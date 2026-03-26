@@ -758,7 +758,7 @@ const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false }) =
       <div style={{ marginTop:18, paddingTop:16, borderTop:`1px solid ${C.bdr}` }}>
         <div style={{ color:C.sub, fontWeight:600, fontSize:10, letterSpacing:.5, marginBottom:8 }}>ASSIGNED DEVICES</div>
         <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
-          {(e.devices||[]).map(d => <span key={d} style={{ background:C.surf, padding:"5px 11px", borderRadius:8, fontSize:11, border:`1px solid ${C.bdr}` }}>{d}</span>)}
+          {(e.devices||[]).map(d => <span key={d} style={{ background:C.surf, padding:"5px 11px", borderRadius:8, border:`1px solid ${C.bdr}` }}>{d}</span>)}
         </div>
       </div>
       <div style={{ marginTop:16 }}>
@@ -794,7 +794,7 @@ const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false }) =
       {(e.timeline||[]).length > 0 && null}
     </>
   );
-  return wrapCard ? <Card style={{ maxWidth:640 }}>{body}</Card> : <div>{body}</div>;
+  return wrapCard ? <Card style={{ maxWidth:640, boxShadow:"0 2px 14px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset", position:"relative" }}>{body}</Card> : <div>{body}</div>;
 };
 
 const PayslipSheet = ({ logoUrl, companyTagline, emp, payslip, breakdown, approverName, narrow = false }) => {
@@ -1903,20 +1903,20 @@ export default function App() {
               position:"relative",
               margin:`0 ${-pad}px 28px`,
               padding: heroPadStd,
-              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 42%, var(--mid) 100%)`,
+              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
               borderBottom:`1px solid ${C.bdr}`,
               overflow:"hidden",
             }}>
               <div style={{
-                position:"absolute", right:-28, top:-32, width:200, height:200,
-                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.2) 0%, transparent 68%)`,
+                position:"absolute", right:-40, top:-30, width:220, height:220,
+                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`,
                 pointerEvents:"none",
               }} />
               <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, flexWrap:"wrap" }}>
                 <div style={{ maxWidth:640 }}>
                   <div style={{
                     display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
-                    padding:"5px 12px", borderRadius:999, background:"rgba(255,255,255,.72)", border:`1px solid ${C.bdr}`,
+                    padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                     fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                   }}>
                     {isSA ? "◉ Directory" : "◉ You"}
@@ -2009,20 +2009,20 @@ export default function App() {
               position:"relative",
               margin:`0 ${-pad}px 28px`,
               padding: heroPadStd,
-              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 42%, var(--mid) 100%)`,
+              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
               borderBottom:`1px solid ${C.bdr}`,
               overflow:"hidden",
             }}>
               <div style={{
-                position:"absolute", left:"8%", bottom:-40, width:180, height:180,
-                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.16) 0%, transparent 70%)`,
+                position:"absolute", right:-40, top:-30, width:220, height:220,
+                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`,
                 pointerEvents:"none",
               }} />
               <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, flexWrap:"wrap" }}>
                 <div style={{ maxWidth:560 }}>
                   <div style={{
                     display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
-                    padding:"5px 12px", borderRadius:999, background:"rgba(255,255,255,.72)", border:`1px solid ${C.bdr}`,
+                    padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                     fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                   }}>◷ Leave</div>
                   <h1 style={{
@@ -2259,7 +2259,7 @@ export default function App() {
                     <div style={{ display:"flex", justifyContent:"flex-start", marginBottom:12 }}>
                       <TabBar inline tabs={["All","Pending","Approved","Rejected"]} active={lvTab} setActive={setLvTab} style={{ marginBottom:0 }} />
                     </div>
-                    <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06)" }}>
+                    <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset" }}>
                       <div style={{ overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
                       <table style={{ width:"100%", minWidth: narrow ? 560 : undefined, borderCollapse:"collapse", fontSize:12 }}>
                         <thead>
@@ -2302,20 +2302,20 @@ export default function App() {
               position:"relative",
               margin:`0 ${-pad}px 28px`,
               padding: heroPadStd,
-              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 42%, var(--mid) 100%)`,
+              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
               borderBottom:`1px solid ${C.bdr}`,
               overflow:"hidden",
             }}>
               <div style={{
-                position:"absolute", right:-36, top:-40, width:220, height:220,
-                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.18) 0%, transparent 70%)`,
+                position:"absolute", right:-40, top:-30, width:220, height:220,
+                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`,
                 pointerEvents:"none",
               }} />
               <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:20, flexWrap:"wrap" }}>
                 <div style={{ maxWidth:520 }}>
                   <div style={{
                     display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
-                    padding:"5px 12px", borderRadius:999, background:"rgba(255,255,255,.72)", border:`1px solid ${C.bdr}`,
+                    padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                     fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                   }}>₹ Payroll</div>
                   <h1 style={{
@@ -2383,7 +2383,7 @@ export default function App() {
             {(pyTab==="All Payslips"||pyTab==="My Payslips") ? (
               isSA ? (
                 <>
-                  <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06)" }}>
+                  <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset" }}>
                   <div style={{ overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
                   <table style={{ width:"100%", minWidth: narrow ? 600 : undefined, borderCollapse:"collapse", fontSize:12 }}>
                     <thead>
@@ -2464,7 +2464,7 @@ export default function App() {
                   {myPayslipRows.map(p => (
                     <Card key={p.id} style={{
                       position:"relative", padding:"16px 20px 16px 24px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:16, flexWrap:"wrap",
-                      borderRadius:16, overflow:"hidden", boxShadow:"0 2px 14px rgba(var(--shadow-rgb),.06)",
+                      borderRadius:16, overflow:"hidden", boxShadow:"0 2px 14px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset",
                     }}>
                       <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:C.p, borderRadius:"4px 0 0 4px" }} />
                       <div style={{ display:"flex", alignItems:"center", gap:12, minWidth:0 }}>
@@ -2493,7 +2493,7 @@ export default function App() {
                 </div>
               )
             ) : (
-              <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06)" }}>
+              <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset" }}>
                 <div style={{ overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
                 <table style={{ width:"100%", minWidth: narrow ? 640 : undefined, borderCollapse:"collapse", fontSize:12 }}>
                   <thead>
@@ -2548,19 +2548,19 @@ export default function App() {
               position:"relative",
               margin:`0 ${-pad}px 28px`,
               padding: heroPadStd,
-              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 42%, var(--mid) 100%)`,
+              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
               borderBottom:`1px solid ${C.bdr}`,
               overflow:"hidden",
             }}>
               <div style={{
-                position:"absolute", right:-36, top:-40, width:240, height:240,
-                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.22) 0%, transparent 68%)`,
+                position:"absolute", right:-40, top:-30, width:220, height:220,
+                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`,
                 pointerEvents:"none",
               }} />
               <div style={{ position:"relative", zIndex:1, maxWidth:640 }}>
                 <div style={{
                   display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
-                  padding:"5px 12px", borderRadius:999, background:"rgba(255,255,255,.7)", border:`1px solid ${C.bdr}`,
+                  padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                   fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                 }}>
                   <span style={{ fontSize:12, lineHeight:1 }}>✦</span>
@@ -2611,7 +2611,7 @@ export default function App() {
                     borderRadius:16,
                     border:`1px solid ${C.bdr}`,
                     overflow:"hidden",
-                    boxShadow:"0 2px 14px rgba(var(--shadow-rgb),.06)",
+                    boxShadow:"0 2px 14px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset",
                   }}
                 >
                   <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:i % 2 === 0 ? C.p : C.p2, borderRadius:"4px 0 0 4px" }} />
@@ -2680,20 +2680,20 @@ export default function App() {
               position:"relative",
               margin:`0 ${-pad}px 28px`,
               padding: heroPadStd,
-              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 42%, var(--mid) 100%)`,
+              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
               borderBottom:`1px solid ${C.bdr}`,
               overflow:"hidden",
             }}>
               <div style={{
-                position:"absolute", left:"15%", bottom:-48, width:200, height:200,
-                borderRadius:"50%", background:`radial-gradient(circle, rgba(90,110,80,.12) 0%, transparent 72%)`,
+                position:"absolute", right:-40, top:-30, width:220, height:220,
+                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`,
                 pointerEvents:"none",
               }} />
               <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, flexWrap:"wrap" }}>
                 <div style={{ maxWidth:560 }}>
                   <div style={{
                     display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
-                    padding:"5px 12px", borderRadius:999, background:"rgba(255,255,255,.72)", border:`1px solid ${C.bdr}`,
+                    padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                     fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                   }}>⊹ Structure</div>
                   <h1 style={{
@@ -2709,7 +2709,7 @@ export default function App() {
             <div style={{
               position:"relative", background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
               padding:"22px 24px 28px 28px", overflowX:"auto",
-              boxShadow:"0 2px 20px rgba(var(--shadow-rgb),.06)",
+              boxShadow:"0 2px 20px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset",
             }}>
               <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:C.p2, borderRadius:"4px 0 0 4px" }} />
               <div style={{ paddingLeft:8, minWidth:0 }}>
@@ -2738,19 +2738,19 @@ export default function App() {
               position:"relative",
               margin:`0 ${-pad}px 28px`,
               padding: heroPadStd,
-              background:`linear-gradient(155deg, #f7f9f4 0%, ${C.surf} 40%, #dde8cf 100%)`,
+              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
               borderBottom:`1px solid ${C.bdr}`,
               overflow:"hidden",
             }}>
               <div style={{
-                position:"absolute", left:"12%", top:-50, width:200, height:200,
-                borderRadius:"50%", background:`radial-gradient(circle, rgba(90,110,80,.12) 0%, transparent 70%)`,
+                position:"absolute", right:-40, top:-30, width:220, height:220,
+                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`,
                 pointerEvents:"none",
               }} />
               <div style={{ position:"relative", zIndex:1, maxWidth:640 }}>
                 <div style={{
                   display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
-                  padding:"5px 12px", borderRadius:999, background:"rgba(255,255,255,.75)", border:`1px solid ${C.bdr}`,
+                  padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                   fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                 }}>
                   <span style={{ fontSize:13, lineHeight:1, opacity:.9 }}>◎</span>
@@ -2769,7 +2769,7 @@ export default function App() {
             <div style={{
               position:"relative", background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
               padding:"16px 18px 16px 22px", marginBottom:16,
-              boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06)",
+              boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset",
               overflow:"hidden",
             }}>
               <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:C.p2, borderRadius:"4px 0 0 4px" }} />
@@ -2789,7 +2789,7 @@ export default function App() {
 
             <div style={{
               position:"relative", background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
-              boxShadow:"0 2px 20px rgba(var(--shadow-rgb),.05)",
+              boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.05), 0 1px 0 rgba(var(--wht-rgb),.8) inset",
               overflow:"hidden", marginBottom:16,
             }}>
               <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:C.p, borderRadius:"4px 0 0 4px" }} />
@@ -2894,19 +2894,19 @@ export default function App() {
               position:"relative",
               margin:`0 ${-pad}px 28px`,
               padding: heroPadStd,
-              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 42%, var(--mid) 100%)`,
+              background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
               borderBottom:`1px solid ${C.bdr}`,
               overflow:"hidden",
             }}>
               <div style={{
-                position:"absolute", right:-32, top:-36, width:220, height:220,
-                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.2) 0%, transparent 68%)`,
+                position:"absolute", right:-40, top:-30, width:220, height:220,
+                borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`,
                 pointerEvents:"none",
               }} />
               <div style={{ position:"relative", zIndex:1, maxWidth:720 }}>
                 <div style={{
                   display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
-                  padding:"5px 12px", borderRadius:999, background:"rgba(255,255,255,.7)", border:`1px solid ${C.bdr}`,
+                  padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                   fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                 }}>
                   ⚙ Account
