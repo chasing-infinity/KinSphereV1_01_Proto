@@ -71,16 +71,16 @@ const EMPS = [
     phone:"+91 98100 11223", designation:"Head of Engineering", dob:"03 Feb 1992",
     devices:["MacBook Air M2"], documents:[{ n:"Aadhaar", v:true },{ n:"PAN", v:false }], managerId:1,
     bankInfo:{ holder:"Nihit Agarwal", acc:"9876543210", ifsc:"ICIC0005678" } },
-  { id:3, ini:"PS", name:"Priya Sharma",   email:"priya@bipolarfactory.com",  role:"Employee",    dept:"Design",      type:"Full Time", joined:"Jun 2023", salary:"₹1,00,000",
-    phone:"+91 91234 55667", designation:"Product Designer", dob:"22 Nov 1995",
+  { id:3, ini:"PS", name:"Priya Sharma",   email:"priya@bipolarfactory.com",  role:"Employee",    dept:"Design",      type:"Full Time", joined:"15 Jun 2023", salary:"₹1,00,000",
+    phone:"+91 91234 55667", designation:"Product Designer", dob:"27 Mar 1995",
     devices:["MacBook Pro 14"], documents:[{ n:"Aadhaar", v:true },{ n:"NDA", v:true }], managerId:1,
     bankInfo:{ holder:"Priya Sharma", acc:"5566778899", ifsc:"SBIN0009988" } },
-  { id:4, ini:"RA", name:"Ridwanul Alam",  email:"ridwan@bipolarfactory.com", role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"Mar 2026", salary:"₹1",
+  { id:4, ini:"RA", name:"Ridwanul Alam",  email:"ridwan@bipolarfactory.com", role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"29 Mar 2025", salary:"₹1",
     phone:"+91 90000 44112", designation:"Software Engineer", dob:"01 Jan 1999",
     devices:["Dell XPS 15"], documents:[{ n:"PAN", v:true }], managerId:2,
     bankInfo:null /* Missing for testing */ },
-  { id:5, ini:"S",  name:"Sahil .",        email:"sahil@bipolarfactory.com",  role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"Oct 2022", salary:"—",
-    phone:"+91 98888 77665", designation:"Tech Lead", dob:"10 Jul 1990",
+  { id:5, ini:"S",  name:"Sahil .",        email:"sahil@bipolarfactory.com",  role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"10 Oct 2022", salary:"—",
+    phone:"+91 98888 77665", designation:"Tech Lead", dob:"30 Mar 1990",
     devices:["ThinkPad P1"], documents:[{ n:"Aadhaar", v:true },{ n:"Contract", v:true }], managerId:1,
     bankInfo:{ holder:"Sahil", acc:"1122334455", ifsc:"KKBK0004433" } },
 ];
@@ -219,6 +219,42 @@ function getPayslipBreakdown(ini, salaryConfigs, payslipRow) {
     grossStr: formatInrNum(monthlyGross),
     netStr: formatInrNum(net),
   };
+}
+
+/** Calculate days until next birthday/anniversary (ignoring year). Includes 0, 1, 2, 3 only. */
+function getEventDays(dateStr) {
+  if (!dateStr || dateStr === "—") return null;
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  
+  // Parse "DD Month YYYY" or "Month YYYY"
+  const parts = dateStr.trim().split(/\s+/);
+  let day = 1;
+  let monthStr = "";
+  
+  if (parts.length === 2) { // "Month YYYY"
+    monthStr = parts[0];
+  } else if (parts.length === 3) { // "DD Month YYYY"
+    day = parseInt(parts[0]);
+    monthStr = parts[1];
+  } else {
+    return null;
+  }
+
+  const monthIdx = MONTHS_SHORT.indexOf(monthStr.slice(0, 3));
+  if (monthIdx === -1) return null;
+
+  let target = new Date(now.getFullYear(), monthIdx, day);
+  
+  // If the event was earlier this year, look at next year
+  if (target < now) {
+    target.setFullYear(now.getFullYear() + 1);
+  }
+  
+  const diff = target.getTime() - now.getTime();
+  const days = Math.round(diff / (1000 * 60 * 60 * 24));
+  
+  return (days >= 0 && days <= 3) ? days : null;
 }
 
 const empById = (id, list = EMPS) => list.find(e => e.id === id);
@@ -1954,39 +1990,103 @@ export default function App() {
               gridTemplateColumns: narrow ? "1fr" : "repeat(2, minmax(0, 1fr))",
               gap:16,
             }}>
+              {/* Birthdays */}
               <div style={{
                 background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
                 padding:"20px 22px", minHeight:120,
                 boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.05)",
                 backgroundImage:`linear-gradient(135deg, ${C.wht} 0%, var(--mid) 55%, ${C.surf} 100%)`,
               }}>
-                <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12 }}>
-                  <span style={{ fontSize:22 }}>🎂</span>
-                  <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>Birthdays this month</h2>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                    <span style={{ fontSize:22 }}>🎂</span>
+                    <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>Birthdays</h2>
+                  </div>
+                  <span style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>NEXT 3 DAYS</span>
                 </div>
-                <p style={{ margin:0, fontSize:12, color:C.sub, lineHeight:1.55 }}>
-                  None in the next 30 days. When someone’s day is near, it’ll show up here so the team can celebrate.
-                </p>
+                
+                {(() => {
+                  const bdays = employees.map(e => ({ e, days: getEventDays(e.dob) })).filter(x => x.days !== null).sort((a,b) => a.days - b.days);
+                  if (bdays.length === 0) return (
+                    <p style={{ margin:0, fontSize:12, color:C.sub, lineHeight:1.55 }}>
+                      None in the next 3 days. When someone’s day is near, it’ll show up here with a countdown.
+                    </p>
+                  );
+                  return (
+                    <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                      {bdays.map(({e, days}) => (
+                        <div key={e.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, padding:"10px 12px", borderRadius:12, border:`1px solid ${C.bdr}`, background:"rgba(255,255,255,.6)" }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                            <Av ini={e.ini} sz={32} bg={C.p} />
+                            <div>
+                              <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>{e.name}</div>
+                              <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{e.dob.split(" ").slice(0,2).join(" ")}</div>
+                            </div>
+                          </div>
+                          {days === 0 ? (
+                            <span style={{ fontSize:10, fontWeight:800, color:"#fff", background:C.p, padding:"4px 10px", borderRadius:999 }}>Today</span>
+                          ) : (
+                            <div style={{ textAlign:"right" }}>
+                              <div style={{ fontSize:11, fontWeight:700, color:C.p }}>In {days} day{days !== 1 ? 's' : ''}</div>
+                              <div style={{ fontSize:9, color:C.sub, fontWeight:600 }}>C O U N T D O W N</div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
+
+              {/* Anniversaries */}
               <div style={{
                 background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
                 padding:"20px 22px", minHeight:120,
                 boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.05)",
               }}>
-                <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12 }}>
-                  <span style={{ fontSize:22 }}>🎉</span>
-                  <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>Work anniversaries</h2>
-                </div>
-                <div style={{
-                  display:"flex", alignItems:"center", gap:14, padding:"12px 14px",
-                  borderRadius:12, border:`1px solid ${C.bdr}`, background:C.bg,
-                }}>
-                  <Av ini="NA" sz={40} bg="#588157" />
-                  <div>
-                    <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>Nihit Agarwal</div>
-                    <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>3 years with the team · joined Apr 2023</div>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                    <span style={{ fontSize:22 }}>🎉</span>
+                    <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>Work anniversaries</h2>
                   </div>
+                  <span style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>NEXT 3 DAYS</span>
                 </div>
+
+                {(() => {
+                  const annivs = employees.map(e => ({ e, days: getEventDays(e.joined) })).filter(x => x.days !== null).sort((a,b) => a.days - b.days);
+                  if (annivs.length === 0) return (
+                    <p style={{ margin:0, fontSize:12, color:C.sub, lineHeight:1.55 }}>
+                      No work anniversaries in the next 3 days.
+                    </p>
+                  );
+                  return (
+                    <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                      {annivs.map(({e, days}) => {
+                        const joinYear = parseInt(e.joined.split(" ").pop());
+                        const years = new Date().getFullYear() - joinYear;
+                        return (
+                          <div key={e.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, padding:"10px 12px", borderRadius:12, border:`1px solid ${C.bdr}`, background:C.bg }}>
+                            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                              <Av ini={e.ini} sz={32} bg={C.p2} />
+                              <div>
+                                <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>{e.name}</div>
+                                <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{years} year{years !== 1 ? 's' : ''} · joined {e.joined.split(" ").slice(1).join(" ")}</div>
+                              </div>
+                            </div>
+                            {days === 0 ? (
+                              <span style={{ fontSize:10, fontWeight:800, color:"#fff", background:C.p2, padding:"4px 10px", borderRadius:999 }}>Today</span>
+                            ) : (
+                              <div style={{ textAlign:"right" }}>
+                                <div style={{ fontSize:11, fontWeight:700, color:C.p2 }}>In {days} day{days !== 1 ? 's' : ''}</div>
+                                <div style={{ fontSize:9, color:C.sub, fontWeight:600 }}>C O U N T D O W N</div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
