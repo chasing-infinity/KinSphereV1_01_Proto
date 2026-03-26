@@ -467,8 +467,24 @@ function saDayCellBg(isOff, dayLeaves) {
 }
 
 const RECOGS = [
-  { from:"Arjun Mehta", fIni:"AM", to:"Ridwanul Alam", tIni:"RA", msg:"Thanks for the quick turnaround on the API fix!", time:"10h ago" },
-  { from:"Arjun Mehta", fIni:"AM", to:"Priya Sharma",  tIni:"PS", msg:"Great work on the design system docs!", time:"4d ago" },
+  { 
+    id: 1, from:"Arjun Mehta", fIni:"AM", to:"Ridwanul Alam", tIni:"RA", 
+    msg:"Thanks for the quick turnaround on the API fix!", time:"10h ago", 
+    tags: ["Ownership", "Teamwork"], 
+    reactions: { like: 5, celebrate: 2 }, 
+    isPrivate: false, 
+    comments: [
+      { from: "Priya Sharma", ini: "PS", txt: "Totally agree, Ridwanul is a lifesaver!", time: "8h ago" }
+    ]
+  },
+  { 
+    id: 2, from:"Arjun Mehta", fIni:"AM", to:"Priya Sharma",  tIni:"PS", 
+    msg:"Great work on the design system docs!", time:"4d ago", 
+    tags: ["Creativity"], 
+    reactions: { like: 12, celebrate: 8 }, 
+    isPrivate: false, 
+    comments: [] 
+  },
 ];
 
 const SOOTHING_GREENS = ["#afc0a5", "#8a9a80", "#a3b18a", "#588157", "#3a5a40", "#7da890", "#6fa88a", "#94a89a"];
@@ -995,6 +1011,86 @@ export default function App() {
   const [offboardedEmployees, setOffboardedEmployees] = useState([]);
   const [empCustomFieldKey, setEmpCustomFieldKey] = useState("");
   const [empCustomFieldVal, setEmpCustomFieldVal] = useState("");
+
+  /** RECOGNITION STATE */
+  const [recogs, setRecogs] = useState(RECOGS);
+  const [newRecogTags, setNewRecogTags] = useState([]);
+  const [isPrivateRecog, setIsPrivateRecog] = useState(false);
+  const [recogTo, setRecogTo] = useState("Choose a teammate…");
+  const [recogMsg, setRecogMsg] = useState("");
+  
+  const RECO_TAGS = ["Teamwork", "Leadership", "Ownership", "Creativity"];
+
+  const handlePostRecog = () => {
+    if (recogTo === "Choose a teammate…" || !recogMsg.trim()) {
+      toast("Please select a teammate and write a message.");
+      return;
+    }
+    const target = employees.find(e => e.name === recogTo);
+    const newR = {
+      id: Date.now(),
+      from: me.name,
+      fIni: me.ini,
+      to: recogTo,
+      tIni: target?.ini || "??",
+      msg: recogMsg,
+      time: "Just now",
+      tags: newRecogTags,
+      reactions: { like: 0, celebrate: 0 },
+      isPrivate: isPrivateRecog,
+      comments: []
+    };
+    setRecogs(p => [newR, ...p]);
+    setRecogTo("Choose a teammate…");
+    setRecogMsg("");
+    setNewRecogTags([]);
+    setIsPrivateRecog(false);
+    toast(`${isPrivateRecog ? "Private" : "Public"} shout-out posted! ✦`);
+  };
+
+  const handleToggleReaction = (recogId, type) => {
+    setRecogs(prev => prev.map(r => {
+      if (r.id !== recogId) return r;
+      const newReactions = { ...r.reactions };
+      // In a real app, we'd check if specific user already reacted. 
+      // For prototype, we just increment.
+      newReactions[type] = (newReactions[type] || 0) + 1;
+      return { ...r, reactions: newReactions };
+    }));
+    toast(`Reacted with ${type === 'like' ? '👍' : '🎉'} ✓`);
+  };
+
+  const handleAddComment = (recogId, txt) => {
+    if (!txt.trim()) return;
+    setRecogs(prev => prev.map(r => {
+      if (r.id !== recogId) return r;
+      return {
+        ...r,
+        comments: [...r.comments, { from: me.name, ini: me.ini, txt, time: "Just now" }]
+      };
+    }));
+    toast("Comment added ✓");
+  };
+
+  /** Monthly Highlights Calculation */
+  const recogHighlights = (() => {
+    const recCounts = {}; // { name: count }
+    const giverCounts = {};
+    recogs.forEach(r => {
+      if (r.isPrivate) return;
+      recCounts[r.to] = (recCounts[r.to] || 0) + 1;
+      giverCounts[r.from] = (giverCounts[r.from] || 0) + 1;
+    });
+    const topRecognised = Object.entries(recCounts)
+      .sort((a,b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([name, count]) => ({ name, count, ini: employees.find(e=>e.name===name)?.ini || "??" }));
+    const topGivers = Object.entries(giverCounts)
+      .sort((a,b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([name, count]) => ({ name, count, ini: employees.find(e=>e.name===name)?.ini || "??" }));
+    return { topRecognised, topGivers };
+  })();
 
   /** Leave Policy: SA-configurable allocations per leave type */
   const [leavePolicy, setLeavePolicy] = useState({
@@ -2571,9 +2667,43 @@ export default function App() {
                   letterSpacing:"-.02em",
                 }}>Recognition</h1>
                 <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55, maxWidth:520 }}>
-                  Public shout-outs for everyone to see. Call out great work and keep momentum visible across the team.
+                  Public shout-outs for everyone to see — now with reactions, tags, and private notes.
                 </p>
               </div>
+            </div>
+
+            {/* ─ MONTHLY HIGHLIGHTS ─ */}
+            <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "1fr 1fr", gap:20, marginBottom:28 }}>
+              <Card style={{ padding:"18px 22px", background:`linear-gradient(145deg, ${C.wht} 0%, ${C.bg} 100%)`, boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset" }}>
+                <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:12 }}>🏆 TOP RECOGNISED</div>
+                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                  {recogHighlights.topRecognised.map((h, i) => (
+                    <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                        <Av ini={h.ini} sz={28} />
+                        <span style={{ fontWeight:600, fontSize:13, color:C.txt }}>{h.name}</span>
+                      </div>
+                      <span style={{ fontSize:11, fontWeight:700, color:C.sub }}>{h.count} shout-out{h.count>1?'s':''}</span>
+                    </div>
+                  ))}
+                  {recogHighlights.topRecognised.length === 0 && <div style={{ fontSize:12, color:C.sub }}>No highlights yet this month.</div>}
+                </div>
+              </Card>
+              <Card style={{ padding:"18px 22px", background:`linear-gradient(145deg, ${C.wht} 0%, ${C.bg} 100%)`, boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset" }}>
+                <div style={{ fontSize:10, fontWeight:700, color:C.p2, letterSpacing:1, marginBottom:12 }}>🚀 MOST ACTIVE RECOGNISERS</div>
+                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                  {recogHighlights.topGivers.map((h, i) => (
+                    <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                        <Av ini={h.ini} sz={28} bg={C.p2} />
+                        <span style={{ fontWeight:600, fontSize:13, color:C.txt }}>{h.name}</span>
+                      </div>
+                      <span style={{ fontSize:11, fontWeight:700, color:C.sub }}>{h.count} shared</span>
+                    </div>
+                  ))}
+                  {recogHighlights.topGivers.length === 0 && <div style={{ fontSize:12, color:C.sub }}>Start recognizing teammate to see highlights!</div>}
+                </div>
+              </Card>
             </div>
 
             <div style={{
@@ -2586,25 +2716,59 @@ export default function App() {
               <div style={{ paddingLeft:8 }}>
                 <div style={{ fontSize:10, fontWeight:700, letterSpacing:1.1, color:C.p, marginBottom:4 }}>COMPOSE</div>
                 <h2 style={{ margin:"0 0 16px", fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>New shout-out</h2>
-                <Inp label="Recognise someone" opts={["Choose a teammate…",...employees.filter(e=>e.name!=="Arjun Mehta").map(e=>e.name)]} />
-                <Inp label="What did they do?" type="textarea" placeholder="Share what they did that made a difference…" />
-                <div style={{ display:"flex", justifyContent:"flex-end", marginTop:8, paddingTop:8, borderTop:`1px solid ${C.surf}` }}>
-                  <Btn onClick={()=>toast("Recognition posted! ✦")} style={{ padding:"10px 22px", minWidth:140 }}>Post shout-out</Btn>
+                <Inp 
+                  label="Recognise someone" 
+                  opts={["Choose a teammate…",...employees.filter(e=>e.name!==me.name).map(e=>e.name)]} 
+                  value={recogTo}
+                  onChange={e=>setRecogTo(e.target.value)}
+                />
+                <Inp 
+                  label="What did they do?" 
+                  type="textarea" 
+                  placeholder="Share what they did that made a difference…" 
+                  value={recogMsg}
+                  onChange={e=>setRecogMsg(e.target.value)}
+                />
+                
+                {/* Tags & Privacy */}
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:16, flexWrap:"wrap", marginTop:12 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+                    <span style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>TAGS:</span>
+                    {RECO_TAGS.map(t => (
+                      <button 
+                        key={t}
+                        onClick={() => {
+                          if (newRecogTags.includes(t)) setNewRecogTags(p => p.filter(x => x !== t));
+                          else if (newRecogTags.length < 2) setNewRecogTags(p => [...p, t]);
+                        }}
+                        style={{
+                          padding:"4px 10px", borderRadius:6, fontSize:10, fontWeight:600, cursor:"pointer",
+                          border:`1px solid ${newRecogTags.includes(t) ? C.p : C.bdr}`,
+                          background: newRecogTags.includes(t) ? `rgba(var(--p-rgb),.12)` : "transparent",
+                          color: newRecogTags.includes(t) ? C.p : C.sub,
+                          transition: "all .2s"
+                        }}
+                      >{t}</button>
+                    ))}
+                  </div>
+                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                    <label style={{ display:"flex", alignItems:"center", gap:6, cursor:"pointer", userSelect:"none" }}>
+                      <input type="checkbox" checked={isPrivateRecog} onChange={e=>setIsPrivateRecog(e.target.checked)} style={{ cursor:"pointer" }} />
+                      <span style={{ fontSize:11, fontWeight:600, color:C.sub }}>Private Recognition</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div style={{ display:"flex", justifyContent:"flex-end", marginTop:16, paddingTop:16, borderTop:`1px solid ${C.surf}` }}>
+                  <Btn onClick={handlePostRecog} style={{ padding:"10px 22px", minWidth:140 }}>Post shout-out</Btn>
                 </div>
               </div>
             </div>
 
-            <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", gap:12, marginBottom:14, flexWrap:"wrap" }}>
-              <div>
-                <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:4 }}>FEED</div>
-                <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>Recent</h2>
-              </div>
-              <span style={{ fontSize:11, color:C.sub }}>Newest first</span>
-            </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
-              {RECOGS.map((r,i)=>(
+                      <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+              {recogs.filter(r => !r.isPrivate || r.from === me.name || r.to === me.name).map((r,i)=>(
                 <div
-                  key={i}
+                  key={r.id || i}
                   style={{
                     position:"relative",
                     background:C.wht,
@@ -2617,7 +2781,12 @@ export default function App() {
                   <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:i % 2 === 0 ? C.p : C.p2, borderRadius:"4px 0 0 4px" }} />
                   <div style={{ padding:"16px 18px 18px 22px" }}>
                     <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, marginBottom:14, flexWrap:"wrap" }}>
-                      <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p }}>SHOUT-OUT</div>
+                      <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                        <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p }}>SHOUT-OUT</div>
+                        {r.isPrivate && (
+                          <span style={{ fontSize:10, fontWeight:700, color:"#92400e", background:"#fef3c7", padding:"3px 8px", borderRadius:6 }}>🔒 PRIVATE</span>
+                        )}
+                      </div>
                       <span style={{
                         fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.3,
                         padding:"5px 11px", borderRadius:999, background:C.bg, border:`1px solid ${C.bdr}`,
@@ -2666,6 +2835,64 @@ export default function App() {
                     >
                       {r.msg}
                     </blockquote>
+
+                    {/* Tags */}
+                    {r.tags && r.tags.length > 0 && (
+                      <div style={{ display:"flex", gap:6, marginTop:12, flexWrap:"wrap" }}>
+                        {r.tags.map(t=>(
+                          <span key={t} style={{ fontSize:10, fontWeight:700, color:C.p, background:`rgba(var(--p-rgb),.1)`, padding:"3px 8px", borderRadius:4, border:`1px solid rgba(var(--p-rgb),.2)` }}>#{t.toUpperCase()}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Actions & Reactions */}
+                    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:16, marginTop:16, paddingTop:12, borderTop:`1px solid ${C.surf}` }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                        <button 
+                          onClick={()=>handleToggleReaction(r.id, 'like')}
+                          style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:8, padding:"5px 10px", fontSize:12, cursor:"pointer", display:"flex", alignItems:"center", gap:6, color:C.txt }}
+                        >
+                          <span>👍</span> <span style={{ fontWeight:700 }}>{r.reactions?.like || 0}</span>
+                        </button>
+                        <button 
+                          onClick={()=>handleToggleReaction(r.id, 'celebrate')}
+                          style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:8, padding:"5px 10px", fontSize:12, cursor:"pointer", display:"flex", alignItems:"center", gap:6, color:C.txt }}
+                        >
+                          <span>🎉</span> <span style={{ fontWeight:700 }}>{r.reactions?.celebrate || 0}</span>
+                        </button>
+                      </div>
+                      <span style={{ fontSize:11, color:C.sub, fontWeight:600 }}>{r.comments?.length || 0} Comment{r.comments?.length !== 1 ? 's' : ''}</span>
+                    </div>
+
+                    {/* Comments Thread */}
+                    <div style={{ marginTop:14, padding:"12px", background:`rgba(var(--shadow-rgb),.02)`, borderRadius:10 }}>
+                      {r.comments?.map((c, ci) => (
+                        <div key={ci} style={{ display:"flex", gap:10, marginBottom:ci === r.comments.length - 1 ? 0 : 12 }}>
+                          <Av ini={c.ini} sz={22} />
+                          <div style={{ flex:1 }}>
+                            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:2 }}>
+                              <span style={{ fontSize:12, fontWeight:700, color:C.txt }}>{c.from}</span>
+                              <span style={{ fontSize:10, color:C.sub }}>{c.time}</span>
+                            </div>
+                            <p style={{ margin:0, fontSize:12, color:C.txt, lineHeight:1.4 }}>{c.txt}</p>
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {/* Quick Comment Input */}
+                      <div style={{ display:"flex", gap:8, marginTop:12 }}>
+                        <input 
+                          placeholder="Add a comment..." 
+                          onKeyDown={e => {
+                            if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                              handleAddComment(r.id, e.currentTarget.value);
+                              e.currentTarget.value = "";
+                            }
+                          }}
+                          style={{ flex:1, padding:"6px 10px", borderRadius:6, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:12, color:C.txt, outline:"none" }} 
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
