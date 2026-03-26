@@ -85,6 +85,11 @@ const EMPS = [
     bankInfo:{ holder:"Sahil", acc:"1122334455", ifsc:"KKBK0004433" } },
 ];
 
+const VACANCIES = [
+  { id:"v1", name:"(Open Role)", role:"Senior Frontend Engineer", dept:"Technology", managerId:5 },
+  { id:"v2", name:"(Open Role)", role:"UI Designer", dept:"Design", managerId:1 },
+];
+
 const INIT_LEAVES = [
   { id:1, empId:1, ini:"AM", emp:"Arjun Mehta",  type:"Sick Leave",   from:"25 Mar", to:"25 Mar", fromISO:"2026-03-25", toISO:"2026-03-25", days:"1d", reason:"Check", approver:"Ridwanul Alam", status:"pending"  },
   { id:2, empId:1, ini:"AM", emp:"Arjun Mehta",  type:"Earned Leave", from:"20 Mar", to:"20 Mar", fromISO:"2026-03-20", toISO:"2026-03-20", days:"1d", reason:"Check", approver:"Priya Sharma",  status:"pending"  },
@@ -694,31 +699,147 @@ const TabBar = ({ tabs, active, setActive, style: tabStyle = {}, inline = false 
   </div>
 );
 
+const OrgPreviewCard = ({ node, isEmp, onReassign, isSA, employees, onClose }) => {
+  if (!node) return null;
+  const managerName = isEmp ? employees.find(x => x.id === node.managerId)?.name : employees.find(x => x.id === node.managerId)?.name;
+
+  return (
+    <div style={{
+      position:"fixed", bottom:24, right:24, width:280, background:C.wht, borderRadius:20,
+      border:`1px solid ${C.bdr}`, boxShadow:"0 10px 40px rgba(0,0,0,.15)", padding:20, zIndex:1000,
+      animation:"slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+    }}>
+      <style>{`
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+      `}</style>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
+        <div style={{ display:"flex", gap:12, alignItems:"center" }}>
+          {isEmp ? <Av ini={node.ini} sz={44} bg={node.avatarC || C.p} /> : <div style={{ width:44, height:44, borderRadius:"50%", background:C.surf, border:`1px dashed ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center" }}>?</div>}
+          <div>
+            <div style={{ fontSize:15, fontWeight:700, color:C.txt }}>{node.name}</div>
+            <div style={{ fontSize:12, color:C.sub }}>{isEmp ? node.designation : node.role}</div>
+          </div>
+        </div>
+        <button onClick={onClose} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:18 }}>×</button>
+      </div>
+
+      <div style={{ display:"grid", gap:10, marginBottom:16 }}>
+        <div style={{ fontSize:12, color:C.sub }}>
+          <span style={{ fontWeight:600, color:C.txt }}>Dept:</span> {node.dept}
+        </div>
+        <div style={{ fontSize:12, color:C.sub }}>
+          <span style={{ fontWeight:600, color:C.txt }}>Manager:</span> {managerName || "Top Level"}
+        </div>
+      </div>
+
+      {isSA && isEmp && (
+        <div style={{ borderTop:`1px solid ${C.bdr}`, paddingTop:14 }}>
+          <div style={{ fontSize:10, fontWeight:700, color:C.p, marginBottom:8, letterSpacing:0.5 }}>REASSIGN MANAGER</div>
+          <select 
+            onChange={(e) => onReassign(node.id, e.target.value === "null" ? null : parseInt(e.target.value))}
+            value={node.managerId ?? "null"}
+            style={{ 
+              width:"100%", padding:"8px", borderRadius:8, border:`1px solid ${C.bdr}`, 
+              fontSize:12, outline:"none", background:C.bg, cursor:"pointer"
+            }}
+          >
+            <option value="null">None (Top Level)</option>
+            {employees.filter(x => x.id !== node.id).map(x => (
+              <option key={x.id} value={x.id}>{x.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Verified = () => (
+
   <span title="Verified" style={{ display:"inline-flex", alignItems:"center", justifyContent:"center", width:16, height:16, borderRadius:"50%", background:"#22c55e", color:"#fff", fontSize:10, fontWeight:800, marginLeft:6 }}>✓</span>
 );
 
-const OrgTreeNode = ({ empId, orgManagers, depth = 0, empList = EMPS }) => {
-  const e = empById(empId, empList);
+const OrgTreeNode = ({ 
+  nodeId, nodeType="emp", orgManagers, depth = 0, empList = EMPS, 
+  orgSearch="", collapsedNodes = new Set(), onToggleCollapse, onPreview, orgPreviewId,
+  vacancies = []
+}) => {
+  const isEmp = nodeType === "emp";
+  const e = isEmp ? empList.find(x => x.id === nodeId) : vacancies.find(x => x.id === nodeId);
   if (!e) return null;
-  const reports = empList.filter(x => orgManagers[x.id] === empId);
+
+  const isCollapsed = collapsedNodes.has(nodeId);
+  const reports = isEmp ? empList.filter(x => orgManagers[x.id] === nodeId) : [];
+  const vacancyReports = isEmp ? vacancies.filter(v => v.managerId === nodeId) : [];
+  const allReports = [...reports, ...vacancyReports];
+  
+  const matchesSearch = orgSearch && (
+    e.name.toLowerCase().includes(orgSearch.toLowerCase()) || 
+    (e.role || e.designation || "").toLowerCase().includes(orgSearch.toLowerCase()) ||
+    e.dept.toLowerCase().includes(orgSearch.toLowerCase())
+  );
+
+  const isSelected = orgPreviewId === nodeId;
+
   return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center" }}>
-      <div style={{
-        padding:"12px 16px", borderRadius:14, border:`2px solid ${depth === 0 ? C.p : C.bdr}`, background:C.wht,
-        minWidth:128, textAlign:"center", boxShadow:"0 2px 8px rgba(var(--shadow-rgb),.06)",
-      }}>
-        <Av ini={e.ini} sz={36} bg={e.avatarC} />
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", position:"relative" }}>
+      {/* Node Card */}
+      <div 
+        onClick={() => onPreview(nodeId)}
+        style={{
+          padding:"12px 14px", borderRadius:14, 
+          border:`2px solid ${isSelected ? C.p : (matchesSearch ? C.p2 : (depth === 0 ? C.p : C.bdr))}`, 
+          background:C.wht,
+          minWidth:134, textAlign:"center", cursor:"pointer",
+          boxShadow: isSelected ? `0 0 0 4px rgba(var(--p-rgb),.15), 0 4px 12px rgba(0,0,0,.08)` : "0 2px 8px rgba(var(--shadow-rgb),.06)",
+          transition:"all .2s ease",
+          borderStyle: isEmp ? "solid" : "dashed",
+          opacity: matchesSearch || !orgSearch ? 1 : 0.4,
+          transform: isSelected ? "scale(1.05)" : "scale(1)",
+          zIndex: isSelected ? 10 : 1,
+        }}
+      >
+        {isEmp ? <Av ini={e.ini} sz={36} bg={e.avatarC || C.p} /> : <div style={{ width:36, height:36, borderRadius:"50%", background:C.surf, border:`1px dashed ${C.bdr}`, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12 }}>?</div>}
         <div style={{ fontSize:11, fontWeight:700, color:C.txt, marginTop:6 }}>{e.name}</div>
-        <div style={{ fontSize:10, color:C.sub }}>{e.designation}</div>
-        <div style={{ fontSize:9, color:C.bdr, marginTop:4 }}>{e.dept}</div>
+        <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{isEmp ? e.designation : e.role}</div>
+        <div style={{ 
+          fontSize:9, fontWeight:700, color:C.p, marginTop:6, 
+          padding:"2px 6px", borderRadius:4, background:`rgba(var(--p-rgb),.08)`, display:"inline-block" 
+        }}>{e.dept}</div>
+        
+        {/* Expand/Collapse Toggle */}
+        {allReports.length > 0 && (
+          <button
+            onClick={(ev) => { ev.stopPropagation(); onToggleCollapse(nodeId); }}
+            style={{
+              position:"absolute", bottom:-10, left:"50%", transform:"translateX(-50%)",
+              width:20, height:20, borderRadius:"50%", background:C.wht, border:`1px solid ${C.bdr}`,
+              display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800,
+              cursor:"pointer", boxShadow:"0 2px 4px rgba(0,0,0,.1)", color:C.p, zIndex:5,
+            }}
+          >
+            {isCollapsed ? "+" : "−"}
+          </button>
+        )}
       </div>
-      {reports.length > 0 && (
+
+      {!isCollapsed && allReports.length > 0 && (
         <>
-          <div style={{ width:2, height:16, background:C.bdr, flexShrink:0 }} />
-          <div style={{ display:"flex", gap:14, alignItems:"flex-start", justifyContent:"center", flexWrap:"wrap" }}>
+          <div style={{ width:2, height:24, background:C.bdr, flexShrink:0 }} />
+          <div style={{ display:"flex", gap:20, alignItems:"flex-start", justifyContent:"center", flexWrap:"wrap", padding:"0 10px" }}>
             {reports.map(r => (
-              <OrgTreeNode key={r.id} empId={r.id} orgManagers={orgManagers} depth={depth + 1} empList={empList} />
+              <OrgTreeNode 
+                key={r.id} nodeId={r.id} nodeType="emp" orgManagers={orgManagers} depth={depth + 1} empList={empList} 
+                orgSearch={orgSearch} collapsedNodes={collapsedNodes} onToggleCollapse={onToggleCollapse} 
+                onPreview={onPreview} orgPreviewId={orgPreviewId} vacancies={vacancies}
+              />
+            ))}
+            {vacancyReports.map(v => (
+              <OrgTreeNode 
+                key={v.id} nodeId={v.id} nodeType="vacancy" orgManagers={orgManagers} depth={depth + 1} empList={empList} 
+                orgSearch={orgSearch} collapsedNodes={collapsedNodes} onToggleCollapse={onToggleCollapse} 
+                onPreview={onPreview} orgPreviewId={orgPreviewId} vacancies={vacancies}
+              />
             ))}
           </div>
         </>
@@ -987,7 +1108,25 @@ export default function App() {
     PS: { annualCtc: "1200000", basicPct: "50", hraPct: "20", profTax: "200", pf: "1800", tds: "800" },
   });
   const [orgManagers, setOrgManagers]  = useState({ 1:null, 2:1, 3:1, 4:2, 5:1 });
+  const [orgSearch, setOrgSearch]     = useState("");
+  const [collapsedNodes, setCollapsedNodes] = useState(new Set());
+  const [orgPreviewId, setOrgPreviewId] = useState(null);
   const [showOrgEdit, setShowOrgEdit] = useState(false);
+
+  const toggleOrgCollapse = (id) => {
+    setCollapsedNodes(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleReassignManager = (empId, newManagerId) => {
+    if (empId === newManagerId) return toast("Cannot report to self!");
+    setOrgManagers(prev => ({ ...prev, [empId]: newManagerId }));
+    toast("Reporting line updated ✓");
+  };
   const [saCalTooltip, setSaCalTooltip] = useState(null);
   const [companyLogoUrl, setCompanyLogoUrl] = useState(null);
   const [companyTagline, setCompanyTagline] = useState("Bipolar Factory");
@@ -3027,34 +3166,87 @@ export default function App() {
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
                   }}>Org Chart</h1>
                   <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55 }}>
-                    Reporting lines only — managers above their reports. {isSA ? "Edit who reports to whom to reshape the tree." : "Contact a Super Admin to update hierarchy."}
+                    Interactive hierarchy. Click nodes for quick view. {isSA ? "Super Admins can reassign reporting lines." : ""}
                   </p>
                 </div>
-                {isSA && <Btn variant="outline" onClick={()=>setShowOrgEdit(true)} style={{ padding:"10px 18px" }}>Edit hierarchy</Btn>}
+                <div style={{ display:"flex", gap:12, alignItems:"center" }}>
+                  <div style={{ position:"relative" }}>
+                    <input 
+                      placeholder="Search name, role, dept..."
+                      value={orgSearch}
+                      onChange={(e) => setOrgSearch(e.target.value)}
+                      style={{
+                        padding:"10px 14px 10px 36px", borderRadius:10, border:`1px solid ${C.bdr}`,
+                        fontSize:13, background:C.wht, outline:"none", width:240,
+                        boxShadow:"inset 0 1px 2px rgba(var(--shadow-rgb),.04)",
+                      }}
+                    />
+                    <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", fontSize:14, opacity:0.5 }}>🔍</span>
+                    {orgSearch && <button onClick={()=>setOrgSearch("")} style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:14 }}>×</button>}
+                  </div>
+                  {isSA && <Btn variant="outline" onClick={()=>setShowOrgEdit(true)} style={{ padding:"10px 18px" }}>Configure</Btn>}
+                </div>
               </div>
             </div>
+
             <div style={{
               position:"relative", background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
-              padding:"22px 24px 28px 28px", overflowX:"auto",
+              padding:"40px 24px 80px", overflowX:"auto",
               boxShadow:"0 2px 20px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset",
+              minHeight:500,
             }}>
-              <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:C.p2, borderRadius:"4px 0 0 4px" }} />
-              <div style={{ paddingLeft:8, minWidth:0 }}>
-                <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:4 }}>VISUALIZATION</div>
-                <h2 style={{ margin:"0 0 18px", fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>Reporting tree</h2>
-                {employees.filter(e => orgManagers[e.id] == null).length === 0 ? (
-                  <div style={{ textAlign:"center", color:C.sub, padding:"40px 20px", fontSize:13, borderRadius:12, background:C.bg, border:`1px dashed ${C.bdr}` }}>
-                    No top-level role defined. {isSA ? <>Use <strong style={{ color:C.txt }}>Edit hierarchy</strong> and set at least one person to “Top level”.</> : <>Ask a Super Admin to assign top-level roles.</>}
-                  </div>
-                ) : (
-                  <div style={{ display:"flex", justifyContent:"center", alignItems:"flex-start", gap:24, flexWrap:"wrap", minWidth:0 }}>
-                    {employees.filter(e => orgManagers[e.id] == null).map(root => (
-                      <OrgTreeNode key={root.id} empId={root.id} orgManagers={orgManagers} depth={0} empList={employees} />
-                    ))}
-                  </div>
-                )}
+              {/* Reset View Button */}
+              <button 
+                onClick={() => {
+                  const chart = document.getElementById("org-chart-root");
+                  if (chart) chart.scrollIntoView({ behavior: "smooth", block: "center" });
+                }}
+                style={{
+                  position:"absolute", top:20, left:20, padding:"8px 12px", borderRadius:8,
+                  background:C.bg, border:`1px solid ${C.bdr}`, fontSize:11, fontWeight:700, color:C.p,
+                  cursor:"pointer", zIndex:10,
+                }}
+              >
+                ➹ Center View
+              </button>
+
+              <div id="org-chart-root" style={{ display:"flex", justifyContent:"center", alignItems:"flex-start", gap:48, flexWrap:"wrap", minWidth:0 }}>
+                {(() => {
+                  const roots = employees.filter(e => orgManagers[e.id] == null);
+                  if (roots.length === 0) return (
+                    <div style={{ textAlign:"center", color:C.sub, padding:"60px 20px", fontSize:13, borderRadius:12, background:C.bg, border:`1px dashed ${C.bdr}` }}>
+                      No top-level role defined. {isSA ? <>Use <strong style={{ color:C.txt }}>Configure</strong> to set a “Top level” manager.</> : <>Contact Admin to set hierarchy.</>}
+                    </div>
+                  );
+                  return roots.map(root => (
+                    <OrgTreeNode 
+                      key={root.id} nodeId={root.id} nodeType="emp" orgManagers={orgManagers} depth={0} empList={employees} 
+                      orgSearch={orgSearch} collapsedNodes={collapsedNodes} 
+                      onToggleCollapse={toggleOrgCollapse} 
+                      onPreview={(id) => setOrgPreviewId(id)}
+                      orgPreviewId={orgPreviewId}
+                      vacancies={VACANCIES}
+                    />
+                  ));
+                })()}
               </div>
             </div>
+
+            {/* Quick View Popover */}
+            {orgPreviewId && (
+              <OrgPreviewCard 
+                node={
+                  typeof orgPreviewId === 'string' 
+                    ? VACANCIES.find(v => v.id === orgPreviewId) 
+                    : employees.find(e => e.id === orgPreviewId)
+                }
+                isEmp={typeof orgPreviewId !== 'string'}
+                onReassign={handleReassignManager}
+                isSA={isSA}
+                employees={employees}
+                onClose={() => setOrgPreviewId(null)}
+              />
+            )}
           </div>
         )}
 
