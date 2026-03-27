@@ -650,8 +650,8 @@ const Btn = ({ children, onClick, variant="primary", style:s={} }) => {
   );
 };
 
-const Card = ({ children, style:s={} }) => (
-  <div style={{
+const Card = ({ children, style:s={}, ...props }: any) => (
+  <div {...props} style={{
     background:C.wht, borderRadius:14, border:`1px solid ${C.bdr}`,
     padding:"clamp(16px, 3.5vw, 22px) clamp(16px, 4vw, 24px)",
     ...s,
@@ -1343,16 +1343,17 @@ export default function App() {
   const [sigValue, setSigValue] = useState(""); // Typed name / Draw data
 
   // Generate flow state
-  const [genStep, setGenStep] = useState(1);          // 1=pick template, 2=fill person, 3=preview
+  const [genStep, setGenStep] = useState(1);          // 1=pick template, 2=fill form & preview, 3=select recipient
   const [genTemplate, setGenTemplate] = useState(null);
-  const [genPersonType, setGenPersonType] = useState("employee"); // "employee" | "candidate"
+  const [genRecipientType, setGenRecipientType] = useState("employee"); // "employee" | "candidate" | "external"
   const [genEmpId, setGenEmpId] = useState("");
   const [genVals, setGenVals] = useState({});          // { field: value }
   const [genCandForm, setGenCandForm] = useState({ name:"",email:"",role:"",salary:"",startDate:"",notes:"" });
   const [genSavedCandId, setGenSavedCandId] = useState(null); // newly saved candidate id
+  const [genExternalEmail, setGenExternalEmail] = useState("");
   const [genFilledBody, setGenFilledBody] = useState("");
   const [genSentLink, setGenSentLink] = useState(null);
-  const resetGen = () => { setGenStep(1); setGenTemplate(null); setGenPersonType("employee"); setGenEmpId(""); setGenVals({}); setGenCandForm({ name:"",email:"",role:"",salary:"",startDate:"",notes:"" }); setGenSavedCandId(null); setGenFilledBody(""); setGenSentLink(null); };
+  const resetGen = () => { setGenStep(1); setGenTemplate(null); setGenRecipientType("employee"); setGenEmpId(""); setGenVals({}); setGenCandForm({ name:"",email:"",role:"",salary:"",startDate:"",notes:"" }); setGenSavedCandId(null); setGenExternalEmail(""); setGenFilledBody(""); setGenSentLink(null); };
   // ─────────────────────────────────────────────────────────────────────────
 
   const handleProcessPayments = () => {
@@ -3175,8 +3176,8 @@ export default function App() {
                 <div style={{ position:"absolute", right:-40, top:-30, width:220, height:220, borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`, pointerEvents:"none" }} />
                 <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-end", gap:16, flexWrap:"wrap" }}>
                   <div>
-                    <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>📄 Paperwork Hub</div>
-                    <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em" }}>Document Center</h1>
+                    <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>📄 Document Centre</div>
+                    <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em" }}>Paperwork Hub</h1>
                   </div>
 
                   <div style={{ display:"flex", gap:10, alignItems:"center" }}>
@@ -3241,6 +3242,11 @@ export default function App() {
                                     <div style={{ width:24, height:24, borderRadius:"50%", background:C.mid, color:C.sub, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700 }}>{docCand.name[0]}</div>
                                     <span style={{ fontSize:12 }}>{docCand.name} (Cand.)</span>
                                   </div>
+                                ) : doc.externalEmail ? (
+                                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                                    <div style={{ width:24, height:24, borderRadius:"50%", background:"#e0f2fe", color:"#0284c7", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700 }}>@</div>
+                                    <span style={{ fontSize:12 }}>{doc.externalEmail} (External)</span>
+                                  </div>
                                 ) : "—"}
                               </td>
                               <td style={{ padding:"14px 16px" }}>
@@ -3257,8 +3263,18 @@ export default function App() {
                               </td>
                               <td style={{ padding:"14px 16px", fontSize:12, color:C.sub }}>{doc.date}</td>
                               <td style={{ padding:"14px 16px", textAlign:"right" }}>
-                                {doc.status === "sent" ? (
-                                  <button onClick={() => setSignId(doc.id)} style={{ background:C.p, border:"none", borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#2a3326", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.1)" }}>Sign Now →</button>
+                                {doc.status === "signed" ? (
+                                  <button onClick={() => { 
+                                    toast(`Downloading securely: ${doc.name}.pdf...`);
+                                    const dummyBlob = new Blob(["KinSphere Simulated Signed Document\n\nTitle: ", doc.name, "\nDate: ", doc.date], {type: "application/pdf"});
+                                    const dummyUrl = URL.createObjectURL(dummyBlob);
+                                    const link = document.createElement("a");
+                                    link.href = dummyUrl;
+                                    link.download = `${doc.name.replace(/\s+/g,'_')}_Signed.pdf`;
+                                    link.click();
+                                  }} style={{ background:"#f0fdf4", border:`1px solid #bbf7d0`, borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#16a34a", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.05)" }}>Download ⬇</button>
+                                ) : doc.status === "sent" ? (
+                                  <button onClick={() => { toast("Simulating Secure Portal: This is what the recipient sees from their email link!"); setSignId(doc.id); }} style={{ background:C.p, border:"none", borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#2a3326", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.1)" }}>Simulate Recipient 👁</button>
                                 ) : doc.sendLink ? (
                                   <button onClick={() => { navigator.clipboard.writeText(doc.sendLink); toast("Link copied to clipboard ✓"); }} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:C.p, cursor:"pointer" }}>Copy Link</button>
                                 ) : (
@@ -3275,38 +3291,6 @@ export default function App() {
                     </table>
                   </div>
 
-                  {canSeeAll && (
-                    <div style={{ marginTop:40 }}>
-                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-                        <div>
-                          <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:2 }}>CANDIDATES</div>
-                          <div style={{ fontSize:11, color:C.sub }}>Manage pre-employee document workflows</div>
-                        </div>
-                      </div>
-                      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))", gap:16 }}>
-                        {candidates.map(c => (
-                          <Card key={c.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 20px" }}>
-                            <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                              <div style={{ width:40, height:40, borderRadius:12, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16 }}>👤</div>
-                              <div>
-                                <div style={{ fontWeight:700, fontSize:14, color:C.txt }}>{c.name}</div>
-                                <div style={{ fontSize:11, color:C.sub }}>{c.role}</div>
-                              </div>
-                            </div>
-                            <Btn variant="outline" style={{ padding:"6px 12px", fontSize:11 }} onClick={() => {
-                              resetGen();
-                              setPaperTab("Generate");
-                              setGenTemplate(templates[0]);
-                              setGenRecipientType("candidate");
-                              setGenVals({ name: c.name, role: c.role });
-                              setGenSavedCandId(c.id);
-                              setGenStep(2);
-                            }}>Generate Doc</Btn>
-                          </Card>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </>
               )}
 
@@ -3317,7 +3301,7 @@ export default function App() {
                     {[1,2,3].map(s => (
                       <div key={s} style={{ display:"flex", alignItems:"center", gap:8, opacity: genStep >= s ? 1 : 0.4 }}>
                         <div style={{ width:24, height:24, borderRadius:"50%", background: genStep === s ? C.p : (genStep > s ? C.p2 : C.mid), color: genStep === s ? "#2a3326" : (genStep > s ? "#fff" : C.sub), display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800 }}>{s}</div>
-                        <div style={{ fontSize:11, fontWeight:700, color: genStep === s ? C.txt : C.sub }}>{s===1?"Template":s===2?"Details":"Preview & Send"}</div>
+                        <div style={{ fontSize:11, fontWeight:700, color: genStep === s ? C.txt : C.sub }}>{s===1?"Template":s===2?"Live Edit":"Dispatch"}</div>
                         {s < 3 && <div style={{ width:40, height:2, background:C.bdr }} />}
                       </div>
                     ))}
@@ -3336,110 +3320,101 @@ export default function App() {
                   )}
 
                   {genStep === 2 && (
-                    <Card style={{ padding:32 }}>
+                    <div style={{ display:"grid", gridTemplateColumns:"340px 1fr", gap:24, alignItems:"start", maxWidth:1100, margin:"0 auto" }}>
+                      <Card style={{ padding:24 }}>
+                        <div style={{ fontSize:14, fontWeight:700, color:C.txt, marginBottom:20 }}>Document Fields</div>
+                        <div style={{ display:"flex", flexDirection:"column", gap:16, maxHeight:500, overflow:"auto", paddingRight:4 }}>
+                          {getPlaceholders(genTemplate.body).length === 0 ? (
+                             <div style={{ fontSize:12, color:C.sub }}>No dynamic fields required.</div>
+                          ) : getPlaceholders(genTemplate.body).map(field => (
+                            <div key={field}>
+                              <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>{field.toUpperCase().replace(/_/g, " ")}</label>
+                              <input 
+                                placeholder={`Enter ${field.replace(/_/g, " ")}...`}
+                                value={genVals[field] || ""}
+                                onChange={e => setGenVals({ ...genVals, [field]: e.target.value })}
+                                style={{ width:"100%", padding:10, borderRadius:8, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ display:"flex", justifyContent:"space-between", marginTop:24, paddingTop:16, borderTop:`1px solid ${C.surf}` }}>
+                          <Btn variant="ghost" onClick={() => setGenStep(1)}>← Back</Btn>
+                          <Btn onClick={() => {
+                            setGenFilledBody(fillTemplate(genTemplate.body, genVals));
+                            setGenStep(3);
+                          }}>Next: Dispatch →</Btn>
+                        </div>
+                      </Card>
+
+                      <Card style={{ padding:"32px 40px", borderStyle:"dashed", background:`linear-gradient(to bottom, #fff 0%, ${C.bg} 100%)` }}>
+                         <div style={{ textAlign:"center", marginBottom:30 }}>
+                           <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:2, marginBottom:4 }}>LIVE PREVIEW</div>
+                           <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:20 }}>{genTemplate?.name}</h2>
+                         </div>
+                         <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia, serif", fontSize:14, lineHeight:1.8, color:C.txt, margin:0 }}>
+                           {fillTemplate(genTemplate.body, genVals)}
+                         </pre>
+                      </Card>
+                    </div>
+                  )}
+
+                  {genStep === 3 && (
+                    <Card style={{ padding:32, maxWidth:600, margin:"0 auto" }}>
                       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
-                        <div style={{ fontSize:14, fontWeight:700, color:C.txt }}>Recipient Details</div>
+                        <div style={{ fontSize:14, fontWeight:700, color:C.txt }}>Recipient & Dispatch</div>
                         <div style={{ display:"flex", gap:4, background:C.surf, padding:3, borderRadius:10 }}>
-                          <button onClick={() => setGenPersonType("employee")} style={{ border:"none", borderRadius:8, padding:"4px 12px", fontSize:11, fontWeight:600, cursor:"pointer", background: genPersonType==="employee"?C.wht:"transparent", color: genPersonType==="employee"?C.p:C.sub, boxShadow: genPersonType==="employee"?"0 1px 3px rgba(0,0,0,.08)":"" }}>Employee</button>
-                          <button onClick={() => setGenPersonType("candidate")} style={{ border:"none", borderRadius:8, padding:"4px 12px", fontSize:11, fontWeight:600, cursor:"pointer", background: genPersonType==="candidate"?C.wht:"transparent", color: genPersonType==="candidate"?C.p:C.sub, boxShadow: genPersonType==="candidate"?"0 1px 3px rgba(0,0,0,.08)":"" }}>New Candidate</button>
+                          <button onClick={() => setGenRecipientType("employee")} style={{ border:"none", borderRadius:8, padding:"4px 12px", fontSize:11, fontWeight:600, cursor:"pointer", background: genRecipientType==="employee"?C.wht:"transparent", color: genRecipientType==="employee"?C.p:C.sub, boxShadow: genRecipientType==="employee"?"0 1px 3px rgba(0,0,0,.08)":"" }}>Internal Employee</button>
+                          <button onClick={() => setGenRecipientType("external")} style={{ border:"none", borderRadius:8, padding:"4px 12px", fontSize:11, fontWeight:600, cursor:"pointer", background: genRecipientType==="external"?C.wht:"transparent", color: genRecipientType==="external"?C.p:C.sub, boxShadow: genRecipientType==="external"?"0 1px 3px rgba(0,0,0,.08)":"" }}>External Email</button>
                         </div>
                       </div>
 
-                      {genPersonType === "employee" && (
+                      {genRecipientType === "employee" && (
                         <div style={{ marginBottom:20 }}>
                           <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>SELECT EMPLOYEE</label>
-                          <select value={genEmpId} onChange={(e) => {
-                            const empId = Number(e.target.value);
-                            setGenEmpId(empId);
-                            const emp = employees.find(x => x.id === empId);
-                            if (emp) {
-                              setGenVals(prev => ({ ...prev, name: emp.name, role: emp.designation, start_date: emp.joined }));
-                            }
-                          }} style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}>
+                          <select value={genEmpId} onChange={(e) => setGenEmpId(e.target.value)} style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}>
                             <option value="">Choose an employee...</option>
                             {employees.map(e => <option key={e.id} value={e.id}>{e.name} — {e.designation}</option>)}
                           </select>
                         </div>
                       )}
 
-                      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
-                        {getPlaceholders(genTemplate.body).map(field => (
-                          <div key={field}>
-                            <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>{field.toUpperCase().replace(/_/g, " ")}</label>
-                            <input 
-                              placeholder={`Enter ${field.replace(/_/g, " ")}...`}
-                              value={genVals[field] || ""}
-                              onChange={e => setGenVals({ ...genVals, [field]: e.target.value })}
-                              style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13 }}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                      {genRecipientType === "external" && (
+                        <div style={{ marginBottom:20 }}>
+                          <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>EXTERNAL EMAIL ADDRESS</label>
+                          <input 
+                            placeholder="e.g. hello@example.com"
+                            value={genExternalEmail}
+                            onChange={e => setGenExternalEmail(e.target.value)}
+                            style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13 }}
+                          />
+                        </div>
+                      )}
 
                       <div style={{ display:"flex", justifyContent:"space-between", marginTop:32, paddingTop:24, borderTop:`1px solid ${C.surf}` }}>
-                        <Btn variant="ghost" onClick={() => setGenStep(1)}>← Back</Btn>
+                        <Btn variant="ghost" onClick={() => setGenStep(2)}>← Back</Btn>
                         <Btn onClick={() => {
-                          const filled = fillTemplate(genTemplate.body, genVals);
-                          setGenFilledBody(filled);
-                          setGenStep(3);
-                        }}>Preview Document →</Btn>
+                          const linkId = Math.random().toString(36).substring(7);
+                          const link = `https://sign.kinsphere.app/doc/${linkId}`;
+                          const newDoc: any = {
+                            id: `doc-${Date.now()}`,
+                            name: genTemplate.name,
+                            empId: genRecipientType === "employee" ? Number(genEmpId) : null,
+                            candidateId: null,
+                            externalEmail: genRecipientType === "external" ? genExternalEmail : null,
+                            type: genTemplate.type,
+                            date: "Today",
+                            status: "sent",
+                            sendLink: link,
+                            filledBody: genFilledBody,
+                          };
+                          setPapers([newDoc, ...papers]);
+                          toast(`Email securely dispatched to ${genRecipientType === 'external' ? genExternalEmail : (employees.find(e => e.id === Number(genEmpId))?.name || 'employee')} ✓`);
+                          setPaperTab("Documents");
+                          resetGen();
+                        }}>✉ Generate & Email</Btn>
                       </div>
                     </Card>
-                  )}
-
-                  {genStep === 3 && (
-                    <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
-                      <Card style={{ padding:"32px 40px", borderStyle:"dashed", background:`linear-gradient(to bottom, #fff 0%, ${C.bg} 100%)` }}>
-                        <div style={{ textAlign:"center", marginBottom:30 }}>
-                          <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:2, marginBottom:4 }}>PREVIEW</div>
-                          <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:20 }}>{genTemplate?.name}</h2>
-                        </div>
-                        <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia, serif", fontSize:14, lineHeight:1.8, color:C.txt, margin:0 }}>
-                          {genFilledBody}
-                        </pre>
-                      </Card>
-
-                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                        <Btn variant="ghost" onClick={() => setGenStep(2)}>← Back</Btn>
-                        <div style={{ display:"flex", gap:10 }}>
-                          <Btn variant="outline" onClick={() => {
-                             const newDoc: any = {
-                               id: `doc-${Date.now()}`,
-                               name: genTemplate.name,
-                               empId: genPersonType === "employee" ? genEmpId : null,
-                               candidateId: genPersonType === "candidate" ? genSavedCandId : null,
-                               type: genTemplate.type,
-                               date: "Today",
-                               status: "draft",
-                               filledBody: genFilledBody,
-                             };
-                             setPapers([newDoc, ...papers]);
-                             toast("Saved as draft ✓");
-                             setPaperTab("Documents");
-                             resetGen();
-                          }}>Save as Draft</Btn>
-                          <Btn onClick={() => {
-                            const linkId = Math.random().toString(36).substring(7);
-                            const link = `https://sign.kinsphere.app/doc/${linkId}`;
-                            const newDoc: any = {
-                              id: `doc-${Date.now()}`,
-                              name: genTemplate.name,
-                              empId: genPersonType === "employee" ? genEmpId : null,
-                              candidateId: genPersonType === "candidate" ? genSavedCandId : null,
-                              type: genTemplate.type,
-                              date: "Today",
-                              status: "sent",
-                              sendLink: link,
-                              filledBody: genFilledBody,
-                            };
-                            setPapers([newDoc, ...papers]);
-                            toast("Document generated and sent ✓");
-                            setPaperTab("Documents");
-                            resetGen();
-                          }}>Generate & Send →</Btn>
-                        </div>
-                      </div>
-                    </div>
                   )}
                 </div>
               )}
