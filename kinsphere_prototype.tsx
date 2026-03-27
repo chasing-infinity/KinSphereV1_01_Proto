@@ -1098,17 +1098,24 @@ const LoginScreen = ({ onLogin, logoUrl, tagline }) => {
       `}</style>
       
       {/* Left side */}
-      <div className="login-left" style={{ flex:1, display:"flex", background:`linear-gradient(135deg, ${C.mid} 0%, ${C.surf} 100%)`, flexDirection:"column", justifyContent:"center", alignItems:"flex-start", padding:60, borderRight:`1px solid ${C.bdr}` }}>
-        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:24 }}>
-          {logoUrl ? <img src={logoUrl} alt="Logo" style={{ height:40, width:"auto", objectFit:"contain" }} /> : <div style={{ width:40, height:40, borderRadius:8, background:C.p, display:"flex", alignItems:"center", justifyContent:"center", color:C.wht, fontSize:20, fontWeight:700, fontFamily:"Georgia,serif" }}>K</div>}
-          <div style={{ fontSize:24, fontWeight:700, fontFamily:"Georgia,serif", color:C.txt }}>KinSphere</div>
+      <div className="login-left" style={{ flex:1, display:"flex", background:`linear-gradient(135deg, ${C.p} 0%, #1e2c22 100%)`, flexDirection:"column", justifyContent:"center", alignItems:"flex-start", padding:60, position:"relative", overflow:"hidden" }}>
+        
+        {/* Subtle decorative circles for depth */}
+        <div style={{ position:"absolute", top:-100, right:-100, width:400, height:400, borderRadius:"50%", background:`radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)` }}/>
+        <div style={{ position:"absolute", bottom:-50, left:-50, width:300, height:300, borderRadius:"50%", background:`radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)` }}/>
+
+        <div style={{ position:"relative", zIndex:1 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:40 }}>
+            {logoUrl ? <img src={logoUrl} alt="Logo" style={{ height:40, width:"auto", objectFit:"contain" }} /> : <div style={{ width:40, height:40, borderRadius:8, background:"#fff", display:"flex", alignItems:"center", justifyContent:"center", color:C.p, fontSize:20, fontWeight:700, fontFamily:"Georgia,serif" }}>K</div>}
+            <div style={{ fontSize:24, fontWeight:700, fontFamily:"Georgia,serif", color:"#fff" }}>KinSphere</div>
+          </div>
+          <h1 style={{ fontSize:"clamp(34px, 4vw, 48px)", fontWeight:700, color:"#fff", margin:0, fontFamily:"Georgia,serif", lineHeight:1.1, letterSpacing:"-0.02em" }}>
+            {tagline || "People-first. Always."}
+          </h1>
+          <p style={{ marginTop:24, fontSize:16, color:"rgba(255,255,255,0.75)", maxWidth:400, lineHeight:1.6 }}>
+            Experience seamless HR management, fast performance, and a unified workspace for your entire team.
+          </p>
         </div>
-        <h1 style={{ fontSize:"clamp(34px, 4vw, 48px)", fontWeight:700, color:C.txt, margin:0, fontFamily:"Georgia,serif", lineHeight:1.1, letterSpacing:"-0.02em" }}>
-          {tagline || "People-first. Always."}
-        </h1>
-        <p style={{ marginTop:20, fontSize:16, color:C.sub, maxWidth:400, lineHeight:1.6 }}>
-          Experience seamless HR management, fast performance, and a unified workspace for your entire team.
-        </p>
       </div>
       
       {/* Right side */}
