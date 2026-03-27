@@ -147,22 +147,23 @@ const INIT_HOLIDAYS = [
   { id:3, n:"Diwali",           d:"01 Nov 2026", dISO:"2026-11-01", desc:"Festival of Lights." },
 ];
 
-/** Static starter templates for Paperwork Hub (Step 1 — no dynamic fields yet). */
+/** Templates with {{placeholder}} support for Step 2 dynamic fill. */
 const PAPER_TEMPLATES = [
   {
     id: "tpl-offer",
     name: "Offer Letter",
     type: "Offer Letter",
-    body: `Dear [Candidate Name],
+    fields: ["name","role","salary","start_date","manager","deadline"],
+    body: `Dear {{name}},
 
-We are pleased to offer you the position of [Designation] at Bipolar Factory, reporting to [Manager Name].
+We are pleased to offer you the position of {{role}} at Bipolar Factory, reporting to {{manager}}.
 
-Start Date: [Date of Joining]
-Compensation: [Annual CTC]
+Start Date: {{start_date}}
+Annual CTC: {{salary}}
 
 This offer is subject to the successful completion of background verification and signing of our standard confidentiality agreement.
 
-Kindly sign and return this letter by [Acceptance Deadline] to confirm your acceptance.
+Kindly sign and return this letter by {{deadline}} to confirm your acceptance.
 
 Warm regards,
 Arjun Mehta
@@ -172,15 +173,16 @@ Co-founder & CEO, Bipolar Factory`,
     id: "tpl-appointment",
     name: "Appointment Letter",
     type: "Appointment Letter",
-    body: `Dear [Employee Name],
+    fields: ["name","role","salary","start_date","manager"],
+    body: `Dear {{name}},
 
-With reference to the discussions held, we are pleased to formally appoint you as [Designation] effective [Date of Joining].
+With reference to the discussions held, we are pleased to formally appoint you as {{role}} effective {{start_date}}.
 
 Your employment will be governed by the terms and conditions of employment as communicated during your onboarding.
 
-Your annual CTC is [Annual CTC] as per the compensation structure agreed upon.
+Your annual CTC is {{salary}} as per the compensation structure agreed upon.
 
-Please report to [Manager Name] on your joining date. This letter serves as your official appointment confirmation.
+Please report to {{manager}} on your joining date. This letter serves as your official appointment confirmation.
 
 We look forward to your contributions to the team.
 
@@ -190,14 +192,34 @@ Co-founder & CEO, Bipolar Factory`,
   },
 ];
 
+const FIELD_LABELS: Record<string,string> = {
+  name: "Full Name", role: "Job Title / Role", salary: "Annual CTC",
+  start_date: "Start Date", manager: "Reporting Manager", deadline: "Acceptance Deadline",
+};
+
+function fillTemplate(body: string, vals: Record<string,string>) {
+  return body.replace(/\{\{(\w+)\}\}/g, (_,k) => vals[k] || `{{${k}}}`);
+}
+
+/** Detect handlebars placeholders dynamically from a string. */
+function getPlaceholders(text: string) {
+  const matches = text.match(/\{\{(\w+)\}\}/g) || [];
+  return [...new Set(matches.map(m => m.replace(/[\{\}]/g, "")))];
+}
+
 /** Demo documents pre-seeded in Paperwork Hub. */
 const INIT_PAPERS = [
-  { id: "doc-1", name: "Offer Letter",       empId: 3, type: "Offer Letter",       date: "15 Jun 2023", fileName: "offer-priya.pdf"  },
-  { id: "doc-2", name: "NDA",                empId: 3, type: "Other",              date: "15 Jun 2023", fileName: "nda-priya.pdf"    },
-  { id: "doc-3", name: "Appointment Letter", empId: 4, type: "Appointment Letter", date: "29 Mar 2025", fileName: "appt-ridwan.pdf" },
-  { id: "doc-4", name: "Offer Letter",       empId: 5, type: "Offer Letter",       date: "10 Oct 2022", fileName: "offer-sahil.pdf"  },
-  { id: "doc-5", name: "Contract",           empId: 5, type: "Other",              date: "10 Oct 2022", fileName: "contract-sahil.pdf"},
-  { id: "doc-6", name: "Offer Letter",       empId: 1, type: "Offer Letter",       date: "01 Jan 2022", fileName: "offer-arjun.pdf"  },
+  { id:"doc-1", name:"Offer Letter",       empId:3, candidateId:null, type:"Offer Letter",       date:"15 Jun 2023", fileName:"offer-priya.pdf",   status:"draft", sendLink:null, filledBody:null },
+  { id:"doc-2", name:"NDA",                empId:3, candidateId:null, type:"Other",              date:"15 Jun 2023", fileName:"nda-priya.pdf",     status:"draft", sendLink:null, filledBody:null },
+  { id:"doc-3", name:"Appointment Letter", empId:4, candidateId:null, type:"Appointment Letter", date:"29 Mar 2025", fileName:"appt-ridwan.pdf",   status:"draft", sendLink:null, filledBody:null },
+  { id:"doc-4", name:"Offer Letter",       empId:5, candidateId:null, type:"Offer Letter",       date:"10 Oct 2022", fileName:"offer-sahil.pdf",   status:"draft", sendLink:null, filledBody:null },
+  { id:"doc-5", name:"Contract",           empId:5, candidateId:null, type:"Other",              date:"10 Oct 2022", fileName:"contract-sahil.pdf",status:"draft", sendLink:null, filledBody:null },
+  { id:"doc-6", name:"Offer Letter",       empId:1, candidateId:null, type:"Offer Letter",       date:"01 Jan 2022", fileName:"offer-arjun.pdf",   status:"draft", sendLink:null, filledBody:null },
+];
+
+const INIT_CANDIDATES = [
+  { id:"cand-1", name:"Riya Nair",      email:"riya.nair@gmail.com",    role:"Product Manager",    salary:"₹18,00,000", startDate:"01 May 2026", notes:"Strong PM background" },
+  { id:"cand-2", name:"Aman Verma",     email:"aman.v@outlook.com",     role:"Backend Engineer",   salary:"₹14,00,000", startDate:"15 May 2026", notes:"3 yrs Go experience" },
 ];
 
 const PAY_SELECT_ARROW = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a6e52' d='M2.5 4L6 7.5 9.5 4'/%3E%3C/svg%3E\")";
@@ -1297,11 +1319,36 @@ export default function App() {
 
   // ─── Paperwork Hub ───────────────────────────────────────────────────────
   const [papers, setPapers] = useState(INIT_PAPERS);
-  const [paperModal, setPaperModal] = useState(false);          // upload modal open
-  const [paperTemplatePreview, setPaperTemplatePreview] = useState(null); // template obj | null
-  const [adminDocAccessGranted, setAdminDocAccessGranted] = useState(false); // SA can grant Admins wider access
+  const [candidates, setCandidates] = useState(INIT_CANDIDATES);
+  const [paperModal, setPaperModal] = useState(false);
+  const [paperTemplatePreview, setPaperTemplatePreview] = useState(null);
+  const [adminDocAccessGranted, setAdminDocAccessGranted] = useState(false);
   const [paperForm, setPaperForm] = useState({ name:"", empId:"", type:"Offer Letter", fileName:"" });
   const [paperFilter, setPaperFilter] = useState("All");
+  const [paperTab, setPaperTab] = useState("Documents"); // "Documents" | "Generate"
+  
+  // Step 4+: Dynamic Templates
+  const [templates, setTemplates] = useState(PAPER_TEMPLATES);
+  const [showTplManage, setShowTplManage] = useState(false);
+  const [tplForm, setTplForm] = useState({ id:"", name:"", type:"Other", body:"" });
+  const [tplSearch, setTplSearch] = useState("");
+
+  // Step 3: E-Signature Flow
+  const [signId, setSignId] = useState(null); // Document ID being signed
+  const [sigType, setSigType] = useState("type"); // "type" | "draw"
+  const [sigValue, setSigValue] = useState(""); // Typed name / Draw data
+
+  // Generate flow state
+  const [genStep, setGenStep] = useState(1);          // 1=pick template, 2=fill person, 3=preview
+  const [genTemplate, setGenTemplate] = useState(null);
+  const [genPersonType, setGenPersonType] = useState("employee"); // "employee" | "candidate"
+  const [genEmpId, setGenEmpId] = useState("");
+  const [genVals, setGenVals] = useState({});          // { field: value }
+  const [genCandForm, setGenCandForm] = useState({ name:"",email:"",role:"",salary:"",startDate:"",notes:"" });
+  const [genSavedCandId, setGenSavedCandId] = useState(null); // newly saved candidate id
+  const [genFilledBody, setGenFilledBody] = useState("");
+  const [genSentLink, setGenSentLink] = useState(null);
+  const resetGen = () => { setGenStep(1); setGenTemplate(null); setGenPersonType("employee"); setGenEmpId(""); setGenVals({}); setGenCandForm({ name:"",email:"",role:"",salary:"",startDate:"",notes:"" }); setGenSavedCandId(null); setGenFilledBody(""); setGenSentLink(null); };
   // ─────────────────────────────────────────────────────────────────────────
 
   const handleProcessPayments = () => {
@@ -1632,6 +1679,80 @@ export default function App() {
       color:C.txt,
       position:"relative",
     }}>
+      {/* ─ STEP 3: E-SIGNATURE OVERLAY ─ */}
+      {signId && (() => {
+        const docToSign = papers.find(p => p.id === signId);
+        if (!docToSign) return null;
+        return (
+          <div style={{ position:"fixed", inset:0, zIndex:2000, background:"#f9fafb", display:"flex", flexDirection:"column", animation:"fadeIn 0.2s" }}>
+            <style>{`@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }`}</style>
+            <div style={{ padding:"16px 24px", background:"#fff", borderBottom:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between", alignItems:"center", boxShadow:"0 1px 3px rgba(0,0,0,.05)" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                <div style={{ width:32, height:32, borderRadius:8, background:C.p, display:"flex", alignItems:"center", justifyContent:"center", color:"#2a3326", fontWeight:800 }}>KS</div>
+                <div>
+                  <div style={{ fontSize:14, fontWeight:700, color:C.txt }}>Sign Document</div>
+                  <div style={{ fontSize:11, color:C.sub }}>{docToSign.name} • KinSphere Document Center</div>
+                </div>
+              </div>
+              <button onClick={() => { setSignId(null); setSigValue(""); }} style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 14px", fontSize:11, fontWeight:600, cursor:"pointer" }}>✕ Cancel</button>
+            </div>
+            
+            <div style={{ flex:1, overflowY:"auto", padding: narrow ? "20px 14px" : "40px", display:"flex", justifyContent:"center", background:C.bg }}>
+              <div style={{ background:"#fff", width:"100%", maxWidth:800, padding: narrow ? "40px 24px" : "80px 60px", boxShadow:"0 4px 30px rgba(0,0,0,.06)", borderRadius:4, border:`1px solid ${C.bdr}`, position:"relative", height:"fit-content" }}>
+                <div style={{ position:"absolute", top:20, right:30, fontSize:10, fontWeight:700, color:C.bdr, letterSpacing:1 }}>OFFICIAL COPY</div>
+                
+                <h2 style={{ fontFamily:"Georgia,serif", fontSize:24, textAlign:"center", marginBottom:40 }}>{docToSign.name}</h2>
+                <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia, serif", fontSize:14, lineHeight:1.9, color:C.txt, margin:0 }}>{docToSign.filledBody}</pre>
+                
+                <div style={{ marginTop:80, paddingTop:40, borderTop:`2px solid ${C.bg}` }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:16 }}>
+                    <div>
+                      <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1.5, marginBottom:4 }}>SIGNATURE</div>
+                      <div style={{ fontSize:11, color:C.sub }}>Type or draw your official signature below</div>
+                    </div>
+                    <div style={{ display:"flex", gap:4, background:C.surf, padding:3, borderRadius:10 }}>
+                      <button onClick={()=>setSigType("type")} style={{ border:"none", borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:700, cursor:"pointer", background: sigType==="type"?"#fff":"transparent", color: sigType==="type"?C.p:C.sub }}>Type</button>
+                      <button onClick={()=>setSigType("draw")} style={{ border:"none", borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:700, cursor:"pointer", background: sigType==="draw"?"#fff":"transparent", color: sigType==="draw"?C.p:C.sub }}>Draw</button>
+                    </div>
+                  </div>
+                  
+                  <div style={{ background:C.bg, borderRadius:16, border:`2px dashed ${C.bdr}`, padding:30, textAlign:"center" }}>
+                    {sigType === "type" ? (
+                      <input 
+                        type="text"
+                        value={sigValue}
+                        onChange={e => setSigValue(e.target.value)}
+                        placeholder="Type Full Name..."
+                        style={{ width:"100%", background:"none", border:"none", borderBottom:`2px solid ${C.p}`, textAlign:"center", fontSize:32, color:C.txt, fontFamily:"'Georgia', serif", fontStyle:"italic", outline:"none", padding:10 }}
+                      />
+                    ) : (
+                      <div style={{ height:80, display:"flex", alignItems:"center", justifyContent:"center", color:C.bdr, fontSize:12, fontStyle:"italic" }}>
+                        [ Move mouse or use touch to draw signature ]
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div style={{ marginTop:40, textAlign:"center" }}>
+                    <Btn 
+                      disabled={sigType==="type" && !sigValue.trim()} 
+                      style={{ padding:"14px 40px", fontSize:14, boxShadow:"0 4px 14px rgba(0,0,0,.1)" }}
+                      onClick={() => {
+                        const date = new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" });
+                        setPapers(papers.map(p => p.id === signId ? { ...p, status:"signed", date } : p));
+                        setSignId(null);
+                        setSigValue("");
+                        toast("Document Signed & Completed! ✓");
+                      }}
+                    >
+                      Sign & Complete Document
+                    </Btn>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
       {narrow && (
         <header
           style={{
@@ -3033,289 +3154,331 @@ export default function App() {
 
         {/* ─ PAPERWORK HUB ─ */}
         {page==="Paperwork Hub" && (() => {
-          // Determine what this viewer can see
-          const canUploadPaper  = isSA || role === "Admin";
-          const canSeeAllPapers = isSA || (role === "Admin" && adminDocAccessGranted);
-          const meEmp = employees.find(e => e.id === ME_ID);
+          const canGenerate = isSA || role === "Admin";
+          const canSeeAll   = isSA || (role === "Admin" && adminDocAccessGranted);
 
-          const visiblePapers = canSeeAllPapers
-            ? papers
-            : papers.filter(d => d.empId === ME_ID);
-
-          const filteredPapers = paperFilter === "All"
-            ? visiblePapers
-            : visiblePapers.filter(d => d.type === paperFilter);
-
-          const DOC_TYPES = ["Offer Letter", "Appointment Letter", "Payslip", "NDA", "Other"];
+          const visiblePapers = canSeeAll ? papers : papers.filter(d => d.empId === ME_ID);
+          const filteredPapers = paperFilter === "All" ? visiblePapers : visiblePapers.filter(d => d.type === paperFilter);
 
           return (
             <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
               {/* ── Hero ── */}
               <div style={{
-                position:"relative",
-                margin:`0 ${-pad}px 28px`,
-                padding: heroPadStd,
+                position:"relative", margin:`0 ${-pad}px 28px`, padding: heroPadStd,
                 background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
-                borderBottom:`1px solid ${C.bdr}`,
-                overflow:"hidden",
+                borderBottom:`1px solid ${C.bdr}`, overflow:"hidden",
               }}>
                 <div style={{ position:"absolute", right:-40, top:-30, width:220, height:220, borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`, pointerEvents:"none" }} />
-                <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, flexWrap:"wrap" }}>
+                <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-end", gap:16, flexWrap:"wrap" }}>
                   <div>
-                    <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>📄 Documents</div>
-                    <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em" }}>Paperwork Hub</h1>
-                    <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55 }}>A central place to store, view, and manage all documents.</p>
+                    <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>📄 Paperwork Hub</div>
+                    <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em" }}>Document Center</h1>
                   </div>
-                  <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center" }}>
+
+                  <div style={{ display:"flex", gap:10, alignItems:"center" }}>
                     {isSA && (
-                      <div
-                        title={adminDocAccessGranted ? "Admins have full access — click to revoke" : "Admins currently see only their own docs — click to grant full access"}
-                        onClick={() => { setAdminDocAccessGranted(v => !v); toast(adminDocAccessGranted ? "Admin access revoked ✓" : "Full access granted to Admins ✓"); }}
-                        style={{
-                          display:"flex", alignItems:"center", gap:8, padding:"8px 14px",
-                          borderRadius:10, border:`1px solid ${adminDocAccessGranted ? C.p : C.bdr}`,
-                          background: adminDocAccessGranted ? `rgba(var(--p-rgb),.1)` : C.wht,
-                          cursor:"pointer", fontSize:11, fontWeight:600, color: adminDocAccessGranted ? C.p2 : C.sub,
-                          transition:"all .15s",
-                        }}
-                      >
-                        <span style={{ fontSize:13 }}>{adminDocAccessGranted ? "🔓" : "🔒"}</span>
-                        Admin access: <strong style={{ color: adminDocAccessGranted ? C.p : C.txt }}>{adminDocAccessGranted ? "Full" : "Own docs only"}</strong>
-                      </div>
+                      <Btn variant="outline" onClick={() => setShowTemplateManager(true)} style={{ padding:"8px 16px", borderRadius:10, fontSize:12 }}>
+                        ⚙ Manage Templates
+                      </Btn>
                     )}
-                    {canUploadPaper && (
-                      <button
-                        onClick={() => { setPaperForm({ name:"", empId: isSA ? "" : String(ME_ID), type:"Offer Letter", fileName:"" }); setPaperModal(true); }}
-                        style={{ padding:"10px 20px", borderRadius:10, border:"none", background:C.p, color:"#2a3326", fontSize:12, fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", gap:7, boxShadow:"0 2px 8px rgba(var(--p-rgb),.3)" }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Upload Document
-                      </button>
+                    {canGenerate && (
+                      <div style={{ display:"flex", background:C.wht, borderRadius:12, padding:4, border:`1px solid ${C.bdr}`, boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
+                        <button onClick={()=>setPaperTab("Documents")} style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Documents"?700:500, background: paperTab==="Documents"?C.p:"transparent", color: paperTab==="Documents"?"#2a3326":C.sub, transition:"all .2s" }}>Documents</button>
+                        <button onClick={()=>setPaperTab("Generate")}  style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Generate"?700:500,  background: paperTab==="Generate"?C.p:"transparent",  color: paperTab==="Generate"?"#2a3326":C.sub,  transition:"all .2s" }}>Generate</button>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* ── Access notice for Admin ── */}
-              {role === "Admin" && !isSA && (
-                <div style={{ marginBottom:20, padding:"12px 16px", borderRadius:12, background: adminDocAccessGranted ? `rgba(var(--p-rgb),.07)` : `rgba(var(--shadow-rgb),.04)`, border:`1px solid ${adminDocAccessGranted ? C.p : C.bdr}`, fontSize:12, color: adminDocAccessGranted ? C.p2 : C.sub, display:"flex", alignItems:"center", gap:8 }}>
-                  <span>{adminDocAccessGranted ? "🔓" : "🔒"}</span>
-                  {adminDocAccessGranted ? "You have been granted full document access by a Super Admin." : "You can see only your own documents. A Super Admin can grant you wider access."}
-                </div>
-              )}
-
-              {/* ── Templates ── */}
-              <div style={{ marginBottom:28 }}>
-                <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:12 }}>STARTER TEMPLATES</div>
-                <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "1fr 1fr", gap:14 }}>
-                  {PAPER_TEMPLATES.map(tpl => (
-                    <div key={tpl.id} style={{ background:C.wht, borderRadius:14, border:`1px solid ${C.bdr}`, padding:"16px 20px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:12, boxShadow:"0 2px 10px rgba(var(--shadow-rgb),.05)" }}>
-                      <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                        <div style={{ width:38, height:38, borderRadius:10, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.p} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        </div>
-                        <div>
-                          <div style={{ fontWeight:700, fontSize:13, color:C.txt }}>{tpl.name}</div>
-                          <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>Static template · Step 1</div>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setPaperTemplatePreview(tpl)}
-                        style={{ padding:"7px 16px", borderRadius:8, border:`1px solid ${C.bdr}`, background:C.surf, color:C.txt, fontSize:11, fontWeight:600, cursor:"pointer" }}
-                      >Preview</button>
+              {/* ── Tab Content: Documents ── */}
+              {paperTab === "Documents" && (
+                <>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:12 }}>
+                    <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                      {["All", "Offer Letter", "Appointment Letter", "Payslip", "NDA", "Other"].map(f => (
+                        <button key={f} onClick={() => setPaperFilter(f)} style={{ padding:"6px 14px", borderRadius:20, border:`1px solid ${paperFilter === f ? C.p : C.bdr}`, background: paperFilter === f ? `rgba(var(--p-rgb),.1)` : C.wht, color: paperFilter === f ? C.p : C.sub, fontSize:11, fontWeight:600, cursor:"pointer" }}>{f}</button>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                    {canGenerate && (
+                      <Btn onClick={() => { setPaperForm({ name:"", empId: isSA ? "" : String(ME_ID), type:"Offer Letter", fileName:"" }); setPaperModal(true); }}>
+                        <span style={{ marginRight:6 }}>+</span> Upload Document
+                      </Btn>
+                    )}
+                  </div>
 
-              {/* ── Document Table ── */}
-              <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06)" }}>
-                {/* Table header row with filter */}
-                <div style={{ padding:"16px 20px", borderBottom:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:10 }}>
-                  <div>
-                    <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:2 }}>DOCUMENTS</div>
-                    <div style={{ fontSize:11, color:C.sub }}>{filteredPapers.length} document{filteredPapers.length !== 1 ? "s" : ""}</div>
-                  </div>
-                  <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
-                    {["All", "Offer Letter", "Appointment Letter", "Payslip", "NDA", "Other"].map(f => (
-                      <button key={f} onClick={() => setPaperFilter(f)} style={{ padding:"5px 12px", borderRadius:20, border:`1px solid ${paperFilter === f ? C.p : C.bdr}`, background: paperFilter === f ? `rgba(var(--p-rgb),.12)` : "transparent", color: paperFilter === f ? C.p : C.sub, fontSize:11, fontWeight: paperFilter === f ? 700 : 400, cursor:"pointer", transition:"all .12s" }}>{f}</button>
-                    ))}
-                  </div>
-                </div>
-
-                {filteredPapers.length === 0 ? (
-                  <div style={{ padding:"48px 24px", textAlign:"center" }}>
-                    <div style={{ fontSize:32, marginBottom:10, opacity:.5 }}>📄</div>
-                    <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>No documents yet</div>
-                    <div style={{ fontSize:12, color:C.sub, marginTop:5 }}>{canUploadPaper ? "Click \"Upload Document\" to add the first one." : "Documents shared with you will appear here."}</div>
-                  </div>
-                ) : (
-                  <div style={{ overflowX:"auto" }}>
+                  <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(var(--shadow-rgb),.05)" }}>
                     <table style={{ width:"100%", borderCollapse:"collapse", fontSize:13 }}>
                       <thead>
                         <tr style={{ background:C.surf }}>
-                          {["Document Name", "Person", "Type", "Date Created", ""].map(h => (
-                            <th key={h} style={{ padding:"11px 16px", textAlign:"left", color:C.sub, fontWeight:700, fontSize:10, letterSpacing:.5, borderBottom:`1px solid ${C.bdr}`, whiteSpace:"nowrap" }}>{h.toUpperCase()}</th>
+                          {["Document Name", "Person", "Type", "Status", "Date", ""].map(h => (
+                            <th key={h} style={{ padding:"12px 16px", textAlign:"left", color:C.sub, fontWeight:700, fontSize:10, letterSpacing:.5, borderBottom:`1px solid ${C.bdr}` }}>{h.toUpperCase()}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredPapers.map((doc, i) => {
+                        {filteredPapers.map((doc) => {
                           const docEmp = employees.find(e => e.id === doc.empId);
+                          const docCand = candidates.find(c => c.id === doc.candidateId);
                           return (
-                            <tr key={doc.id} style={{ borderBottom:`1px solid ${C.surf}`, transition:"background .1s" }}
-                              onMouseEnter={e => e.currentTarget.style.background = C.bg}
-                              onMouseLeave={e => e.currentTarget.style.background = ""}
-                            >
-                              <td style={{ padding:"13px 16px" }}>
-                                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                                  <div style={{ width:32, height:32, borderRadius:8, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.p} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                  </div>
-                                  <div>
-                                    <div style={{ fontWeight:600, color:C.txt }}>{doc.name}</div>
-                                    <div style={{ fontSize:11, color:C.sub, marginTop:1 }}>{doc.fileName}</div>
-                                  </div>
-                                </div>
+                            <tr key={doc.id} style={{ borderBottom:`1px solid ${C.surf}` }}>
+                              <td style={{ padding:"14px 16px" }}>
+                                <div style={{ fontWeight:600, color:C.txt }}>{doc.name}</div>
+                                <div style={{ fontSize:11, color:C.sub }}>{doc.fileName || "Generated.docx"}</div>
                               </td>
-                              <td style={{ padding:"13px 16px" }}>
+                              <td style={{ padding:"14px 16px" }}>
                                 {docEmp ? (
                                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                                    <Av ini={docEmp.ini} sz={26} bg={docEmp.avatarC} />
-                                    <span style={{ fontSize:12, color:C.txt, fontWeight:500 }}>{docEmp.name}</span>
+                                    <Av ini={docEmp.ini} sz={24} />
+                                    <span style={{ fontSize:12 }}>{docEmp.name}</span>
                                   </div>
-                                ) : <span style={{ color:C.sub }}>—</span>}
+                                ) : docCand ? (
+                                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                                    <div style={{ width:24, height:24, borderRadius:"50%", background:C.mid, color:C.sub, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700 }}>{docCand.name[0]}</div>
+                                    <span style={{ fontSize:12 }}>{docCand.name} (Cand.)</span>
+                                  </div>
+                                ) : "—"}
                               </td>
-                              <td style={{ padding:"13px 16px" }}>
-                                <span style={{ padding:"3px 10px", borderRadius:20, background:C.surf, border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, color:C.sub }}>{doc.type}</span>
+                              <td style={{ padding:"14px 16px" }}>
+                                <span style={{ fontSize:11, color:C.sub, background:C.surf, padding:"2px 8px", borderRadius:6 }}>{doc.type}</span>
                               </td>
-                              <td style={{ padding:"13px 16px", color:C.sub, fontSize:12, whiteSpace:"nowrap" }}>{doc.date}</td>
-                              <td style={{ padding:"13px 16px" }}>
-                                {canUploadPaper && (
-                                  <button
-                                    onClick={() => { setPapers(prev => prev.filter(d => d.id !== doc.id)); toast("Document removed ✓"); }}
-                                    style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:7, cursor:"pointer", color:C.sub, fontSize:11, padding:"4px 10px", fontWeight:600 }}
-                                  >Remove</button>
+                              <td style={{ padding:"14px 16px" }}>
+                                {doc.status === "signed" ? (
+                                  <span style={{ fontSize:10, fontWeight:700, color:"#16a34a", background:"#dcfce7", padding:"3px 8px", borderRadius:5 }}>SIGNED</span>
+                                ) : doc.status === "sent" ? (
+                                  <span style={{ fontSize:10, fontWeight:700, color:C.p, background:`rgba(var(--p-rgb),.1)`, padding:"3px 8px", borderRadius:5 }}>SENT</span>
+                                ) : (
+                                  <span style={{ fontSize:10, fontWeight:700, color:C.sub, background:C.bg, padding:"3px 8px", borderRadius:5, border:`1px solid ${C.bdr}` }}>DRAFT</span>
+                                )}
+                              </td>
+                              <td style={{ padding:"14px 16px", fontSize:12, color:C.sub }}>{doc.date}</td>
+                              <td style={{ padding:"14px 16px", textAlign:"right" }}>
+                                {doc.status === "sent" ? (
+                                  <button onClick={() => setSignId(doc.id)} style={{ background:C.p, border:"none", borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#2a3326", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.1)" }}>Sign Now →</button>
+                                ) : doc.sendLink ? (
+                                  <button onClick={() => { navigator.clipboard.writeText(doc.sendLink); toast("Link copied to clipboard ✓"); }} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:C.p, cursor:"pointer" }}>Copy Link</button>
+                                ) : (
+                                  <span style={{ fontSize:10, color:C.bdr }}>—</span>
                                 )}
                               </td>
                             </tr>
                           );
                         })}
+                        {filteredPapers.length === 0 && (
+                          <tr><td colSpan={6} style={{ padding:40, textAlign:"center", color:C.sub, fontSize:12 }}>No documents found.</td></tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
-                )}
-              </div>
 
-              {/* ── Upload Modal ── */}
+                  {canSeeAll && (
+                    <div style={{ marginTop:40 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+                        <div>
+                          <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:2 }}>CANDIDATES</div>
+                          <div style={{ fontSize:11, color:C.sub }}>Manage pre-employee document workflows</div>
+                        </div>
+                      </div>
+                      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))", gap:16 }}>
+                        {candidates.map(c => (
+                          <Card key={c.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 20px" }}>
+                            <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                              <div style={{ width:40, height:40, borderRadius:12, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16 }}>👤</div>
+                              <div>
+                                <div style={{ fontWeight:700, fontSize:14, color:C.txt }}>{c.name}</div>
+                                <div style={{ fontSize:11, color:C.sub }}>{c.role}</div>
+                              </div>
+                            </div>
+                            <Btn variant="outline" style={{ padding:"6px 12px", fontSize:11 }} onClick={() => {
+                              resetGen();
+                              setPaperTab("Generate");
+                              setGenTemplate(templates[0]);
+                              setGenPersonType("candidate");
+                              setGenVals({ name: c.name, role: c.role });
+                              setGenSavedCandId(c.id);
+                              setGenStep(2);
+                            }}>Generate Doc</Btn>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* ── Tab Content: Generate ── */}
+              {paperTab === "Generate" && (
+                <div style={{ maxWidth:800, margin:"0 auto" }}>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:30, marginBottom:32 }}>
+                    {[1,2,3].map(s => (
+                      <div key={s} style={{ display:"flex", alignItems:"center", gap:8, opacity: genStep >= s ? 1 : 0.4 }}>
+                        <div style={{ width:24, height:24, borderRadius:"50%", background: genStep === s ? C.p : (genStep > s ? C.p2 : C.mid), color: genStep === s ? "#2a3326" : (genStep > s ? "#fff" : C.sub), display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800 }}>{s}</div>
+                        <div style={{ fontSize:11, fontWeight:700, color: genStep === s ? C.txt : C.sub }}>{s===1?"Template":s===2?"Details":"Preview & Send"}</div>
+                        {s < 3 && <div style={{ width:40, height:2, background:C.bdr }} />}
+                      </div>
+                    ))}
+                  </div>
+
+                  {genStep === 1 && (
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))", gap:20 }}>
+                      {templates.map(tpl => (
+                        <Card key={tpl.id} onClick={() => { setGenTemplate(tpl); setGenStep(2); }} style={{ cursor:"pointer", transition:"transform .2s, border-color .2s", border:`1px solid ${genTemplate?.id === tpl.id ? C.p : C.bdr}`, background: genTemplate?.id === tpl.id ? `rgba(var(--p-rgb),.05)` : C.wht }}>
+                          <div style={{ fontSize:24, marginBottom:12 }}>{tpl.type==="Payslip"?"📊":tpl.type==="Offer Letter"?"✉️":"📄"}</div>
+                          <div style={{ fontWeight:700, fontSize:15, color:C.txt, marginBottom:4 }}>{tpl.name}</div>
+                          <div style={{ fontSize:11, color:C.sub }}>{tpl.type}</div>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+
+                  {genStep === 2 && (
+                    <Card style={{ padding:32 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
+                        <div style={{ fontSize:14, fontWeight:700, color:C.txt }}>Recipient Details</div>
+                        <div style={{ display:"flex", gap:4, background:C.surf, padding:3, borderRadius:10 }}>
+                          <button onClick={() => setGenPersonType("employee")} style={{ border:"none", borderRadius:8, padding:"4px 12px", fontSize:11, fontWeight:600, cursor:"pointer", background: genPersonType==="employee"?C.wht:"transparent", color: genPersonType==="employee"?C.p:C.sub, boxShadow: genPersonType==="employee"?"0 1px 3px rgba(0,0,0,.08)":"" }}>Employee</button>
+                          <button onClick={() => setGenPersonType("candidate")} style={{ border:"none", borderRadius:8, padding:"4px 12px", fontSize:11, fontWeight:600, cursor:"pointer", background: genPersonType==="candidate"?C.wht:"transparent", color: genPersonType==="candidate"?C.p:C.sub, boxShadow: genPersonType==="candidate"?"0 1px 3px rgba(0,0,0,.08)":"" }}>New Candidate</button>
+                        </div>
+                      </div>
+
+                      {genPersonType === "employee" && (
+                        <div style={{ marginBottom:20 }}>
+                          <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>SELECT EMPLOYEE</label>
+                          <select value={genEmpId} onChange={(e) => {
+                            const empId = Number(e.target.value);
+                            setGenEmpId(empId);
+                            const emp = employees.find(x => x.id === empId);
+                            if (emp) {
+                              setGenVals(prev => ({ ...prev, name: emp.name, role: emp.designation, start_date: emp.joined }));
+                            }
+                          }} style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}>
+                            <option value="">Choose an employee...</option>
+                            {employees.map(e => <option key={e.id} value={e.id}>{e.name} — {e.designation}</option>)}
+                          </select>
+                        </div>
+                      )}
+
+                      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
+                        {getPlaceholders(genTemplate.body).map(field => (
+                          <div key={field}>
+                            <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>{field.toUpperCase().replace(/_/g, " ")}</label>
+                            <input 
+                              placeholder={`Enter ${field.replace(/_/g, " ")}...`}
+                              value={genVals[field] || ""}
+                              onChange={e => setGenVals({ ...genVals, [field]: e.target.value })}
+                              style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13 }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ display:"flex", justifyContent:"space-between", marginTop:32, paddingTop:24, borderTop:`1px solid ${C.surf}` }}>
+                        <Btn variant="ghost" onClick={() => setGenStep(1)}>← Back</Btn>
+                        <Btn onClick={() => {
+                          const filled = fillTemplate(genTemplate.body, genVals);
+                          setGenFilledBody(filled);
+                          setGenStep(3);
+                        }}>Preview Document →</Btn>
+                      </div>
+                    </Card>
+                  )}
+
+                  {genStep === 3 && (
+                    <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
+                      <Card style={{ padding:"32px 40px", borderStyle:"dashed", background:`linear-gradient(to bottom, #fff 0%, ${C.bg} 100%)` }}>
+                        <div style={{ textAlign:"center", marginBottom:30 }}>
+                          <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:2, marginBottom:4 }}>PREVIEW</div>
+                          <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:20 }}>{genTemplate?.name}</h2>
+                        </div>
+                        <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia, serif", fontSize:14, lineHeight:1.8, color:C.txt, margin:0 }}>
+                          {genFilledBody}
+                        </pre>
+                      </Card>
+
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                        <Btn variant="ghost" onClick={() => setGenStep(2)}>← Back</Btn>
+                        <div style={{ display:"flex", gap:10 }}>
+                          <Btn variant="outline" onClick={() => {
+                             const newDoc: any = {
+                               id: `doc-${Date.now()}`,
+                               name: genTemplate.name,
+                               empId: genPersonType === "employee" ? genEmpId : null,
+                               candidateId: genPersonType === "candidate" ? genSavedCandId : null,
+                               type: genTemplate.type,
+                               date: "Today",
+                               status: "draft",
+                               filledBody: genFilledBody,
+                             };
+                             setPapers([newDoc, ...papers]);
+                             toast("Saved as draft ✓");
+                             setPaperTab("Documents");
+                             resetGen();
+                          }}>Save as Draft</Btn>
+                          <Btn onClick={() => {
+                            const linkId = Math.random().toString(36).substring(7);
+                            const link = `https://sign.kinsphere.app/doc/${linkId}`;
+                            const newDoc: any = {
+                              id: `doc-${Date.now()}`,
+                              name: genTemplate.name,
+                              empId: genPersonType === "employee" ? genEmpId : null,
+                              candidateId: genPersonType === "candidate" ? genSavedCandId : null,
+                              type: genTemplate.type,
+                              date: "Today",
+                              status: "sent",
+                              sendLink: link,
+                              filledBody: genFilledBody,
+                            };
+                            setPapers([newDoc, ...papers]);
+                            toast("Document generated and sent ✓");
+                            setPaperTab("Documents");
+                            resetGen();
+                          }}>Generate & Send →</Btn>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {paperModal && (
                 <Modal title="Upload Document" onClose={() => setPaperModal(false)} width={440}>
                   <div style={{ marginBottom:14 }}>
                     <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT NAME</label>
-                    <input
-                      placeholder="e.g. Offer Letter — Priya"
-                      value={paperForm.name}
-                      onChange={e => setPaperForm(f => ({ ...f, name: e.target.value }))}
-                      style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }}
-                    />
+                    <input placeholder="e.g. Offer Letter — Priya" value={paperForm.name} onChange={e=>setPaperForm({...paperForm, name:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }} />
                   </div>
-
-                  {(isSA) && (
-                    <div style={{ marginBottom:14 }}>
-                      <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>LINK TO PERSON</label>
-                      <select
-                        value={paperForm.empId}
-                        onChange={e => setPaperForm(f => ({ ...f, empId: e.target.value }))}
-                        style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }}
-                      >
-                        <option value="">Select employee…</option>
-                        {employees.map(e => <option key={e.id} value={String(e.id)}>{e.name}</option>)}
-                      </select>
-                    </div>
-                  )}
-
-                  {role === "Admin" && !isSA && (
-                    <div style={{ marginBottom:14 }}>
-                      <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>LINK TO PERSON</label>
-                      <select
-                        value={paperForm.empId}
-                        onChange={e => setPaperForm(f => ({ ...f, empId: e.target.value }))}
-                        style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }}
-                      >
-                        <option value={String(ME_ID)}>{meEmp?.name ?? "Me"}</option>
-                        {adminDocAccessGranted && employees.filter(e => e.id !== ME_ID).map(e => <option key={e.id} value={String(e.id)}>{e.name}</option>)}
-                      </select>
-                    </div>
-                  )}
-
                   <div style={{ marginBottom:14 }}>
-                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT TYPE</label>
-                    <select
-                      value={paperForm.type}
-                      onChange={e => setPaperForm(f => ({ ...f, type: e.target.value }))}
-                      style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }}
-                    >
-                      {DOC_TYPES.map(t => <option key={t}>{t}</option>)}
+                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>LINK TO PERSON</label>
+                    <select value={paperForm.empId} onChange={e=>setPaperForm({...paperForm, empId:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }}>
+                      <option value="">Select recipient…</option>
+                      <optgroup label="Employees">
+                        {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                      </optgroup>
+                      <optgroup label="Candidates">
+                        {candidates.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </optgroup>
                     </select>
                   </div>
-
                   <div style={{ marginBottom:20 }}>
-                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>FILE</label>
-                    <div
-                      onClick={() => {
-                        const fakeName = paperForm.name ? paperForm.name.toLowerCase().replace(/\s+/g,"-") + ".pdf" : "document.pdf";
-                        setPaperForm(f => ({ ...f, fileName: fakeName }));
-                        toast("File selected (simulated) ✓");
-                      }}
-                      style={{ width:"100%", padding:"22px", borderRadius:10, border:`2px dashed ${paperForm.fileName ? C.p : C.bdr}`, background: paperForm.fileName ? `rgba(var(--p-rgb),.05)` : C.surf, textAlign:"center", cursor:"pointer", boxSizing:"border-box", transition:"all .15s" }}
-                    >
-                      {paperForm.fileName ? (
-                        <div style={{ fontSize:12, color:C.p, fontWeight:600 }}>📎 {paperForm.fileName}</div>
-                      ) : (
-                        <div style={{ fontSize:12, color:C.sub }}>Click to select a file <span style={{ opacity:.6 }}>(simulated)</span></div>
-                      )}
-                    </div>
+                     <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>FILE</label>
+                     <div onClick={()=>setPaperForm({...paperForm, fileName:"uploaded_doc.pdf"})} style={{ width:"100%", padding:20, borderRadius:10, border:`2px dashed ${C.bdr}`, background:C.surf, textAlign:"center", cursor:"pointer" }}>
+                       {paperForm.fileName ? <span style={{ color:C.p, fontWeight:700 }}>📎 {paperForm.fileName}</span> : <span style={{ color:C.sub }}>Click to select file</span>}
+                     </div>
                   </div>
-
-                  <div style={{ display:"flex", gap:9, justifyContent:"flex-end" }}>
+                  <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
                     <Btn variant="ghost" onClick={() => setPaperModal(false)}>Cancel</Btn>
                     <Btn onClick={() => {
-                      if (!paperForm.name.trim()) return toast("Enter a document name.");
-                      if (!paperForm.empId) return toast("Select a person to link this document to.");
-                      if (!paperForm.fileName) return toast("Select a file first.");
-                      const now = new Date();
-                      const dateStr = `${now.getDate()} ${MONTHS_SHORT[now.getMonth()]} ${now.getFullYear()}`;
-                      const newDoc = {
-                        id: `doc-${Date.now()}`,
-                        name: paperForm.name.trim(),
-                        empId: Number(paperForm.empId),
-                        type: paperForm.type,
-                        date: dateStr,
-                        fileName: paperForm.fileName,
-                      };
-                      setPapers(prev => [newDoc, ...prev]);
+                      if (!paperForm.name || !paperForm.fileName) return toast("Fill all fields");
+                      setPapers([{ id:`up-${Date.now()}`, name:paperForm.name, empId:Number(paperForm.empId)||null, type:paperForm.type, date:"Today", fileName:paperForm.fileName, status:"draft" }, ...papers]);
                       setPaperModal(false);
                       toast("Document uploaded ✓");
-                    }}>Upload →</Btn>
-                  </div>
-                </Modal>
-              )}
-
-              {/* ── Template Preview Modal ── */}
-              {paperTemplatePreview && (
-                <Modal title={paperTemplatePreview.name} onClose={() => setPaperTemplatePreview(null)} width={560}>
-                  <div style={{ marginBottom:14, padding:"4px 10px", borderRadius:6, background:C.surf, display:"inline-block" }}>
-                    <span style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>STATIC TEMPLATE · STEP 1 — Dynamic fields coming in Step 2</span>
-                  </div>
-                  <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia,serif", fontSize:13, lineHeight:1.7, color:C.txt, margin:0, padding:"20px 22px", background:C.bg, borderRadius:12, border:`1px solid ${C.bdr}` }}>{paperTemplatePreview.body}</pre>
-                  <div style={{ display:"flex", justifyContent:"flex-end", marginTop:18 }}>
-                    <Btn variant="ghost" onClick={() => setPaperTemplatePreview(null)}>Close</Btn>
+                    }}>Upload</Btn>
                   </div>
                 </Modal>
               )}
             </div>
           );
         })()}
+
 
         {/* ─ RECOGNITION ─ */}
         {page==="Recognition" && (
@@ -4904,7 +5067,7 @@ export default function App() {
                 }
                 const res = leaveRowFromApplyForm(leaves, employees, leaveApply, ME_ID, isSA);
                 if (res.error) { toast(res.error); return; }
-                const newRow = { ...res.row, halfDay: leaveApply.halfDay, halfDayPart: leaveApply.halfDayPart };
+                const newRow: any = { ...(res.row || {}), halfDay: leaveApply.halfDay, halfDayPart: leaveApply.halfDayPart };
                 setLeaves(p => [...p, newRow]);
                 // Notification hook: notify approver
                 toast(`Leave request submitted ✓ — ${res.row.approver} has been notified.`);

@@ -1,0 +1,502 @@
+﻿kinsphere_prototype.tsx(112,9): error TS7034: Variable 'ps' implicitly has type 'any[]' in some locations where its type cannot be determined.
+kinsphere_prototype.tsx(140,10): error TS7005: Variable 'ps' implicitly has an 'any[]' type.
+kinsphere_prototype.tsx(227,19): error TS7006: Parameter 's' implicitly has an 'any' type.
+kinsphere_prototype.tsx(258,22): error TS7006: Parameter 's' implicitly has an 'any' type.
+kinsphere_prototype.tsx(262,23): error TS7006: Parameter 'n' implicitly has an 'any' type.
+kinsphere_prototype.tsx(267,30): error TS7006: Parameter 'ini' implicitly has an 'any' type.
+kinsphere_prototype.tsx(267,35): error TS7006: Parameter 'salaryConfigs' implicitly has an 'any' type.
+kinsphere_prototype.tsx(267,50): error TS7006: Parameter 'payslipRow' implicitly has an 'any' type.
+kinsphere_prototype.tsx(305,23): error TS7006: Parameter 'dateStr' implicitly has an 'any' type.
+kinsphere_prototype.tsx(340,18): error TS7006: Parameter 'id' implicitly has an 'any' type.
+kinsphere_prototype.tsx(341,18): error TS7006: Parameter 'id' implicitly has an 'any' type.
+kinsphere_prototype.tsx(346,28): error TS7006: Parameter 'leave' implicitly has an 'any' type.
+kinsphere_prototype.tsx(346,35): error TS7006: Parameter 'employeesList' implicitly has an 'any' type.
+kinsphere_prototype.tsx(347,29): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(351,30): error TS7006: Parameter 'leave' implicitly has an 'any' type.
+kinsphere_prototype.tsx(351,37): error TS7006: Parameter 'viewerName' implicitly has an 'any' type.
+kinsphere_prototype.tsx(351,49): error TS7006: Parameter 'employeesList' implicitly has an 'any' type.
+kinsphere_prototype.tsx(359,29): error TS7006: Parameter 'leave' implicitly has an 'any' type.
+kinsphere_prototype.tsx(359,36): error TS7006: Parameter 'viewerName' implicitly has an 'any' type.
+kinsphere_prototype.tsx(359,48): error TS7006: Parameter 'employeesList' implicitly has an 'any' type.
+kinsphere_prototype.tsx(359,63): error TS7006: Parameter 'viewerIsSA' implicitly has an 'any' type.
+kinsphere_prototype.tsx(366,32): error TS7006: Parameter 'leaves' implicitly has an 'any' type.
+kinsphere_prototype.tsx(366,40): error TS7006: Parameter 'employeesList' implicitly has an 'any' type.
+kinsphere_prototype.tsx(366,55): error TS7006: Parameter 'form' implicitly has an 'any' type.
+kinsphere_prototype.tsx(366,61): error TS7006: Parameter 'submitterEmpId' implicitly has an 'any' type.
+kinsphere_prototype.tsx(366,77): error TS7006: Parameter 'isSA' implicitly has an 'any' type.
+kinsphere_prototype.tsx(374,43): error TS7006: Parameter 'l' implicitly has an 'any' type.
+kinsphere_prototype.tsx(377,15): error TS7006: Parameter 'd' implicitly has an 'any' type.
+kinsphere_prototype.tsx(405,24): error TS7006: Parameter 'v' implicitly has an 'any' type.
+kinsphere_prototype.tsx(411,25): error TS7006: Parameter 'rows' implicitly has an 'any' type.
+kinsphere_prototype.tsx(413,26): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(424,27): error TS7006: Parameter 'filename' implicitly has an 'any' type.
+kinsphere_prototype.tsx(424,37): error TS7006: Parameter 'text' implicitly has an 'any' type.
+kinsphere_prototype.tsx(436,23): error TS7006: Parameter 'line' implicitly has an 'any' type.
+kinsphere_prototype.tsx(459,32): error TS7006: Parameter 'text' implicitly has an 'any' type.
+kinsphere_prototype.tsx(459,38): error TS7006: Parameter 'existing' implicitly has an 'any' type.
+kinsphere_prototype.tsx(460,41): error TS7006: Parameter 'l' implicitly has an 'any' type.
+kinsphere_prototype.tsx(467,15): error TS7006: Parameter 'h' implicitly has an 'any' type.
+kinsphere_prototype.tsx(468,16): error TS7006: Parameter 'row' implicitly has an 'any' type.
+kinsphere_prototype.tsx(468,21): error TS7006: Parameter 'h' implicitly has an 'any' type.
+kinsphere_prototype.tsx(472,42): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(473,43): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(486,23): error TS7006: Parameter 'w' implicitly has an 'any' type.
+kinsphere_prototype.tsx(544,25): error TS7006: Parameter 'isSA' implicitly has an 'any' type.
+kinsphere_prototype.tsx(547,22): error TS7006: Parameter 'y' implicitly has an 'any' type.
+kinsphere_prototype.tsx(547,25): error TS7006: Parameter 'm0' implicitly has an 'any' type.
+kinsphere_prototype.tsx(550,23): error TS7006: Parameter 's' implicitly has an 'any' type.
+kinsphere_prototype.tsx(554,22): error TS7006: Parameter 'd' implicitly has an 'any' type.
+kinsphere_prototype.tsx(554,25): error TS7006: Parameter 'fromISO' implicitly has an 'any' type.
+kinsphere_prototype.tsx(554,34): error TS7006: Parameter 'toISO' implicitly has an 'any' type.
+kinsphere_prototype.tsx(560,22): error TS7006: Parameter 'd' implicitly has an 'any' type.
+kinsphere_prototype.tsx(563,21): error TS7006: Parameter 'status' implicitly has an 'any' type.
+kinsphere_prototype.tsx(572,23): error TS7006: Parameter 'allLeaves' implicitly has an 'any' type.
+kinsphere_prototype.tsx(572,34): error TS7006: Parameter 'd' implicitly has an 'any' type.
+kinsphere_prototype.tsx(573,27): error TS7006: Parameter 'l' implicitly has an 'any' type.
+kinsphere_prototype.tsx(576,22): error TS7006: Parameter 'isOff' implicitly has an 'any' type.
+kinsphere_prototype.tsx(576,29): error TS7006: Parameter 'dayLeaves' implicitly has an 'any' type.
+kinsphere_prototype.tsx(579,31): error TS7006: Parameter 'l' implicitly has an 'any' type.
+kinsphere_prototype.tsx(580,31): error TS7006: Parameter 'l' implicitly has an 'any' type.
+kinsphere_prototype.tsx(609,27): error TS7006: Parameter 'seed' implicitly has an 'any' type.
+kinsphere_prototype.tsx(616,15): error TS7031: Binding element 'ini' implicitly has an 'any' type.
+kinsphere_prototype.tsx(616,27): error TS7031: Binding element 'bg' implicitly has an 'any' type.
+kinsphere_prototype.tsx(626,18): error TS7031: Binding element 's' implicitly has an 'any' type.
+kinsphere_prototype.tsx(632,13): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ pending: { bg: string; c: string; lbl: string; }; approved: { bg: string; c: string; lbl: string; }; rejected: { bg: string; c: string; lbl: string; }; }'.
+kinsphere_prototype.tsx(636,17): error TS7031: Binding element 'txt' implicitly has an 'any' type.
+kinsphere_prototype.tsx(636,22): error TS7031: Binding element 'bg' implicitly has an 'any' type.
+kinsphere_prototype.tsx(636,26): error TS7031: Binding element 'c' implicitly has an 'any' type.
+kinsphere_prototype.tsx(640,16): error TS7031: Binding element 'children' implicitly has an 'any' type.
+kinsphere_prototype.tsx(640,26): error TS7031: Binding element 'onClick' implicitly has an 'any' type.
+kinsphere_prototype.tsx(653,17): error TS7031: Binding element 'children' implicitly has an 'any' type.
+kinsphere_prototype.tsx(662,26): error TS7031: Binding element 'label' implicitly has an 'any' type.
+kinsphere_prototype.tsx(662,33): error TS7031: Binding element 'title' implicitly has an 'any' type.
+kinsphere_prototype.tsx(662,54): error TS7031: Binding element 'children' implicitly has an 'any' type.
+kinsphere_prototype.tsx(681,25): error TS7031: Binding element 'children' implicitly has an 'any' type.
+kinsphere_prototype.tsx(685,16): error TS7031: Binding element 'label' implicitly has an 'any' type.
+kinsphere_prototype.tsx(685,36): error TS7031: Binding element 'opts' implicitly has an 'any' type.
+kinsphere_prototype.tsx(690,19): error TS7006: Parameter 'o' implicitly has an 'any' type.
+kinsphere_prototype.tsx(701,23): error TS7031: Binding element 'label' implicitly has an 'any' type.
+kinsphere_prototype.tsx(701,30): error TS7031: Binding element 'hint' implicitly has an 'any' type.
+kinsphere_prototype.tsx(701,36): error TS7031: Binding element 'prefix' implicitly has an 'any' type.
+kinsphere_prototype.tsx(701,44): error TS7031: Binding element 'suffix' implicitly has an 'any' type.
+kinsphere_prototype.tsx(701,67): error TS7031: Binding element 'value' implicitly has an 'any' type.
+kinsphere_prototype.tsx(701,74): error TS7031: Binding element 'onChange' implicitly has an 'any' type.
+kinsphere_prototype.tsx(734,30): error TS7031: Binding element 'children' implicitly has an 'any' type.
+kinsphere_prototype.tsx(738,18): error TS7031: Binding element 'title' implicitly has an 'any' type.
+kinsphere_prototype.tsx(738,25): error TS7031: Binding element 'onClose' implicitly has an 'any' type.
+kinsphere_prototype.tsx(738,34): error TS7031: Binding element 'children' implicitly has an 'any' type.
+kinsphere_prototype.tsx(751,19): error TS7031: Binding element 'tabs' implicitly has an 'any' type.
+kinsphere_prototype.tsx(751,25): error TS7031: Binding element 'active' implicitly has an 'any' type.
+kinsphere_prototype.tsx(751,33): error TS7031: Binding element 'setActive' implicitly has an 'any' type.
+kinsphere_prototype.tsx(767,15): error TS7006: Parameter 't' implicitly has an 'any' type.
+kinsphere_prototype.tsx(779,27): error TS7031: Binding element 'node' implicitly has an 'any' type.
+kinsphere_prototype.tsx(779,33): error TS7031: Binding element 'isEmp' implicitly has an 'any' type.
+kinsphere_prototype.tsx(779,40): error TS7031: Binding element 'onReassign' implicitly has an 'any' type.
+kinsphere_prototype.tsx(779,52): error TS7031: Binding element 'isSA' implicitly has an 'any' type.
+kinsphere_prototype.tsx(779,58): error TS7031: Binding element 'employees' implicitly has an 'any' type.
+kinsphere_prototype.tsx(779,69): error TS7031: Binding element 'onClose' implicitly has an 'any' type.
+kinsphere_prototype.tsx(781,46): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(781,99): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(824,31): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(824,58): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(840,3): error TS7031: Binding element 'nodeId' implicitly has an 'any' type.
+kinsphere_prototype.tsx(840,27): error TS7031: Binding element 'orgManagers' implicitly has an 'any' type.
+kinsphere_prototype.tsx(841,45): error TS7031: Binding element 'onToggleCollapse' implicitly has an 'any' type.
+kinsphere_prototype.tsx(841,63): error TS7031: Binding element 'onPreview' implicitly has an 'any' type.
+kinsphere_prototype.tsx(841,74): error TS7031: Binding element 'orgPreviewId' implicitly has an 'any' type.
+kinsphere_prototype.tsx(845,80): error TS2339: Property 'id' does not exist on type 'never'.
+kinsphere_prototype.tsx(850,58): error TS2339: Property 'managerId' does not exist on type 'never'.
+kinsphere_prototype.tsx(879,48): error TS2339: Property 'avatarC' does not exist on type '{ id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; salary: string; phone: string; designation: string; dob: string; devices: string[]; documents: { ...; }[]; managerId: null; bankInfo: { ...; }; } | { ...; } | { ...; }'.
+  Property 'avatarC' does not exist on type '{ id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; salary: string; phone: string; designation: string; dob: string; devices: string[]; documents: { ...; }[]; managerId: null; bankInfo: { ...; }; }'.
+kinsphere_prototype.tsx(916,24): error TS2339: Property 'id' does not exist on type 'never'.
+kinsphere_prototype.tsx(916,38): error TS2339: Property 'id' does not exist on type 'never'.
+kinsphere_prototype.tsx(929,23): error TS7006: Parameter 'ts' implicitly has an 'any' type.
+kinsphere_prototype.tsx(945,29): error TS7031: Binding element 'events' implicitly has an 'any' type.
+kinsphere_prototype.tsx(954,22): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ joined: { icon: string; color: string; }; role_change: { icon: string; color: string; }; dept_change: { icon: string; color: string; }; salary_update: { icon: string; color: string; }; doc_upload: { icon: string; color: string; }; asset_assign: { ...; }; asset_return: { ...; }; offboarded: { ...; }; }'.
+kinsphere_prototype.tsx(973,26): error TS7031: Binding element 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1011,32): error TS7006: Parameter 'd' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1017,35): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1017,39): error TS7006: Parameter 'i' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1035,39): error TS7006: Parameter 'cf' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1050,25): error TS7031: Binding element 'logoUrl' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1050,34): error TS7031: Binding element 'companyTagline' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1050,50): error TS7031: Binding element 'emp' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1050,55): error TS7031: Binding element 'payslip' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1050,64): error TS7031: Binding element 'breakdown' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1050,75): error TS7031: Binding element 'approverName' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1052,18): error TS7031: Binding element 'label' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1052,25): error TS7031: Binding element 'value' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1052,32): error TS7031: Binding element 'pct' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1119,10): error TS2741: Property 'pct' is missing in type '{ label: string; value: string; }' but required in type '{ label: any; value: any; pct: any; }'.
+kinsphere_prototype.tsx(1120,10): error TS2741: Property 'pct' is missing in type '{ label: string; value: string; }' but required in type '{ label: any; value: any; pct: any; }'.
+kinsphere_prototype.tsx(1121,10): error TS2741: Property 'pct' is missing in type '{ label: string; value: string; }' but required in type '{ label: any; value: any; pct: any; }'.
+kinsphere_prototype.tsx(1149,24): error TS7031: Binding element 'onLogin' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1149,33): error TS7031: Binding element 'logoUrl' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1149,42): error TS7031: Binding element 'tagline' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1155,24): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1164,28): error TS7006: Parameter 'role' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1207,115): error TS2345: Argument of type '"email"' is not assignable to parameter of type 'SetStateAction<null>'.
+kinsphere_prototype.tsx(1211,124): error TS2345: Argument of type '"pass"' is not assignable to parameter of type 'SetStateAction<null>'.
+kinsphere_prototype.tsx(1280,30): error TS7006: Parameter 'id' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1289,34): error TS7006: Parameter 'empId' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1289,41): error TS7006: Parameter 'newManagerId' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1358,81): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(1361,9): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+kinsphere_prototype.tsx(1362,30): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+kinsphere_prototype.tsx(1366,22): error TS2345: Argument of type '(prev: never[]) => { ts: string; actor: string; monthYear: string; amount: string; count: number; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(prev: never[]) => { ts: string; actor: string; monthYear: string; amount: string; count: number; }[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type '{ ts: string; actor: string; monthYear: string; amount: string; count: number; }[]' is not assignable to type 'never[]'.
+      Type '{ ts: string; actor: string; monthYear: string; amount: string; count: number; }' is not assignable to type 'never'.
+kinsphere_prototype.tsx(1402,35): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1424,33): error TS7006: Parameter 'recogId' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1424,42): error TS7006: Parameter 'type' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1430,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ like: number; celebrate: number; }'.
+kinsphere_prototype.tsx(1430,29): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ like: number; celebrate: number; }'.
+kinsphere_prototype.tsx(1436,29): error TS7006: Parameter 'recogId' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1436,38): error TS7006: Parameter 'txt' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1454,7): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+kinsphere_prototype.tsx(1454,26): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+kinsphere_prototype.tsx(1455,7): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+kinsphere_prototype.tsx(1455,30): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+kinsphere_prototype.tsx(1458,22): error TS2571: Object is of type 'unknown'.
+kinsphere_prototype.tsx(1458,29): error TS2571: Object is of type 'unknown'.
+kinsphere_prototype.tsx(1460,67): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1462,22): error TS2571: Object is of type 'unknown'.
+kinsphere_prototype.tsx(1462,29): error TS2571: Object is of type 'unknown'.
+kinsphere_prototype.tsx(1464,67): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1478,22): error TS7006: Parameter 'empId' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1478,29): error TS7006: Parameter 'type' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1484,25): error TS2339: Property 'halfDay' does not exist on type '{ id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; }'.
+kinsphere_prototype.tsx(1509,21): error TS7006: Parameter 'empId' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1509,28): error TS7006: Parameter 'type' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1509,34): error TS7006: Parameter 'label' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1510,11): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1510,28): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1518,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1518,35): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1586,17): error TS7006: Parameter 'msg' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1588,39): error TS2339: Property 'querySelector' does not exist on type 'never'.
+kinsphere_prototype.tsx(1594,18): error TS7006: Parameter 's' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1595,49): error TS2339: Property 'name' does not exist on type 'never'.
+kinsphere_prototype.tsx(1595,78): error TS2339: Property 'monthLabel' does not exist on type 'never'.
+kinsphere_prototype.tsx(1602,21): error TS7006: Parameter 'id' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1602,25): error TS7006: Parameter 'act' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1609,30): error TS7006: Parameter 'id' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1609,34): error TS7006: Parameter 'act' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1609,66): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type '(prevState: null) => null'.
+kinsphere_prototype.tsx(1612,13): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1613,29): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1640,55): error TS2339: Property 'scrollTop' does not exist on type 'never'.
+kinsphere_prototype.tsx(1640,81): error TS2339: Property 'scrollHeight' does not exist on type 'never'.
+kinsphere_prototype.tsx(1659,13): error TS2345: Argument of type '(p: never[]) => { from: string; txt: string; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(p: never[]) => { from: string; txt: string; }[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type '{ from: string; txt: string; }[]' is not assignable to type 'never[]'.
+      Type '{ from: string; txt: string; }' is not assignable to type 'never'.
+kinsphere_prototype.tsx(1660,28): error TS2345: Argument of type '(p: never[]) => { from: string; txt: string; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(p: never[]) => { from: string; txt: string; }[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type '{ from: string; txt: string; }[]' is not assignable to type 'never[]'.
+      Type '{ from: string; txt: string; }' is not assignable to type 'never'.
+kinsphere_prototype.tsx(1666,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+kinsphere_prototype.tsx(1737,23): error TS2322: Type '{ children: string; disabled: boolean; style: { padding: string; fontSize: number; boxShadow: string; }; onClick: () => void; }' is not assignable to type 'IntrinsicAttributes & { children: any; onClick: any; variant?: string | undefined; style?: {} | undefined; }'.
+  Property 'disabled' does not exist on type 'IntrinsicAttributes & { children: any; onClick: any; variant?: string | undefined; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(1846,50): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<null>'.
+kinsphere_prototype.tsx(1866,54): error TS2339: Property 'click' does not exist on type 'never'.
+kinsphere_prototype.tsx(1914,132): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Dashboard: Element; "Paperwork Hub": Element; Employees: Element; "Time Away": Element; Paydays: Element; Recognition: Element; "Org Chart": Element; ... 6 more ...; CalendarCheck: Element; }'.
+  No index signature with a parameter of type 'string' was found on type '{ Dashboard: Element; "Paperwork Hub": Element; Employees: Element; "Time Away": Element; Paydays: Element; Recognition: Element; "Org Chart": Element; ... 6 more ...; CalendarCheck: Element; }'.
+kinsphere_prototype.tsx(2019,34): error TS2339: Property 'left' does not exist on type 'never'.
+kinsphere_prototype.tsx(2020,33): error TS2339: Property 'top' does not exist on type 'never'.
+kinsphere_prototype.tsx(2033,27): error TS2339: Property 'lines' does not exist on type 'never'.
+kinsphere_prototype.tsx(2033,38): error TS7006: Parameter 'line' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2033,44): error TS7006: Parameter 'i' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2424,47): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2424,95): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2424,123): error TS7006: Parameter 'a' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2424,125): error TS7006: Parameter 'b' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2432,36): error TS7031: Binding element 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2432,39): error TS7031: Binding element 'days' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2471,48): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2471,99): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2471,127): error TS7006: Parameter 'a' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2471,129): error TS7006: Parameter 'b' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2479,37): error TS7031: Binding element 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2479,40): error TS7031: Binding element 'days' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2583,33): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2590,32): error TS2741: Property 'bg' is missing in type '{ ini: any; sz: number; }' but required in type '{ ini: any; sz?: number | undefined; bg: any; }'.
+kinsphere_prototype.tsx(2702,58): error TS7006: Parameter 'l' implicitly has an 'any' type.
+kinsphere_prototype.tsx(2717,35): error TS2353: Object literal may only specify known properties, and 'left' does not exist in type '(prevState: null) => null'.
+kinsphere_prototype.tsx(2726,35): error TS2353: Object literal may only specify known properties, and 'left' does not exist in type '(prevState: null) => null'.
+kinsphere_prototype.tsx(2947,45): error TS2345: Argument of type 'number | null' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type 'number' is not assignable to type 'SetStateAction<null>'.
+kinsphere_prototype.tsx(2949,25): error TS2322: Type '{ minWidth: number; appearance: string; WebkitAppearance: string; MozAppearance: string; padding: string; borderRadius: number; border: string; backgroundColor: string; backgroundImage: string; ... 6 more ...; boxShadow: string; }' is not assignable to type 'Properties<string | number, string & {}>'.
+  Types of property 'appearance' are incompatible.
+    Type 'string' is not assignable to type 'Appearance | undefined'.
+kinsphere_prototype.tsx(2963,23): error TS2322: Type '{ appearance: string; WebkitAppearance: string; MozAppearance: string; padding: string; borderRadius: number; border: string; backgroundColor: string; backgroundImage: string; backgroundRepeat: string; ... 6 more ...; boxShadow: string; }' is not assignable to type 'Properties<string | number, string & {}>'.
+  Types of property 'appearance' are incompatible.
+    Type 'string' is not assignable to type 'Appearance | undefined'.
+kinsphere_prototype.tsx(2974,43): error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type 'any[]' is not assignable to type 'never[]'.
+    Type 'any' is not assignable to type 'never'.
+kinsphere_prototype.tsx(3014,74): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3024,91): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+kinsphere_prototype.tsx(3026,30): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+kinsphere_prototype.tsx(3060,87): error TS2339: Property 'ts' does not exist on type 'never'.
+kinsphere_prototype.tsx(3061,90): error TS2339: Property 'actor' does not exist on type 'never'.
+kinsphere_prototype.tsx(3062,73): error TS2339: Property 'monthYear' does not exist on type 'never'.
+kinsphere_prototype.tsx(3063,90): error TS2339: Property 'amount' does not exist on type 'never'.
+kinsphere_prototype.tsx(3124,72): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3140,29): error TS2322: Type '{ children: string; variant: string; style: { padding: string; fontSize: number; opacity: number; }; disabled: boolean; onClick: () => void; }' is not assignable to type 'IntrinsicAttributes & { children: any; onClick: any; variant?: string | undefined; style?: {} | undefined; }'.
+  Property 'disabled' does not exist on type 'IntrinsicAttributes & { children: any; onClick: any; variant?: string | undefined; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(3141,61): error TS2353: Object literal may only specify known properties, and 'ini' does not exist in type '(prevState: null) => null'.
+kinsphere_prototype.tsx(3141,113): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ PS: { annualCtc: string; basicPct: string; hraPct: string; profTax: string; pf: string; tds: string; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ PS: { annualCtc: string; basicPct: string; hraPct: string; profTax: string; pf: string; tds: string; }; }'.
+kinsphere_prototype.tsx(3141,166): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ PS: { annualCtc: string; basicPct: string; hraPct: string; profTax: string; pf: string; tds: string; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ PS: { annualCtc: string; basicPct: string; hraPct: string; profTax: string; pf: string; tds: string; }; }'.
+kinsphere_prototype.tsx(3180,61): error TS2552: Cannot find name 'setShowTemplateManager'. Did you mean 'setShowTplManage'?
+kinsphere_prototype.tsx(3221,57): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3232,38): error TS2741: Property 'bg' is missing in type '{ ini: any; sz: number; }' but required in type '{ ini: any; sz?: number | undefined; bg: any; }'.
+kinsphere_prototype.tsx(3257,68): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<null>'.
+kinsphere_prototype.tsx(3259,90): error TS2345: Argument of type 'null' is not assignable to parameter of type 'string'.
+kinsphere_prototype.tsx(3295,46): error TS2345: Argument of type '{ id: string; name: string; type: string; fields: string[]; body: string; }' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type '{ id: string; name: string; type: string; fields: string[]; body: string; }' provides no match for the signature '(prevState: null): null'.
+kinsphere_prototype.tsx(3298,49): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<null>'.
+kinsphere_prototype.tsx(3325,44): error TS2322: Type '{ children: Element[]; key: string; onClick: () => void; style: { cursor: string; transition: string; border: string; background: string; }; }' is not assignable to type 'IntrinsicAttributes & { children: any; style?: {} | undefined; }'.
+  Property 'onClick' does not exist on type 'IntrinsicAttributes & { children: any; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(3325,76): error TS2345: Argument of type '{ id: string; name: string; type: string; fields: string[]; body: string; }' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type '{ id: string; name: string; type: string; fields: string[]; body: string; }' provides no match for the signature '(prevState: null): null'.
+kinsphere_prototype.tsx(3325,206): error TS2339: Property 'id' does not exist on type 'never'.
+kinsphere_prototype.tsx(3325,262): error TS2339: Property 'id' does not exist on type 'never'.
+kinsphere_prototype.tsx(3349,41): error TS2345: Argument of type 'number' is not assignable to parameter of type 'SetStateAction<string>'.
+kinsphere_prototype.tsx(3350,56): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3356,44): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3362,42): error TS18047: 'genTemplate' is possibly 'null'.
+kinsphere_prototype.tsx(3367,38): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+kinsphere_prototype.tsx(3378,55): error TS18047: 'genTemplate' is possibly 'null'.
+kinsphere_prototype.tsx(3391,107): error TS2339: Property 'name' does not exist on type 'never'.
+kinsphere_prototype.tsx(3404,38): error TS18047: 'genTemplate' is possibly 'null'.
+kinsphere_prototype.tsx(3407,38): error TS18047: 'genTemplate' is possibly 'null'.
+kinsphere_prototype.tsx(3412,41): error TS2739: Type '{ id: string; name: any; empId: string | null; candidateId: null; type: any; date: string; status: string; filledBody: string; }' is missing the following properties from type '{ id: string; name: string; empId: number; candidateId: null; type: string; date: string; fileName: string; status: string; sendLink: null; filledBody: null; }': fileName, sendLink
+kinsphere_prototype.tsx(3422,37): error TS18047: 'genTemplate' is possibly 'null'.
+kinsphere_prototype.tsx(3425,37): error TS18047: 'genTemplate' is possibly 'null'.
+kinsphere_prototype.tsx(3431,40): error TS2741: Property 'fileName' is missing in type '{ id: string; name: any; empId: string | null; candidateId: null; type: any; date: string; status: string; sendLink: string; filledBody: string; }' but required in type '{ id: string; name: string; empId: number; candidateId: null; type: string; date: string; fileName: string; status: string; sendLink: null; filledBody: null; }'.
+kinsphere_prototype.tsx(3454,40): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3471,80): error TS2322: Type 'number | null' is not assignable to type 'number'.
+  Type 'null' is not assignable to type 'number'.
+kinsphere_prototype.tsx(3526,26): error TS2741: Property 'bg' is missing in type '{ ini: any; sz: number; }' but required in type '{ ini: any; sz?: number | undefined; bg: any; }'.
+kinsphere_prototype.tsx(3529,82): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+kinsphere_prototype.tsx(3529,102): error TS18046: 'h.count' is of type 'unknown'.
+kinsphere_prototype.tsx(3544,82): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+kinsphere_prototype.tsx(3564,67): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3564,92): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3566,29): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3568,18): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; placeholder: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(3573,29): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3584,53): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(3585,77): error TS2345: Argument of type '(p: never[]) => string[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(p: never[]) => string[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type 'string[]' is not assignable to type 'never[]'.
+      Type 'string' is not assignable to type 'never'.
+kinsphere_prototype.tsx(3589,69): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(3590,61): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(3591,56): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(3714,28): error TS2741: Property 'bg' is missing in type '{ ini: string; sz: number; }' but required in type '{ ini: any; sz?: number | undefined; bg: any; }'.
+kinsphere_prototype.tsx(3819,50): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3819,55): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ 1: null; 2: number; 3: number; 4: number; 5: number; }'.
+kinsphere_prototype.tsx(3825,36): error TS7006: Parameter 'root' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3830,35): error TS7006: Parameter 'id' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3832,23): error TS2322: Type '{ id: string; name: string; role: string; dept: string; managerId: number; }[]' is not assignable to type 'never[]'.
+  Type '{ id: string; name: string; role: string; dept: string; managerId: number; }' is not assignable to type 'never'.
+kinsphere_prototype.tsx(3845,38): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(3953,41): error TS2339: Property 'from' does not exist on type 'never'.
+kinsphere_prototype.tsx(3954,36): error TS2339: Property 'from' does not exist on type 'never'.
+kinsphere_prototype.tsx(3955,41): error TS2339: Property 'from' does not exist on type 'never'.
+kinsphere_prototype.tsx(3956,42): error TS2339: Property 'from' does not exist on type 'never'.
+kinsphere_prototype.tsx(3957,37): error TS2339: Property 'from' does not exist on type 'never'.
+kinsphere_prototype.tsx(3958,40): error TS2339: Property 'from' does not exist on type 'never'.
+kinsphere_prototype.tsx(3961,28): error TS2339: Property 'txt' does not exist on type 'never'.
+kinsphere_prototype.tsx(4261,16): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4262,16): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4263,16): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4272,10): error TS2741: Property 'title' is missing in type '{ children: Element; onClose: () => void; width: number; }' but required in type '{ title: any; onClose: any; children: any; width?: number | undefined; }'.
+kinsphere_prototype.tsx(4274,39): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4274,66): error TS2339: Property 'ini' does not exist on type 'never'.
+kinsphere_prototype.tsx(4283,38): error TS2339: Property 'set' does not exist on type 'never'.
+kinsphere_prototype.tsx(4285,94): error TS2339: Property 'name' does not exist on type 'never'.
+kinsphere_prototype.tsx(4287,38): error TS2339: Property 'set' does not exist on type 'never'.
+kinsphere_prototype.tsx(4306,20): error TS2741: Property 'suffix' is missing in type '{ style: { gridColumn: string; }; label: string; hint: string; prefix: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ label: any; hint: any; prefix: any; suffix: any; type?: string | undefined; value: any; onChange: any; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(4313,31): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4319,20): error TS2741: Property 'prefix' is missing in type '{ label: string; hint: string; suffix: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ label: any; hint: any; prefix: any; suffix: any; type?: string | undefined; value: any; onChange: any; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(4325,31): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4327,20): error TS2741: Property 'prefix' is missing in type '{ label: string; hint: string; suffix: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ label: any; hint: any; prefix: any; suffix: any; type?: string | undefined; value: any; onChange: any; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(4333,31): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4339,20): error TS2741: Property 'suffix' is missing in type '{ label: string; hint: string; prefix: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ label: any; hint: any; prefix: any; suffix: any; type?: string | undefined; value: any; onChange: any; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(4345,31): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4347,20): error TS2741: Property 'suffix' is missing in type '{ label: string; hint: string; prefix: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ label: any; hint: any; prefix: any; suffix: any; type?: string | undefined; value: any; onChange: any; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(4353,31): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4355,20): error TS2741: Property 'suffix' is missing in type '{ style: { gridColumn: string; }; label: string; hint: string; prefix: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ label: any; hint: any; prefix: any; suffix: any; type?: string | undefined; value: any; onChange: any; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(4362,31): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4378,45): error TS2339: Property 'ini' does not exist on type 'never'.
+kinsphere_prototype.tsx(4407,44): error TS2339: Property 'empId' does not exist on type 'never'.
+kinsphere_prototype.tsx(4474,12): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; placeholder: string; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4474,63): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4486,26): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4490,24): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ 1: null; 2: number; 3: number; 4: number; 5: number; }'.
+kinsphere_prototype.tsx(4498,35): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4498,59): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4526,60): error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type 'any[]' is not assignable to type 'never[]'.
+    Type 'any' is not assignable to type 'never'.
+kinsphere_prototype.tsx(4537,50): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4538,66): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(4546,65): error TS2345: Argument of type '(prev: never[]) => any[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(prev: never[]) => any[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type 'any[]' is not assignable to type 'never[]'.
+      Type 'any' is not assignable to type 'never'.
+kinsphere_prototype.tsx(4546,87): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(4552,45): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+kinsphere_prototype.tsx(4571,46): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4571,63): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4587,46): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4587,63): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4599,121): error TS2322: Type '{ children: string; style: { padding: string; background: string; color: string; }; onClick: () => void; disabled: boolean; }' is not assignable to type 'IntrinsicAttributes & { children: any; onClick: any; variant?: string | undefined; style?: {} | undefined; }'.
+  Property 'disabled' does not exist on type 'IntrinsicAttributes & { children: any; onClick: any; variant?: string | undefined; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(4617,73): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(4617,117): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+kinsphere_prototype.tsx(4624,48): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(4625,44): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4646,19): error TS2322: Type '{ children: string; style: { flex: number; padding: string; background: string; color: string; borderColor: string; }; onClick: () => void; disabled: boolean; }' is not assignable to type 'IntrinsicAttributes & { children: any; onClick: any; variant?: string | undefined; style?: {} | undefined; }'.
+  Property 'disabled' does not exist on type 'IntrinsicAttributes & { children: any; onClick: any; variant?: string | undefined; style?: {} | undefined; }'.
+kinsphere_prototype.tsx(4647,50): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+kinsphere_prototype.tsx(4648,46): error TS7006: Parameter 'x' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4672,69): error TS2345: Argument of type '{ id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; salary: string; phone: string; designation: string; dob: string; devices: string[]; documents: { ...; }[]; managerId: null; bankInfo: { ...; }; } | { ...; } | { ...; } | undefined' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type 'undefined' is not assignable to type 'SetStateAction<null>'.
+kinsphere_prototype.tsx(4687,59): error TS2339: Property 'name' does not exist on type 'never'.
+kinsphere_prototype.tsx(4688,50): error TS2339: Property 'timeline' does not exist on type 'never'.
+kinsphere_prototype.tsx(4697,12): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; placeholder: string; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4697,67): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4698,118): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4699,12): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4699,69): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4700,12): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4700,71): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4701,12): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4701,73): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4706,28): error TS7006: Parameter 'emps' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4706,45): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4717,12): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; placeholder: string; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4717,69): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4718,113): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4727,28): error TS7006: Parameter 'emps' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4727,45): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4739,12): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4739,82): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4740,112): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4748,41): error TS2339: Property 'timeline' does not exist on type '{ id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; salary: string; phone: string; designation: string; dob: string; devices: string[]; documents: { ...; }[]; managerId: null; bankInfo: { ...; }; } | { ...; } | { ...; }'.
+  Property 'timeline' does not exist on type '{ id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; salary: string; phone: string; designation: string; dob: string; devices: string[]; documents: { ...; }[]; managerId: null; bankInfo: { ...; }; }'.
+kinsphere_prototype.tsx(4750,40): error TS2345: Argument of type '(prev: never[]) => ({ status: string; relievingDate: string; offboardReason: string; timeline: any[]; id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; ... 7 more ...; bankInfo: { ...; }; } | { ...; } | { ...; })[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(prev: never[]) => ({ status: string; relievingDate: string; offboardReason: string; timeline: any[]; id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; ... 7 more ...; bankInfo: { ...; }; } | { ...; } | { ...; })[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type '({ status: string; relievingDate: string; offboardReason: string; timeline: any[]; id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; salary: string; ... 6 more ...; bankInfo: { ...; }; } | { ...; } | { ...; })[]' is not assignable to type 'never[]'.
+      Type '{ status: string; relievingDate: string; offboardReason: string; timeline: any[]; id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; salary: string; ... 6 more ...; bankInfo: { ...; }; } | { ...; } | { ...; }' is not assignable to type 'never'.
+        Type '{ status: string; relievingDate: string; offboardReason: string; timeline: any[]; id: number; ini: string; name: string; email: string; role: string; dept: string; type: string; joined: string; salary: string; ... 6 more ...; bankInfo: { ...; }; }' is not assignable to type 'never'.
+kinsphere_prototype.tsx(4752,28): error TS7006: Parameter 'emps' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4752,48): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4764,66): error TS2339: Property 'id' does not exist on type 'never'.
+kinsphere_prototype.tsx(4765,43): error TS2339: Property 'act' does not exist on type 'never'.
+kinsphere_prototype.tsx(4806,56): error TS2339: Property 'id' does not exist on type 'never'.
+kinsphere_prototype.tsx(4806,79): error TS2339: Property 'act' does not exist on type 'never'.
+kinsphere_prototype.tsx(4848,18): error TS2741: Property 'opts' is missing in type '{ label: string; placeholder: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4852,29): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4854,18): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4858,29): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4862,18): error TS2741: Property 'opts' is missing in type '{ label: string; placeholder: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4866,29): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4917,28): error TS18046: 'cfg' is of type 'unknown'.
+kinsphere_prototype.tsx(4918,59): error TS2698: Spread types may only be created from object types.
+kinsphere_prototype.tsx(4918,78): error TS18047: 'd' is possibly 'null'.
+kinsphere_prototype.tsx(4925,28): error TS18046: 'cfg' is of type 'unknown'.
+kinsphere_prototype.tsx(4926,59): error TS2698: Spread types may only be created from object types.
+kinsphere_prototype.tsx(4926,78): error TS18047: 'd' is possibly 'null'.
+kinsphere_prototype.tsx(4959,32): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4969,23): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4974,25): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ "Sick Leave": { total: number; accrual: string; }; "Earned Leave": { total: number; accrual: string; }; "Casual Leave": { total: number; accrual: string; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ "Sick Leave": { total: number; accrual: string; }; "Earned Leave": { total: number; accrual: string; }; "Casual Leave": { total: number; accrual: string; }; }'.
+kinsphere_prototype.tsx(4996,14): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4996,77): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(4997,14): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(4997,77): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5043,59): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5043,115): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5045,23): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5047,12): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; placeholder: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5052,23): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5059,29): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ "Sick Leave": { total: number; accrual: string; }; "Earned Leave": { total: number; accrual: string; }; "Casual Leave": { total: number; accrual: string; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ "Sick Leave": { total: number; accrual: string; }; "Earned Leave": { total: number; accrual: string; }; "Casual Leave": { total: number; accrual: string; }; }'.
+kinsphere_prototype.tsx(5071,27): error TS2345: Argument of type '(p: { id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; }[]) => ({ ...; } | { ...; })[]' is not assignable to parameter of type 'SetStateAction<{ id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; }[]>'.
+  Type '(p: { id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; }[]) => ({ ...; } | { ...; })[]' is not assignable to type '(prevState: { id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; }[]) => { ...; }[]'.
+    Type '({ id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; } | { halfDay: boolean; ... 13 more ...; status?: string | undefined; })[]' is not assignable to type '{ id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; }[]'.
+      Type '{ id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; } | { halfDay: boolean; ... 13 more ...; status?: string | undefined; }' is not assignable to type '{ id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; }'.
+        Type '{ halfDay: boolean; halfDayPart: string; id?: number | undefined; empId?: number | undefined; ini?: string | undefined; emp?: string | undefined; type?: any; from?: string | undefined; to?: string | undefined; ... 5 more ...; status?: string | undefined; }' is not assignable to type '{ id: number; empId: number; ini: string; emp: string; type: string; from: string; to: string; fromISO: string; toISO: string; days: string; reason: string; approver: string; status: string; }'.
+          Types of property 'id' are incompatible.
+            Type 'number | undefined' is not assignable to type 'number'.
+              Type 'undefined' is not assignable to type 'number'.
+kinsphere_prototype.tsx(5073,54): error TS18048: 'res.row' is possibly 'undefined'.
+kinsphere_prototype.tsx(5089,14): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5089,75): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5090,14): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5090,73): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5091,14): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5091,79): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5092,14): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5092,82): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5093,14): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5093,70): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5097,104): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5098,117): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5099,14): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5099,74): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5100,14): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5100,76): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5101,133): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5102,71): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5102,118): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5106,14): error TS2741: Property 'opts' is missing in type '{ label: string; value: any; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5106,46): error TS2339: Property 'ecName' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'.
+kinsphere_prototype.tsx(5106,68): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5106,95): error TS2353: Object literal may only specify known properties, and 'ecName' does not exist in type 'SetStateAction<{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }>'.
+kinsphere_prototype.tsx(5107,14): error TS2741: Property 'opts' is missing in type '{ label: string; type: string; value: any; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5107,58): error TS2551: Property 'ecPhone' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'. Did you mean 'phone'?
+kinsphere_prototype.tsx(5107,81): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5107,108): error TS2353: Object literal may only specify known properties, and 'ecPhone' does not exist in type 'SetStateAction<{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }>'.
+kinsphere_prototype.tsx(5108,14): error TS2741: Property 'opts' is missing in type '{ label: string; value: any; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5108,54): error TS2339: Property 'ecRel' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'.
+kinsphere_prototype.tsx(5108,75): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5108,102): error TS2353: Object literal may only specify known properties, and 'ecRel' does not exist in type 'SetStateAction<{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }>'.
+kinsphere_prototype.tsx(5112,14): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5112,73): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5113,14): error TS2741: Property 'opts' is missing in type '{ label: string; value: string; onChange: (e: any) => void; }' but required in type '{ [x: string]: any; label: any; type?: string | undefined; opts: any; }'.
+kinsphere_prototype.tsx(5113,68): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5116,57): error TS2339: Property 'customFields' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'.
+kinsphere_prototype.tsx(5120,21): error TS2339: Property 'customFields' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'.
+kinsphere_prototype.tsx(5120,44): error TS7006: Parameter 'cf' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5120,47): error TS7006: Parameter 'i' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5123,73): error TS2339: Property 'customFields' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'.
+kinsphere_prototype.tsx(5123,94): error TS7006: Parameter '_' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5123,96): error TS7006: Parameter 'j' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5131,49): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5132,42): error TS2339: Property 'ecName' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'.
+kinsphere_prototype.tsx(5132,69): error TS2551: Property 'ecPhone' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'. Did you mean 'phone'?
+kinsphere_prototype.tsx(5132,95): error TS2339: Property 'ecRel' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'.
+kinsphere_prototype.tsx(5135,23): error TS7034: Variable 'changes' implicitly has type 'any[]' in some locations where its type cannot be determined.
+kinsphere_prototype.tsx(5138,30): error TS7006: Parameter 'emps' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5138,47): error TS7006: Parameter 'e' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5152,41): error TS2339: Property 'customFields' does not exist on type '{ firstName: string; lastName: string; email: string; phone: string; dob: string; role: string; type: string; doj: string; designation: string; dept: string; manager: string; }'.
+kinsphere_prototype.tsx(5153,54): error TS7005: Variable 'changes' implicitly has an 'any[]' type.
+kinsphere_prototype.tsx(5215,30): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+kinsphere_prototype.tsx(5218,44): error TS7053: Element implicitly has an 'any' type because expression of type 'number' can't be used to index type '{ 1: null; 2: number; 3: number; 4: number; 5: number; }'.
+  No index signature with a parameter of type 'number' was found on type '{ 1: null; 2: number; 3: number; 4: number; 5: number; }'.
+kinsphere_prototype.tsx(5224,35): error TS2339: Property 'message' does not exist on type '{}'.
+kinsphere_prototype.tsx(5230,55): error TS2339: Property 'click' does not exist on type 'never'.
