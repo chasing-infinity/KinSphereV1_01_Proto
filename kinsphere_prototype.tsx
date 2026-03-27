@@ -1098,7 +1098,7 @@ const LoginScreen = ({ onLogin, logoUrl, tagline }) => {
       `}</style>
       
       {/* Left side */}
-      <div className="login-left" style={{ flex:1, display:"flex", background:`linear-gradient(135deg, ${C.p} 0%, #1e2c22 100%)`, flexDirection:"column", justifyContent:"center", alignItems:"flex-start", padding:60, position:"relative", overflow:"hidden" }}>
+      <div className="login-left" style={{ flex:1.5, display:"flex", background:`linear-gradient(135deg, ${C.p} 0%, #1e2c22 100%)`, flexDirection:"column", justifyContent:"center", alignItems:"flex-start", padding:60, position:"relative", overflow:"hidden" }}>
         
         {/* Subtle decorative circles for depth */}
         <div style={{ position:"absolute", top:-100, right:-100, width:400, height:400, borderRadius:"50%", background:`radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)` }}/>
