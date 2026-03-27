@@ -520,6 +520,7 @@ const ICONS = {
   Paydays: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
   Recognition: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
   "Org Chart": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></svg>,
+  "People Chapters": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>,
   "Listening Room": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>,
   Settings: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
   "My Profile": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
@@ -535,6 +536,7 @@ const NAV = [
   { key:"Time Away" },
   { key:"Paydays" },
   { key:"Paperwork Hub" },
+  { key:"People Chapters" },
   { key:"Recognition" },
   { key:"Org Chart" },
   { key:"Listening Room" },
@@ -542,7 +544,8 @@ const NAV = [
 ];
 
 const navItemsForRole = isSA =>
-  NAV.map(n => (n.key === "Employees" ? (isSA ? n : { key:"My Profile" }) : n));
+  NAV.filter(n => isSA || n.key !== "People Chapters")
+     .map(n => (n.key === "Employees" ? (isSA ? n : { key:"My Profile" }) : n));
 
 function daysInMonth(y, m0) {
   return new Date(y, m0 + 1, 0).getDate();
@@ -1336,6 +1339,7 @@ export default function App() {
   const [tplExtracted, setTplExtracted] = useState([]);
   const [tplViewPdf, setTplViewPdf] = useState(null); // url string
   const [tplSearch, setTplSearch] = useState("");
+  const [viewingDoc, setViewingDoc] = useState(null); // Document object for preview
 
   // Step 3: E-Signature Flow
   const [signId, setSignId] = useState(null); // Document ID being signed
@@ -1354,6 +1358,9 @@ export default function App() {
   const [genFilledBody, setGenFilledBody] = useState("");
   const [genSentLink, setGenSentLink] = useState(null);
   const resetGen = () => { setGenStep(1); setGenTemplate(null); setGenRecipientType("employee"); setGenEmpId(""); setGenVals({}); setGenCandForm({ name:"",email:"",role:"",salary:"",startDate:"",notes:"" }); setGenSavedCandId(null); setGenExternalEmail(""); setGenFilledBody(""); setGenSentLink(null); };
+
+  // People Chapters
+  const [chapterTab, setChapterTab] = useState("Menu");
   // ─────────────────────────────────────────────────────────────────────────
 
   const handleProcessPayments = () => {
@@ -2435,7 +2442,16 @@ export default function App() {
                   return (
                     <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                       {bdays.map(({e, days}) => (
-                        <div key={e.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, padding:"10px 12px", borderRadius:12, border:`1px solid ${C.bdr}`, background:"rgba(255,255,255,.6)" }}>
+                        <div
+                          key={e.id}
+                          style={{
+                            display:"flex", alignItems:"center", justifyContent:"space-between", gap:12,
+                            padding:"10px 12px", borderRadius:12, border:`1px solid ${C.bdr}`,
+                            background:C.bg, cursor:"default", transition:"transform .12s, box-shadow .12s",
+                          }}
+                          onMouseEnter={ev => { ev.currentTarget.style.transform="translateY(-1px)"; ev.currentTarget.style.boxShadow=`0 4px 12px rgba(var(--p-rgb),.15)`; }}
+                          onMouseLeave={ev => { ev.currentTarget.style.transform="translateY(0)"; ev.currentTarget.style.boxShadow="none"; }}
+                        >
                           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                             <Av ini={e.ini} sz={32} bg={C.p} />
                             <div>
@@ -2485,7 +2501,16 @@ export default function App() {
                         const joinYear = parseInt(e.joined.split(" ").pop());
                         const years = new Date().getFullYear() - joinYear;
                         return (
-                          <div key={e.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, padding:"10px 12px", borderRadius:12, border:`1px solid ${C.bdr}`, background:C.bg }}>
+                          <div
+                            key={e.id}
+                            style={{
+                              display:"flex", alignItems:"center", justifyContent:"space-between", gap:12,
+                              padding:"10px 12px", borderRadius:12, border:`1px solid ${C.bdr}`,
+                              background:C.bg, cursor:"default", transition:"transform .12s, box-shadow .12s",
+                            }}
+                            onMouseEnter={ev => { ev.currentTarget.style.transform="translateY(-1px)"; ev.currentTarget.style.boxShadow=`0 4px 12px rgba(var(--p-rgb),.15)`; }}
+                            onMouseLeave={ev => { ev.currentTarget.style.transform="translateY(0)"; ev.currentTarget.style.boxShadow="none"; }}
+                          >
                             <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                               <Av ini={e.ini} sz={32} bg={C.p2} />
                               <div>
@@ -3159,8 +3184,8 @@ export default function App() {
 
         {/* ─ PAPERWORK HUB ─ */}
         {page==="Paperwork Hub" && (() => {
-          const canGenerate = isSA || role === "Admin";
-          const canSeeAll   = isSA || (role === "Admin" && adminDocAccessGranted);
+          const canGenerate = isSA;
+          const canSeeAll   = isSA;
 
           const visiblePapers = canSeeAll ? papers : papers.filter(d => d.empId === ME_ID);
           const filteredPapers = paperFilter === "All" ? visiblePapers : visiblePapers.filter(d => d.type === paperFilter);
@@ -3275,6 +3300,22 @@ export default function App() {
                                   }} style={{ background:"#f0fdf4", border:`1px solid #bbf7d0`, borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#16a34a", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.05)" }}>Download ⬇</button>
                                 ) : doc.status === "sent" ? (
                                   <button onClick={() => { toast("Simulating Secure Portal: This is what the recipient sees from their email link!"); setSignId(doc.id); }} style={{ background:C.p, border:"none", borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#2a3326", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.1)" }}>Simulate Recipient 👁</button>
+                                ) : doc.status === "draft" && isSA ? (
+                                  <div style={{ display:"flex", gap:6, justifyContent:"flex-end" }}>
+                                    <button onClick={() => setViewingDoc(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:C.p, cursor:"pointer" }}>Look 👁</button>
+                                    <button onClick={() => {
+                                      const linkId = Math.random().toString(36).substring(7);
+                                      const link = `https://sign.kinsphere.app/doc/${linkId}`;
+                                      setPapers(papers.map(p => p.id === doc.id ? { ...p, status:"sent", sendLink: link } : p));
+                                      toast(`Document "${doc.name}" sent successfully ✓`);
+                                    }} style={{ background:"#f0fdf4", border:`1px solid #bbf7d0`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:700, color:"#16a34a", cursor:"pointer" }}>Send ✉</button>
+                                    <button onClick={() => {
+                                      if (confirm(`Are you sure you want to delete "${doc.name}"?`)) {
+                                        setPapers(papers.filter(p => p.id !== doc.id));
+                                        toast("Document deleted ✓");
+                                      }
+                                    }} style={{ background:"none", border:`1px solid rgba(220,38,38,.2)`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:"#dc2626", cursor:"pointer" }}>Delete 🗑</button>
+                                  </div>
                                 ) : doc.sendLink ? (
                                   <button onClick={() => { navigator.clipboard.writeText(doc.sendLink); toast("Link copied to clipboard ✓"); }} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:C.p, cursor:"pointer" }}>Copy Link</button>
                                 ) : (
@@ -3292,6 +3333,26 @@ export default function App() {
                   </div>
 
                 </>
+              )}
+
+              {viewingDoc && (
+                <Modal title="Document Preview" onClose={() => setViewingDoc(null)} width={600}>
+                  <div style={{ padding:10 }}>
+                    <div style={{ textAlign:"center", marginBottom:24 }}>
+                      <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:2, marginBottom:4 }}>PREVIEW MODE</div>
+                      <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:20 }}>{viewingDoc.name}</h2>
+                      <div style={{ fontSize:11, color:C.sub, marginTop:4 }}>{viewingDoc.fileName || "Generated Preview"}</div>
+                    </div>
+                    <div style={{ background:C.surf, padding:24, borderRadius:12, border:`1px solid ${C.bdr}` }}>
+                      <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia, serif", fontSize:14, lineHeight:1.8, color:C.txt, margin:0 }}>
+                        {viewingDoc.filledBody || "This is a draft version of the document. Full body text will appear once all fields are populated in the generation flow."}
+                      </pre>
+                    </div>
+                    <div style={{ marginTop:24, display:"flex", justifyContent:"center" }}>
+                      <Btn onClick={() => setViewingDoc(null)}>Close Preview</Btn>
+                    </div>
+                  </div>
+                </Modal>
               )}
 
               {/* ── Tab Content: Generate ── */}
@@ -3324,7 +3385,7 @@ export default function App() {
                       <Card style={{ padding:24 }}>
                         <div style={{ fontSize:14, fontWeight:700, color:C.txt, marginBottom:20 }}>Document Fields</div>
                         <div style={{ display:"flex", flexDirection:"column", gap:16, maxHeight:500, overflow:"auto", paddingRight:4 }}>
-                          {getPlaceholders(genTemplate.body).length === 0 ? (
+                          {!genTemplate || getPlaceholders(genTemplate.body).length === 0 ? (
                              <div style={{ fontSize:12, color:C.sub }}>No dynamic fields required.</div>
                           ) : getPlaceholders(genTemplate.body).map(field => (
                             <div key={field}>
@@ -3332,7 +3393,7 @@ export default function App() {
                               <input 
                                 placeholder={`Enter ${field.replace(/_/g, " ")}...`}
                                 value={genVals[field] || ""}
-                                onChange={e => setGenVals({ ...genVals, [field]: e.target.value })}
+                                onChange={(e: any) => setGenVals({ ...genVals, [field]: e.target.value })}
                                 style={{ width:"100%", padding:10, borderRadius:8, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}
                               />
                             </div>
@@ -3372,7 +3433,7 @@ export default function App() {
                       {genRecipientType === "employee" && (
                         <div style={{ marginBottom:20 }}>
                           <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>SELECT EMPLOYEE</label>
-                          <select value={genEmpId} onChange={(e) => setGenEmpId(e.target.value)} style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}>
+                          <select value={genEmpId} onChange={(e: any) => setGenEmpId(e.target.value)} style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}>
                             <option value="">Choose an employee...</option>
                             {employees.map(e => <option key={e.id} value={e.id}>{e.name} — {e.designation}</option>)}
                           </select>
@@ -3385,7 +3446,7 @@ export default function App() {
                           <input 
                             placeholder="e.g. hello@example.com"
                             value={genExternalEmail}
-                            onChange={e => setGenExternalEmail(e.target.value)}
+                            onChange={(e: any) => setGenExternalEmail(e.target.value)}
                             style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13 }}
                           />
                         </div>
@@ -3423,11 +3484,11 @@ export default function App() {
                 <Modal title="Upload Document" onClose={() => setPaperModal(false)} width={440}>
                   <div style={{ marginBottom:14 }}>
                     <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT NAME</label>
-                    <input placeholder="e.g. Offer Letter — Priya" value={paperForm.name} onChange={e=>setPaperForm({...paperForm, name:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }} />
+                    <input placeholder="e.g. Offer Letter — Priya" value={paperForm.name} onChange={(e: any)=>setPaperForm({...paperForm, name:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }} />
                   </div>
                   <div style={{ marginBottom:14 }}>
                     <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>LINK TO PERSON</label>
-                    <select value={paperForm.empId} onChange={e=>setPaperForm({...paperForm, empId:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }}>
+                    <select value={paperForm.empId} onChange={(e: any)=>setPaperForm({...paperForm, empId:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }}>
                       <option value="">Select recipient…</option>
                       <optgroup label="Employees">
                         {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
@@ -4199,6 +4260,45 @@ export default function App() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* ─ PEOPLE CHAPTERS ─ */}
+        {page === "People Chapters" && (
+             <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"800px", margin:"0 auto" }}>
+               {/* Hero */}
+               <div style={{ padding:"40px 0", textAlign:"center" }}>
+                 <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:16, padding:"6px 14px", borderRadius:999, background:C.surf, border:`1px solid ${C.bdr}`, fontSize:11, fontWeight:700, letterSpacing:1, color:C.p, textTransform:"uppercase" }}>🧭 Employee Journeys</div>
+                 <h1 style={{ fontFamily:"Georgia,serif", fontSize:32, color:C.txt, margin:"0 0 16px", fontWeight:700 }}>People Chapters</h1>
+                 <p style={{ color:C.sub, fontSize:15, lineHeight:1.6, maxWidth:500, margin:"0 auto" }}>Manage the critical transitions of your workforce, from their first day to their final handover.</p>
+               </div>
+
+               {chapterTab === "Menu" ? (
+                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:24, marginTop:20 }}>
+                   <Card onClick={() => setChapterTab("Onboarding")} style={{ padding:40, textAlign:"center", cursor:"pointer", transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)" }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.p} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
+                     <div style={{ width:64, height:64, borderRadius:"50%", background:"#e0f2fe", color:"#0369a1", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center" }}>👋</div>
+                     <div>
+                       <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Onboarding</h2>
+                       <p style={{ fontSize:14, color:C.sub, margin:0, lineHeight:1.5 }}>Set up and welcome new employees into the organization.</p>
+                     </div>
+                   </Card>
+                   
+                   <Card onClick={() => setChapterTab("Offboarding")} style={{ padding:40, textAlign:"center", cursor:"pointer", transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)" }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.p} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
+                     <div style={{ width:64, height:64, borderRadius:"50%", background:"#fce7f3", color:"#be185d", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center" }}>🚪</div>
+                     <div>
+                       <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Offboarding</h2>
+                       <p style={{ fontSize:14, color:C.sub, margin:0, lineHeight:1.5 }}>Manage exits, clearances, and employee transitions.</p>
+                     </div>
+                   </Card>
+                 </div>
+               ) : (
+                 <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
+                   <div style={{ fontSize:40, marginBottom:16 }}>{chapterTab === "Onboarding" ? "🎢" : "📦"}</div>
+                   <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 12px" }}>{chapterTab} flows coming soon</h2>
+                   <p style={{ fontSize:14, color:C.sub, margin:"0 0 24px", maxWidth:400, marginLeft:"auto", marginRight:"auto" }}>The detailed workflows and automations for {chapterTab.toLowerCase()} are currently under construction.</p>
+                   <Btn variant="outline" onClick={() => setChapterTab("Menu")}>← Back to Chapters</Btn>
+                 </div>
+               )}
+             </div>
         )}
 
         {/* ─ SETTINGS ─ */}
