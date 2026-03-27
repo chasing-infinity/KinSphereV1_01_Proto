@@ -1133,7 +1133,7 @@ const LoginScreen = ({ onLogin, logoUrl, tagline }) => {
               <label style={{ display:"block", fontSize:12, fontWeight:700, color:C.sub, marginBottom:6, textTransform:"uppercase", letterSpacing:0.5 }}>Password</label>
               <input type="password" value={password} onChange={e=>setPassword(e.target.value)} onFocus={()=>setFocusInput('pass')} onBlur={()=>setFocusInput(null)} placeholder="••••••••" style={{ width:"100%", boxSizing:"border-box", padding:"12px 14px", borderRadius:10, border:`1px solid ${focusInput==='pass'?C.p:C.bdr}`, outline:"none", fontSize:14, background:focusInput==='pass'?C.wht:C.bg, boxShadow:focusInput==='pass'?`0 0 0 3px rgba(var(--p-rgb),.15)`:"", transition:"all 0.2s" }} />
             </div>
-            <button type="submit" disabled={loading} style={{ marginTop:8, width:"100%", padding:"14px", borderRadius:10, background:loading?C.sub:C.p, color:"#fff", border:"none", fontSize:15, fontWeight:700, cursor:loading?"wait":"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <button type="submit" disabled={loading || !(email && password)} style={{ marginTop:8, width:"100%", padding:"14px", borderRadius:10, background:loading?C.sub:(email && password ? C.p : C.bg), color:(email && password)?"#fff":C.sub, border:(email && password)?"none":`1px solid ${C.bdr}`, fontSize:15, fontWeight:700, cursor:(loading || !(email && password))?"not-allowed":"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
               {loading ? "Authenticating..." : "Login"}
             </button>
           </form>
