@@ -1331,8 +1331,10 @@ export default function App() {
   const [templates, setTemplates] = useState(PAPER_TEMPLATES);
   const [showTplManage, setShowTplManage] = useState(false);
   const [tplForm, setTplForm] = useState({ id:"", name:"", type:"Other", body:"", fileName:"" });
-  const [tplStep, setTplStep] = useState(1); // 1 = Upload, 2 = Edit Text, 3 = Confirm
+  const [tplStep, setTplStep] = useState(1); // 1 = TabView, 2 = Edit Text, 3 = Confirm
+  const [tplTab,  setTplTab]  = useState("Library"); // "Library" | "Upload"
   const [tplExtracted, setTplExtracted] = useState([]);
+  const [tplViewPdf, setTplViewPdf] = useState(null); // url string
   const [tplSearch, setTplSearch] = useState("");
 
   // Step 3: E-Signature Flow
@@ -3295,7 +3297,7 @@ export default function App() {
                               resetGen();
                               setPaperTab("Generate");
                               setGenTemplate(templates[0]);
-                              setGenPersonType("candidate");
+                              setGenRecipientType("candidate");
                               setGenVals({ name: c.name, role: c.role });
                               setGenSavedCandId(c.id);
                               setGenStep(2);
@@ -3480,82 +3482,111 @@ export default function App() {
 
               {/* ─ TEMPLATE MANAGER (SUPER ADMIN) ─ */}
               {showTplManage && (
-                <Modal title="Manage Templates" onClose={() => { setShowTplManage(false); setTplStep(1); setTplForm({ id:"", name:"", type:"Other", body:"", fileName:"" }); }} width={tplStep === 2 ? 650 : 500}>
+                <Modal title="Manage Templates" onClose={() => { setShowTplManage(false); setTplStep(1); setTplTab("Library"); setTplForm({ id:"", name:"", type:"Other", body:"", fileName:"" }); }} width={tplStep === 2 ? 650 : 500}>
                   {tplStep === 1 && (
                     <>
-                      <div style={{ marginBottom:20 }}>
-                        <h3 style={{ fontSize:15, fontWeight:700, margin:"0 0 4px", color:C.txt }}>Upload Template</h3>
-                        <p style={{ fontSize:12, color:C.sub, margin:0, lineHeight:1.45 }}>Upload a PDF or Word document to be used as a template. Our system will extract the text so you can map dynamic fields.</p>
+                      <div style={{ display:"flex", background:C.surf, borderRadius:12, padding:4, border:`1px solid ${C.bdr}`, marginBottom:20 }}>
+                        <button onClick={()=>setTplTab("Library")} style={{ flex:1, padding:"10px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: tplTab==="Library"?700:500, background: tplTab==="Library"?C.wht:"transparent", boxShadow: tplTab==="Library"?"0 2px 6px rgba(0,0,0,.05)":"none", color: tplTab==="Library"?C.txt:C.sub, transition:"all .2s" }}>Template Library</button>
+                        <button onClick={()=>setTplTab("Upload")}  style={{ flex:1, padding:"10px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: tplTab==="Upload"?700:500,  background: tplTab==="Upload"?C.wht:"transparent", boxShadow: tplTab==="Upload"?"0 2px 6px rgba(0,0,0,.05)":"none",  color: tplTab==="Upload"?C.txt:C.sub,  transition:"all .2s" }}>Upload New</button>
                       </div>
 
-                      <div style={{ marginBottom:14 }}>
-                        <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>TEMPLATE NAME</label>
-                        <input placeholder="e.g. Standard NDA 2026" value={tplForm.name} onChange={e=>setTplForm({...tplForm, name:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }} />
-                      </div>
-                      <div style={{ marginBottom:14 }}>
-                        <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>CATEGORY</label>
-                        <select value={tplForm.type} onChange={e=>setTplForm({...tplForm, type:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }}>
-                          {["Offer Letter", "Appointment Letter", "NDA", "Appraisal", "Other"].map(t => <option key={t}>{t}</option>)}
-                        </select>
-                      </div>
+                      {tplTab === "Upload" && (
+                        <div>
+                          <div style={{ marginBottom:20 }}>
+                            <h3 style={{ fontSize:15, fontWeight:700, margin:"0 0 4px", color:C.txt }}>Create New Template</h3>
+                            <p style={{ fontSize:12, color:C.sub, margin:0, lineHeight:1.45 }}>Upload a PDF or Word document to be used as a template. Our system will extract the text so you can map dynamic fields.</p>
+                          </div>
 
-                      <div style={{ marginBottom:20 }}>
-                         <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT FILE (.pdf, .docx, .txt)</label>
-                         <input 
-                           type="file" 
-                           id="tpl-upload-input" 
-                           accept=".pdf,.docx,.doc,.txt" 
-                           style={{ display:"none" }}
-                           onChange={(e) => {
-                             const file = e.target.files?.[0];
-                             if (!file) return;
-                             toast("Processing document: " + file.name + "...");
-                             
-                             if (file.name.endsWith(".txt")) {
-                               const reader = new FileReader();
-                               reader.onload = (ev) => {
-                                 setTplForm({...tplForm, fileName: file.name, body: ev.target.result});
-                                 setTimeout(() => setTplStep(2), 800);
-                               };
-                               reader.readAsText(file);
-                             } else {
-                               // For PDFs/Word docs in frontend prototype, use sample extraction
-                               setTplForm({...tplForm, fileName: file.name, body: "[[ ⚠ Prototype Demo Note: Real PDF extraction requires the backend OCR which is not yet connected to this frontend mock. ]]\n\nDear [Candidate Name],\n\nWe are pleased to offer you the position of [Job Title] at KinSphere.\nYour starting salary will be [Salary] per year, beginning on [Start Date].\n\nBest,\nThe HR Team"});
-                               setTimeout(() => setTplStep(2), 1500);
-                             }
-                           }}
-                         />
-                         <div onClick={() => {
-                           if (!tplForm.name) return toast("Please enter a template name first.");
-                           document.getElementById('tpl-upload-input')?.click();
-                         }} style={{ width:"100%", padding:24, borderRadius:12, border:`2px dashed ${C.bdr}`, background:C.surf, textAlign:"center", cursor:"pointer", transition:"all .2s" }}>
-                           {tplForm.fileName ? <span style={{ color:C.p, fontWeight:700, fontSize:13 }}>📄 {tplForm.fileName} uploaded</span> : <span style={{ color:C.sub, fontSize:12, fontWeight:500 }}>Drop file here or browse from your computer</span>}
-                         </div>
-                      </div>
+                          <div style={{ marginBottom:14 }}>
+                            <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>TEMPLATE NAME</label>
+                            <input placeholder="e.g. Standard NDA 2026" value={tplForm.name} onChange={e=>setTplForm({...tplForm, name:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }} />
+                          </div>
+                          <div style={{ marginBottom:14 }}>
+                            <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>CATEGORY</label>
+                            <select value={tplForm.type} onChange={e=>setTplForm({...tplForm, type:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }}>
+                              {["Offer Letter", "Appointment Letter", "NDA", "Appraisal", "Other"].map(t => <option key={t}>{t}</option>)}
+                            </select>
+                          </div>
 
-                      <div style={{ marginTop:24 }}>
-                        <div style={{ fontSize:12, fontWeight:700, color:C.txt, marginBottom:10 }}>Existing Templates</div>
-                        <div style={{ display:"flex", flexDirection:"column", gap:8, maxHeight:180, overflow:"auto" }}>
-                          {templates.map(t => (
-                            <div 
-                              key={t.id} 
-                              onClick={() => {
-                                setTplForm({ ...t, fileName: t.name + ".pdf" });
-                                setTplStep(2);
-                              }}
-                              style={{ padding:"10px 14px", border:`1px solid ${C.bdr}`, borderRadius:8, display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer", background:C.wht, transition:"all .2s" }}
-                              onMouseEnter={(e) => e.currentTarget.style.borderColor = C.p}
-                              onMouseLeave={(e) => e.currentTarget.style.borderColor = C.bdr}
-                            >
-                              <div>
-                                <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>{t.name}</div>
-                                <div style={{ fontSize:11, color:C.sub }}>{t.fields?.length || 0} dynamic fields</div>
-                              </div>
-                              <span style={{ fontSize:12, color:C.p, fontWeight:600 }}>Edit ✎</span>
-                            </div>
-                          ))}
+                          <div style={{ marginBottom:10 }}>
+                             <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT FILE (.pdf, .docx, .txt)</label>
+                             <input 
+                               type="file" 
+                               id="tpl-upload-input" 
+                               accept=".pdf,.docx,.doc,.txt" 
+                               style={{ display:"none" }}
+                               onChange={(e) => {
+                                 const file = e.target.files?.[0];
+                                 if (!file) return;
+                                 toast("Processing document: " + file.name + "...");
+                                 
+                                 const fileUrl = URL.createObjectURL(file);
+                                 if (file.name.endsWith(".txt")) {
+                                   const reader = new FileReader();
+                                   reader.onload = (ev) => {
+                                     setTplForm({...tplForm, fileName: file.name, body: ev.target.result, pdfUrl: fileUrl});
+                                     setTimeout(() => setTplStep(2), 800);
+                                   };
+                                   reader.readAsText(file);
+                                 } else {
+                                   // For PDFs/Word docs in frontend prototype, use sample extraction
+                                   setTplForm({...tplForm, fileName: file.name, body: "[[ ⚠ Prototype Demo Note: Real PDF extraction requires the backend OCR which is not yet connected to this frontend mock. ]]\n\nDear [Candidate Name],\n\nWe are pleased to offer you the position of [Job Title] at KinSphere.\nYour starting salary will be [Salary] per year, beginning on [Start Date].\n\nBest,\nThe HR Team", pdfUrl: fileUrl});
+                                   setTimeout(() => setTplStep(2), 1500);
+                                 }
+                               }}
+                             />
+                             <div onClick={() => {
+                               if (!tplForm.name) return toast("Please enter a template name first.");
+                               document.getElementById('tpl-upload-input')?.click();
+                             }} style={{ width:"100%", padding:24, borderRadius:12, border:`2px dashed ${C.bdr}`, background:C.surf, textAlign:"center", cursor:"pointer", transition:"all .2s" }}>
+                               {tplForm.fileName ? <span style={{ color:C.p, fontWeight:700, fontSize:13 }}>📄 {tplForm.fileName} uploaded</span> : <span style={{ color:C.sub, fontSize:12, fontWeight:500 }}>Drop file here or browse from your computer</span>}
+                             </div>
+                          </div>
                         </div>
-                      </div>
+                      )}
+
+                      {tplTab === "Library" && (
+                        <div>
+                          <div style={{ marginBottom:20 }}>
+                            <h3 style={{ fontSize:15, fontWeight:700, margin:"0 0 4px", color:C.txt }}>Template Library</h3>
+                            <p style={{ fontSize:12, color:C.sub, margin:0, lineHeight:1.45 }}>Click on any organization template below to review its contents or modify the dynamic generation fields.</p>
+                          </div>
+                          
+                          <div style={{ display:"flex", flexDirection:"column", gap:8, maxHeight:320, overflow:"auto", paddingBottom:10 }}>
+                            {templates.map(t => (
+                              <div 
+                                key={t.id} 
+                                onClick={() => {
+                                  setTplForm({ ...t, fileName: t.name + ".pdf" });
+                                  setTplStep(2);
+                                }}
+                                style={{ padding:"14px 18px", border:`1px solid ${C.bdr}`, borderRadius:10, display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer", background:C.wht, transition:"all .2s", boxShadow:"0 2px 6px rgba(0,0,0,.02)" }}
+                                onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.p; e.currentTarget.style.transform = "translateY(-1px)" }}
+                                onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.bdr; e.currentTarget.style.transform = "translateY(0)" }}
+                              >
+                                <div>
+                                  <div style={{ fontSize:14, fontWeight:700, color:C.txt, marginBottom:2 }}>{t.name}</div>
+                                  <div style={{ fontSize:11, color:C.sub, display:"flex", alignItems:"center", gap:6 }}>
+                                    <span style={{ background:C.surf, padding:"2px 6px", borderRadius:4, fontWeight:600 }}>{t.type}</span>
+                                    <span>•</span>
+                                    {t.fields?.length || 0} dynamic fields
+                                  </div>
+                                </div>
+                                <div style={{ display:"flex", gap:10 }}>
+                                  <span onClick={(e) => { e.stopPropagation(); setTplViewPdf(t.pdfUrl || "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"); }} style={{ fontSize:12, color:C.txt, fontWeight:700, background:`rgba(0,0,0,.05)`, padding:"6px 12px", borderRadius:6, transition:"all .15s" }} onMouseEnter={e=>e.currentTarget.style.background=`rgba(0,0,0,.09)`} onMouseLeave={e=>e.currentTarget.style.background=`rgba(0,0,0,.05)`}>👁 View PDF</span>
+                                  <span onClick={() => { setTplForm({ ...t, fileName: t.name + ".pdf" }); setTplStep(2); }} style={{ fontSize:12, color:C.p, fontWeight:700, background:`rgba(var(--p-rgb),.1)`, padding:"6px 12px", borderRadius:6, transition:"all .15s" }} onMouseEnter={e=>e.currentTarget.style.background=`rgba(var(--p-rgb),.15)`} onMouseLeave={e=>e.currentTarget.style.background=`rgba(var(--p-rgb),.1)`}>Edit ✎</span>
+                                  <span onClick={(e) => { e.stopPropagation(); setTemplates(prev => prev.filter(x => x.id !== t.id)); toast(`Template "${t.name}" deleted.`); }} style={{ fontSize:12, color:"#dc2626", fontWeight:700, background:`#fee2e2`, padding:"6px 12px", borderRadius:6, transition:"all .15s" }} onMouseEnter={e=>e.currentTarget.style.background=`#fecaca`} onMouseLeave={e=>e.currentTarget.style.background=`#fee2e2`}>🗑 Delete</span>
+                                </div>
+                              </div>
+                            ))}
+                            {templates.length === 0 && (
+                              <div style={{ padding:30, textAlign:"center", color:C.sub, fontSize:13, border:`1px dashed ${C.bdr}`, borderRadius:10 }}>
+                                No templates found in the library. Go to the Upload tab to add one!
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </>
                   )}
 
@@ -3593,7 +3624,7 @@ export default function App() {
                       </div>
 
                       <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
-                        <Btn variant="ghost" onClick={() => setTplStep(1)}>Cancel</Btn>
+                        <Btn variant="ghost" onClick={() => { setTplStep(1); setTplTab("Library"); }}>Cancel</Btn>
                         <Btn onClick={() => {
                           const rx = /\{\{([^}]+)\}\}/g;
                           const matches = Array.from(tplForm.body.matchAll(rx)).map(m => m[1]);
@@ -3636,17 +3667,28 @@ export default function App() {
                             name: tplForm.name,
                             type: tplForm.type,
                             fields: tplExtracted,
-                            body: tplForm.body
+                            body: tplForm.body,
+                            pdfUrl: tplForm.pdfUrl
                           };
                           setTemplates(prev => [newTpl, ...prev.filter(x => x.id !== newTpl.id)]);
                           setShowTplManage(false);
                           setTplStep(1);
+                          setTplTab("Library");
                           setTplForm({ id:"", name:"", type:"Other", body:"", fileName:"" });
                           toast(`Template "${newTpl.name}" created ✓`);
                         }}>Save Template</Btn>
                       </div>
                     </>
                   )}
+                </Modal>
+              )}
+
+              {/* ─ PDF NATIVE PREVIEW VIEWER ─ */}
+              {tplViewPdf && (
+                <Modal title="Original Document" onClose={() => setTplViewPdf(null)} width={800}>
+                  <div style={{ height:600, background:"#f0f0f0", borderRadius:10, overflow:"hidden", border:`1px solid ${C.bdr}` }}>
+                    <iframe src={tplViewPdf} style={{ width:"100%", height:"100%", border:"none" }} title="Original PDF"></iframe>
+                  </div>
                 </Modal>
               )}
             </div>
