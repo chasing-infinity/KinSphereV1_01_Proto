@@ -3520,7 +3520,7 @@ export default function App() {
                                reader.readAsText(file);
                              } else {
                                // For PDFs/Word docs in frontend prototype, use sample extraction
-                               setTplForm({...tplForm, fileName: file.name, body: "This is a document for {{candidateName}} who is offered the role of {{jobTitle}} with a salary of {{salary}} starting on {{startDate}}."});
+                               setTplForm({...tplForm, fileName: file.name, body: "[[ ⚠ Prototype Demo Note: Real PDF extraction requires the backend OCR which is not yet connected to this frontend mock. ]]\n\nDear [Candidate Name],\n\nWe are pleased to offer you the position of [Job Title] at KinSphere.\nYour starting salary will be [Salary] per year, beginning on [Start Date].\n\nBest,\nThe HR Team"});
                                setTimeout(() => setTplStep(2), 1500);
                              }
                            }}
@@ -3567,10 +3567,19 @@ export default function App() {
                       </div>
 
                       <div style={{ padding:14, borderRadius:8, background:"#f0fdf4", border:"1px solid #bbf7d0", marginBottom:16 }}>
-                        <div style={{ fontSize:11, fontWeight:700, color:"#166534", marginBottom:4 }}>💡 HOW TO ADD FIELDS</div>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+                          <div style={{ fontSize:11, fontWeight:700, color:"#166534" }}>💡 HOW TO ADD FIELDS</div>
+                          <Btn variant="outline" onClick={() => {
+                            let newBody = tplForm.body;
+                            // AI Simulation: Convert [Field] to {{field}} and detect currency
+                            newBody = newBody.replace(/\[([^\]]+)\]/g, (match, p1) => `{{${p1.replace(/\s+/g, '')}}}`);
+                            toast("✨ AI Detection Complete! Found potential dynamic fields.");
+                            setTplForm(f => ({...f, body: newBody}));
+                          }} style={{ padding:"4px 10px", fontSize:10, borderRadius:6, borderColor:"#166534", color:"#166534", background:"#dcfce7" }}>✨ Auto-Detect Fields (AI)</Btn>
+                        </div>
                         <div style={{ fontSize:11, color:"#15803d", lineHeight:1.5 }}>
-                          Replace static text in the document with double curly braces to create a dynamic field.<br/>
-                          Example: Replace "John Doe" with <strong style={{background:"rgba(255,255,255,.5)", padding:"1px 4px", borderRadius:4}}>{"{{candidateName}}"}</strong>. The system will prompt users to fill this out during generation!
+                          Replace static text with double curly braces (or square brackets if using Auto-Detect) to create a dynamic field.<br/>
+                          Example: Replace "John Doe" with <strong style={{background:"rgba(255,255,255,.5)", padding:"1px 4px", borderRadius:4}}>{"{{CandidateName}}"}</strong>.
                         </div>
                       </div>
 
@@ -3578,7 +3587,7 @@ export default function App() {
                         <textarea 
                           value={tplForm.body}
                           onChange={e => setTplForm(f => ({...f, body: e.target.value}))}
-                          style={{ width:"100%", height:200, padding:14, borderRadius:10, border:`1px solid ${C.bdr}`, fontFamily:"monospace", fontSize:13, lineHeight:1.6, resize:"vertical", boxSizing:"border-box" }}
+                          style={{ width:"100%", height:240, padding:14, borderRadius:10, border:`1px solid ${C.bdr}`, fontFamily:"monospace", fontSize:13, lineHeight:1.6, resize:"vertical", boxSizing:"border-box", background:C.surf }}
                           placeholder={"Type or paste your template text here...\n\nHello {{candidateName}},\nWelcome to the team!"}
                         />
                       </div>
