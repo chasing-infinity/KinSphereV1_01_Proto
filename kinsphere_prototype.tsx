@@ -1069,7 +1069,87 @@ const PayslipSheet = ({ logoUrl, companyTagline, emp, payslip, breakdown, approv
   );
 };
 
+const LoginScreen = ({ onLogin, logoUrl, tagline }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [focusInput, setFocusInput] = useState(null);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (!email || !password) return;
+    setLoading(true);
+    setTimeout(() => {
+      onLogin("Employee");
+    }, 1500);
+  };
+
+  const handleRoleLogin = (role) => {
+    setLoading(true);
+    setTimeout(() => {
+      onLogin(role);
+    }, 1200);
+  };
+
+  return (
+    <div style={{ display:"flex", minHeight:"100vh", width:"100vw", background:C.wht, fontFamily:"'Inter',system-ui,sans-serif" }}>
+      <style>{`
+        @media (max-width: 768px) { .login-left { display: none !important; } }
+      `}</style>
+      
+      {/* Left side */}
+      <div className="login-left" style={{ flex:1, display:"flex", background:`linear-gradient(135deg, ${C.mid} 0%, ${C.surf} 100%)`, flexDirection:"column", justifyContent:"center", alignItems:"flex-start", padding:60, borderRight:`1px solid ${C.bdr}` }}>
+        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:24 }}>
+          {logoUrl ? <img src={logoUrl} alt="Logo" style={{ height:40, width:"auto", objectFit:"contain" }} /> : <div style={{ width:40, height:40, borderRadius:8, background:C.p, display:"flex", alignItems:"center", justifyContent:"center", color:C.wht, fontSize:20, fontWeight:700, fontFamily:"Georgia,serif" }}>K</div>}
+          <div style={{ fontSize:24, fontWeight:700, fontFamily:"Georgia,serif", color:C.txt }}>KinSphere</div>
+        </div>
+        <h1 style={{ fontSize:"clamp(34px, 4vw, 48px)", fontWeight:700, color:C.txt, margin:0, fontFamily:"Georgia,serif", lineHeight:1.1, letterSpacing:"-0.02em" }}>
+          {tagline || "People-first. Always."}
+        </h1>
+        <p style={{ marginTop:20, fontSize:16, color:C.sub, maxWidth:400, lineHeight:1.6 }}>
+          Experience seamless HR management, fast performance, and a unified workspace for your entire team.
+        </p>
+      </div>
+      
+      {/* Right side */}
+      <div style={{ flex:1, display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", padding:40, width:"100%" }}>
+        <div style={{ width:"100%", maxWidth:360 }}>
+          <h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Welcome back</h2>
+          <p style={{ fontSize:14, color:C.sub, margin:"0 0 32px" }}>Enter your details to access your workspace.</p>
+          
+          <form onSubmit={handleLogin} style={{ display:"flex", flexDirection:"column", gap:16, marginBottom:24 }}>
+            <div>
+              <label style={{ display:"block", fontSize:12, fontWeight:700, color:C.sub, marginBottom:6, textTransform:"uppercase", letterSpacing:0.5 }}>Work Email</label>
+              <input type="email" value={email} onChange={e=>setEmail(e.target.value)} onFocus={()=>setFocusInput('email')} onBlur={()=>setFocusInput(null)} placeholder="name@company.com" style={{ width:"100%", boxSizing:"border-box", padding:"12px 14px", borderRadius:10, border:`1px solid ${focusInput==='email'?C.p:C.bdr}`, outline:"none", fontSize:14, background:focusInput==='email'?C.wht:C.bg, boxShadow:focusInput==='email'?`0 0 0 3px rgba(var(--p-rgb),.15)`:"", transition:"all 0.2s" }} />
+            </div>
+            <div>
+              <label style={{ display:"block", fontSize:12, fontWeight:700, color:C.sub, marginBottom:6, textTransform:"uppercase", letterSpacing:0.5 }}>Password</label>
+              <input type="password" value={password} onChange={e=>setPassword(e.target.value)} onFocus={()=>setFocusInput('pass')} onBlur={()=>setFocusInput(null)} placeholder="••••••••" style={{ width:"100%", boxSizing:"border-box", padding:"12px 14px", borderRadius:10, border:`1px solid ${focusInput==='pass'?C.p:C.bdr}`, outline:"none", fontSize:14, background:focusInput==='pass'?C.wht:C.bg, boxShadow:focusInput==='pass'?`0 0 0 3px rgba(var(--p-rgb),.15)`:"", transition:"all 0.2s" }} />
+            </div>
+            <button type="submit" disabled={loading} style={{ marginTop:8, width:"100%", padding:"14px", borderRadius:10, background:loading?C.sub:C.p, color:"#fff", border:"none", fontSize:15, fontWeight:700, cursor:loading?"wait":"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
+              {loading ? "Authenticating..." : "Login"}
+            </button>
+          </form>
+
+          <div style={{ display:"flex", alignItems:"center", gap:12, margin:"24px 0" }}>
+            <div style={{ flex:1, height:1, background:C.bdr }} />
+            <span style={{ fontSize:11, fontWeight:700, color:C.sub, textTransform:"uppercase", letterSpacing:0.5 }}>Demo As</span>
+            <div style={{ flex:1, height:1, background:C.bdr }} />
+          </div>
+
+          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            <button type="button" onClick={()=>handleRoleLogin("Super Admin")} disabled={loading} style={{ padding:12, borderRadius:10, background:C.bg, border:`1px solid ${C.bdr}`, color:C.txt, fontSize:13, fontWeight:600, cursor:loading?"wait":"pointer", transition:"all 0.15s" }} onMouseEnter={e=>e.currentTarget.style.background=C.wht} onMouseLeave={e=>e.currentTarget.style.background=C.bg}>Login as Super Admin</button>
+            <button type="button" onClick={()=>handleRoleLogin("Admin")}       disabled={loading} style={{ padding:12, borderRadius:10, background:C.bg, border:`1px solid ${C.bdr}`, color:C.txt, fontSize:13, fontWeight:600, cursor:loading?"wait":"pointer", transition:"all 0.15s" }} onMouseEnter={e=>e.currentTarget.style.background=C.wht} onMouseLeave={e=>e.currentTarget.style.background=C.bg}>Login as Admin</button>
+            <button type="button" onClick={()=>handleRoleLogin("Employee")}    disabled={loading} style={{ padding:12, borderRadius:10, background:C.bg, border:`1px solid ${C.bdr}`, color:C.txt, fontSize:13, fontWeight:600, cursor:loading?"wait":"pointer", transition:"all 0.15s" }} onMouseEnter={e=>e.currentTarget.style.background=C.wht} onMouseLeave={e=>e.currentTarget.style.background=C.bg}>Login as Employee</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [page,       setPage]     = useState("Dashboard");
   const [role,       setRole]     = useState("Super Admin");
   const isSA  = role === "Super Admin";
@@ -1464,6 +1544,10 @@ export default function App() {
 
   const mobileHeaderTop = "calc(52px + env(safe-area-inset-top, 0px))";
 
+  if (!isLoggedIn) {
+    return <LoginScreen onLogin={(r) => { setRole(r); setIsLoggedIn(true); setPage("Dashboard"); }} logoUrl={companyLogoUrl} tagline={companyTagline} />;
+  }
+
   return (
     <div style={{
       display:"flex",
@@ -1680,7 +1764,7 @@ export default function App() {
             </div>
             <button
               type="button"
-              onClick={() => toast("Logged out ✓")}
+              onClick={() => { setIsLoggedIn(false); setRole("Employee"); setPage("Dashboard"); toast("Logged out ✓"); }}
               title="Log out"
               style={{
                 flexShrink:0,
