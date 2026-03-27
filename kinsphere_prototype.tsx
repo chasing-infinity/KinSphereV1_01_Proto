@@ -3179,7 +3179,7 @@ export default function App() {
 
                   <div style={{ display:"flex", gap:10, alignItems:"center" }}>
                     {isSA && (
-                      <Btn variant="outline" onClick={() => setShowTemplateManager(true)} style={{ padding:"8px 16px", borderRadius:10, fontSize:12 }}>
+                      <Btn variant="outline" onClick={() => setShowTplManage(true)} style={{ padding:"8px 16px", borderRadius:10, fontSize:12 }}>
                         ⚙ Manage Templates
                       </Btn>
                     )}
@@ -3500,14 +3500,36 @@ export default function App() {
                       </div>
 
                       <div style={{ marginBottom:20 }}>
-                         <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT FILE (.pdf, .docx)</label>
+                         <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT FILE (.pdf, .docx, .txt)</label>
+                         <input 
+                           type="file" 
+                           id="tpl-upload-input" 
+                           accept=".pdf,.docx,.doc,.txt" 
+                           style={{ display:"none" }}
+                           onChange={(e) => {
+                             const file = e.target.files?.[0];
+                             if (!file) return;
+                             toast("Processing document: " + file.name + "...");
+                             
+                             if (file.name.endsWith(".txt")) {
+                               const reader = new FileReader();
+                               reader.onload = (ev) => {
+                                 setTplForm({...tplForm, fileName: file.name, body: ev.target.result});
+                                 setTimeout(() => setTplStep(2), 800);
+                               };
+                               reader.readAsText(file);
+                             } else {
+                               // For PDFs/Word docs in frontend prototype, use sample extraction
+                               setTplForm({...tplForm, fileName: file.name, body: "This is a document for {{candidateName}} who is offered the role of {{jobTitle}} with a salary of {{salary}} starting on {{startDate}}."});
+                               setTimeout(() => setTplStep(2), 1500);
+                             }
+                           }}
+                         />
                          <div onClick={() => {
                            if (!tplForm.name) return toast("Please enter a template name first.");
-                           toast("Simulating document upload and text extraction...");
-                           setTplForm({...tplForm, fileName:"template_draft.pdf", body: "This is a document for {{candidateName}} who is offered the role of {{jobTitle}} with a salary of {{salary}} starting on {{startDate}}."});
-                           setTimeout(() => setTplStep(2), 1500);
+                           document.getElementById('tpl-upload-input')?.click();
                          }} style={{ width:"100%", padding:24, borderRadius:12, border:`2px dashed ${C.bdr}`, background:C.surf, textAlign:"center", cursor:"pointer", transition:"all .2s" }}>
-                           {tplForm.fileName ? <span style={{ color:C.p, fontWeight:700, fontSize:13 }}>📄 {tplForm.fileName} uploaded</span> : <span style={{ color:C.sub, fontSize:12, fontWeight:500 }}>Drop file here or click to browse</span>}
+                           {tplForm.fileName ? <span style={{ color:C.p, fontWeight:700, fontSize:13 }}>📄 {tplForm.fileName} uploaded</span> : <span style={{ color:C.sub, fontSize:12, fontWeight:500 }}>Drop file here or browse from your computer</span>}
                          </div>
                       </div>
 
@@ -3515,11 +3537,21 @@ export default function App() {
                         <div style={{ fontSize:12, fontWeight:700, color:C.txt, marginBottom:10 }}>Existing Templates</div>
                         <div style={{ display:"flex", flexDirection:"column", gap:8, maxHeight:180, overflow:"auto" }}>
                           {templates.map(t => (
-                            <div key={t.id} style={{ padding:"10px 14px", border:`1px solid ${C.bdr}`, borderRadius:8, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                            <div 
+                              key={t.id} 
+                              onClick={() => {
+                                setTplForm({ ...t, fileName: t.name + ".pdf" });
+                                setTplStep(2);
+                              }}
+                              style={{ padding:"10px 14px", border:`1px solid ${C.bdr}`, borderRadius:8, display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer", background:C.wht, transition:"all .2s" }}
+                              onMouseEnter={(e) => e.currentTarget.style.borderColor = C.p}
+                              onMouseLeave={(e) => e.currentTarget.style.borderColor = C.bdr}
+                            >
                               <div>
                                 <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>{t.name}</div>
-                                <div style={{ fontSize:11, color:C.sub }}>{t.fields.length} dynamic fields</div>
+                                <div style={{ fontSize:11, color:C.sub }}>{t.fields?.length || 0} dynamic fields</div>
                               </div>
+                              <span style={{ fontSize:12, color:C.p, fontWeight:600 }}>Edit ✎</span>
                             </div>
                           ))}
                         </div>
@@ -3591,13 +3623,13 @@ export default function App() {
                         <Btn variant="ghost" onClick={() => setTplStep(2)}>← Back to Map Fields</Btn>
                         <Btn onClick={() => {
                           const newTpl = {
-                            id: `tpl-${Date.now()}`,
+                            id: tplForm.id || `tpl-${Date.now()}`,
                             name: tplForm.name,
                             type: tplForm.type,
                             fields: tplExtracted,
                             body: tplForm.body
                           };
-                          setTemplates([newTpl, ...templates]);
+                          setTemplates(prev => [newTpl, ...prev.filter(x => x.id !== newTpl.id)]);
                           setShowTplManage(false);
                           setTplStep(1);
                           setTplForm({ id:"", name:"", type:"Other", body:"", fileName:"" });
