@@ -1330,7 +1330,9 @@ export default function App() {
   // Step 4+: Dynamic Templates
   const [templates, setTemplates] = useState(PAPER_TEMPLATES);
   const [showTplManage, setShowTplManage] = useState(false);
-  const [tplForm, setTplForm] = useState({ id:"", name:"", type:"Other", body:"" });
+  const [tplForm, setTplForm] = useState({ id:"", name:"", type:"Other", body:"", fileName:"" });
+  const [tplStep, setTplStep] = useState(1); // 1 = Upload, 2 = Edit Text, 3 = Confirm
+  const [tplExtracted, setTplExtracted] = useState([]);
   const [tplSearch, setTplSearch] = useState("");
 
   // Step 3: E-Signature Flow
@@ -3473,6 +3475,137 @@ export default function App() {
                       toast("Document uploaded ✓");
                     }}>Upload</Btn>
                   </div>
+                </Modal>
+              )}
+
+              {/* ─ TEMPLATE MANAGER (SUPER ADMIN) ─ */}
+              {showTplManage && (
+                <Modal title="Manage Templates" onClose={() => { setShowTplManage(false); setTplStep(1); setTplForm({ id:"", name:"", type:"Other", body:"", fileName:"" }); }} width={tplStep === 2 ? 650 : 500}>
+                  {tplStep === 1 && (
+                    <>
+                      <div style={{ marginBottom:20 }}>
+                        <h3 style={{ fontSize:15, fontWeight:700, margin:"0 0 4px", color:C.txt }}>Upload Template</h3>
+                        <p style={{ fontSize:12, color:C.sub, margin:0, lineHeight:1.45 }}>Upload a PDF or Word document to be used as a template. Our system will extract the text so you can map dynamic fields.</p>
+                      </div>
+
+                      <div style={{ marginBottom:14 }}>
+                        <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>TEMPLATE NAME</label>
+                        <input placeholder="e.g. Standard NDA 2026" value={tplForm.name} onChange={e=>setTplForm({...tplForm, name:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }} />
+                      </div>
+                      <div style={{ marginBottom:14 }}>
+                        <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>CATEGORY</label>
+                        <select value={tplForm.type} onChange={e=>setTplForm({...tplForm, type:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }}>
+                          {["Offer Letter", "Appointment Letter", "NDA", "Appraisal", "Other"].map(t => <option key={t}>{t}</option>)}
+                        </select>
+                      </div>
+
+                      <div style={{ marginBottom:20 }}>
+                         <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT FILE (.pdf, .docx)</label>
+                         <div onClick={() => {
+                           if (!tplForm.name) return toast("Please enter a template name first.");
+                           toast("Simulating document upload and text extraction...");
+                           setTplForm({...tplForm, fileName:"template_draft.pdf", body: "This is a document for {{candidateName}} who is offered the role of {{jobTitle}} with a salary of {{salary}} starting on {{startDate}}."});
+                           setTimeout(() => setTplStep(2), 1500);
+                         }} style={{ width:"100%", padding:24, borderRadius:12, border:`2px dashed ${C.bdr}`, background:C.surf, textAlign:"center", cursor:"pointer", transition:"all .2s" }}>
+                           {tplForm.fileName ? <span style={{ color:C.p, fontWeight:700, fontSize:13 }}>📄 {tplForm.fileName} uploaded</span> : <span style={{ color:C.sub, fontSize:12, fontWeight:500 }}>Drop file here or click to browse</span>}
+                         </div>
+                      </div>
+
+                      <div style={{ marginTop:24 }}>
+                        <div style={{ fontSize:12, fontWeight:700, color:C.txt, marginBottom:10 }}>Existing Templates</div>
+                        <div style={{ display:"flex", flexDirection:"column", gap:8, maxHeight:180, overflow:"auto" }}>
+                          {templates.map(t => (
+                            <div key={t.id} style={{ padding:"10px 14px", border:`1px solid ${C.bdr}`, borderRadius:8, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                              <div>
+                                <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>{t.name}</div>
+                                <div style={{ fontSize:11, color:C.sub }}>{t.fields.length} dynamic fields</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {tplStep === 2 && (
+                    <>
+                      <div style={{ marginBottom:16 }}>
+                        <h3 style={{ fontSize:15, fontWeight:700, margin:"0 0 6px", color:C.txt }}>Map Dynamic Fields</h3>
+                        <p style={{ fontSize:12, color:C.sub, margin:0, lineHeight:1.45 }}>Text extracted successfully from <strong style={{color:C.txt}}>{tplForm.fileName}</strong>.</p>
+                      </div>
+
+                      <div style={{ padding:14, borderRadius:8, background:"#f0fdf4", border:"1px solid #bbf7d0", marginBottom:16 }}>
+                        <div style={{ fontSize:11, fontWeight:700, color:"#166534", marginBottom:4 }}>💡 HOW TO ADD FIELDS</div>
+                        <div style={{ fontSize:11, color:"#15803d", lineHeight:1.5 }}>
+                          Replace static text in the document with double curly braces to create a dynamic field.<br/>
+                          Example: Replace "John Doe" with <strong style={{background:"rgba(255,255,255,.5)", padding:"1px 4px", borderRadius:4}}>{"{{candidateName}}"}</strong>. The system will prompt users to fill this out during generation!
+                        </div>
+                      </div>
+
+                      <div style={{ marginBottom:20 }}>
+                        <textarea 
+                          value={tplForm.body}
+                          onChange={e => setTplForm(f => ({...f, body: e.target.value}))}
+                          style={{ width:"100%", height:200, padding:14, borderRadius:10, border:`1px solid ${C.bdr}`, fontFamily:"monospace", fontSize:13, lineHeight:1.6, resize:"vertical", boxSizing:"border-box" }}
+                          placeholder={"Type or paste your template text here...\n\nHello {{candidateName}},\nWelcome to the team!"}
+                        />
+                      </div>
+
+                      <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
+                        <Btn variant="ghost" onClick={() => setTplStep(1)}>Cancel</Btn>
+                        <Btn onClick={() => {
+                          const rx = /\{\{([^}]+)\}\}/g;
+                          const matches = Array.from(tplForm.body.matchAll(rx)).map(m => m[1]);
+                          const uniqueFields = [...new Set(matches)];
+                          setTplExtracted(uniqueFields);
+                          setTplStep(3);
+                        }}>Next: Confirm Criteria →</Btn>
+                      </div>
+                    </>
+                  )}
+
+                  {tplStep === 3 && (
+                    <>
+                      <div style={{ marginBottom:20 }}>
+                        <h3 style={{ fontSize:15, fontWeight:700, margin:"0 0 6px", color:C.txt }}>Confirm Generation Criteria</h3>
+                        <p style={{ fontSize:12, color:C.sub, margin:0, lineHeight:1.45 }}>We found <strong style={{color:C.txt}}>{tplExtracted.length}</strong> fields in your template. These will be required when a user generates this document.</p>
+                      </div>
+
+                      {tplExtracted.length > 0 ? (
+                        <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:24 }}>
+                          {tplExtracted.map(f => (
+                            <div key={f} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", border:`1px solid ${C.bdr}`, borderRadius:8, background:C.surf }}>
+                              <span style={{ fontSize:14, color:C.p }}>{"{{"}</span>
+                              <span style={{ fontSize:13, fontWeight:700, color:C.txt, flex:1 }}>{f}</span>
+                              <span style={{ fontSize:14, color:C.p }}>{"}}"}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ padding:20, borderRadius:8, background:C.surf, border:`1px solid ${C.bdr}`, color:C.sub, fontSize:12, marginBottom:24, textAlign:"center" }}>
+                          No dynamic fields `{"{{field_name}}"}` found. This template will generate exactly as written.
+                        </div>
+                      )}
+
+                      <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
+                        <Btn variant="ghost" onClick={() => setTplStep(2)}>← Back to Map Fields</Btn>
+                        <Btn onClick={() => {
+                          const newTpl = {
+                            id: `tpl-${Date.now()}`,
+                            name: tplForm.name,
+                            type: tplForm.type,
+                            fields: tplExtracted,
+                            body: tplForm.body
+                          };
+                          setTemplates([newTpl, ...templates]);
+                          setShowTplManage(false);
+                          setTplStep(1);
+                          setTplForm({ id:"", name:"", type:"Other", body:"", fileName:"" });
+                          toast(`Template "${newTpl.name}" created ✓`);
+                        }}>Save Template</Btn>
+                      </div>
+                    </>
+                  )}
                 </Modal>
               )}
             </div>
