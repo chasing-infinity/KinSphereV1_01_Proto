@@ -147,6 +147,59 @@ const INIT_HOLIDAYS = [
   { id:3, n:"Diwali",           d:"01 Nov 2026", dISO:"2026-11-01", desc:"Festival of Lights." },
 ];
 
+/** Static starter templates for Paperwork Hub (Step 1 — no dynamic fields yet). */
+const PAPER_TEMPLATES = [
+  {
+    id: "tpl-offer",
+    name: "Offer Letter",
+    type: "Offer Letter",
+    body: `Dear [Candidate Name],
+
+We are pleased to offer you the position of [Designation] at Bipolar Factory, reporting to [Manager Name].
+
+Start Date: [Date of Joining]
+Compensation: [Annual CTC]
+
+This offer is subject to the successful completion of background verification and signing of our standard confidentiality agreement.
+
+Kindly sign and return this letter by [Acceptance Deadline] to confirm your acceptance.
+
+Warm regards,
+Arjun Mehta
+Co-founder & CEO, Bipolar Factory`,
+  },
+  {
+    id: "tpl-appointment",
+    name: "Appointment Letter",
+    type: "Appointment Letter",
+    body: `Dear [Employee Name],
+
+With reference to the discussions held, we are pleased to formally appoint you as [Designation] effective [Date of Joining].
+
+Your employment will be governed by the terms and conditions of employment as communicated during your onboarding.
+
+Your annual CTC is [Annual CTC] as per the compensation structure agreed upon.
+
+Please report to [Manager Name] on your joining date. This letter serves as your official appointment confirmation.
+
+We look forward to your contributions to the team.
+
+Sincerely,
+Arjun Mehta
+Co-founder & CEO, Bipolar Factory`,
+  },
+];
+
+/** Demo documents pre-seeded in Paperwork Hub. */
+const INIT_PAPERS = [
+  { id: "doc-1", name: "Offer Letter",       empId: 3, type: "Offer Letter",       date: "15 Jun 2023", fileName: "offer-priya.pdf"  },
+  { id: "doc-2", name: "NDA",                empId: 3, type: "Other",              date: "15 Jun 2023", fileName: "nda-priya.pdf"    },
+  { id: "doc-3", name: "Appointment Letter", empId: 4, type: "Appointment Letter", date: "29 Mar 2025", fileName: "appt-ridwan.pdf" },
+  { id: "doc-4", name: "Offer Letter",       empId: 5, type: "Offer Letter",       date: "10 Oct 2022", fileName: "offer-sahil.pdf"  },
+  { id: "doc-5", name: "Contract",           empId: 5, type: "Other",              date: "10 Oct 2022", fileName: "contract-sahil.pdf"},
+  { id: "doc-6", name: "Offer Letter",       empId: 1, type: "Offer Letter",       date: "01 Jan 2022", fileName: "offer-arjun.pdf"  },
+];
+
 const PAY_SELECT_ARROW = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a6e52' d='M2.5 4L6 7.5 9.5 4'/%3E%3C/svg%3E\")";
 
 const parseInr = (s) => (s && typeof s === "string") ? Number(s.replace(/[₹,]/g, "")) : 0;
@@ -439,6 +492,7 @@ function parseEmployeesFromCSV(text, existing) {
 
 const ICONS = {
   Dashboard: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>,
+  "Paperwork Hub": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>,
   Employees: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   "Time Away": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="16" r="2"/></svg>,
   Paydays: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
@@ -458,6 +512,7 @@ const NAV = [
   { key:"Employees" },
   { key:"Time Away" },
   { key:"Paydays" },
+  { key:"Paperwork Hub" },
   { key:"Recognition" },
   { key:"Org Chart" },
   { key:"Listening Room" },
@@ -1239,6 +1294,15 @@ export default function App() {
   const [showAssignDevice, setShowAssignDevice] = useState(false);
   const [showUploadDoc, setShowUploadDoc] = useState(false);
   const [showOffboard, setShowOffboard] = useState(false);
+
+  // ─── Paperwork Hub ───────────────────────────────────────────────────────
+  const [papers, setPapers] = useState(INIT_PAPERS);
+  const [paperModal, setPaperModal] = useState(false);          // upload modal open
+  const [paperTemplatePreview, setPaperTemplatePreview] = useState(null); // template obj | null
+  const [adminDocAccessGranted, setAdminDocAccessGranted] = useState(false); // SA can grant Admins wider access
+  const [paperForm, setPaperForm] = useState({ name:"", empId:"", type:"Offer Letter", fileName:"" });
+  const [paperFilter, setPaperFilter] = useState("All");
+  // ─────────────────────────────────────────────────────────────────────────
 
   const handleProcessPayments = () => {
     setIsProcessingPayment(true);
@@ -2966,6 +3030,292 @@ export default function App() {
             )}
           </div>
         )}
+
+        {/* ─ PAPERWORK HUB ─ */}
+        {page==="Paperwork Hub" && (() => {
+          // Determine what this viewer can see
+          const canUploadPaper  = isSA || role === "Admin";
+          const canSeeAllPapers = isSA || (role === "Admin" && adminDocAccessGranted);
+          const meEmp = employees.find(e => e.id === ME_ID);
+
+          const visiblePapers = canSeeAllPapers
+            ? papers
+            : papers.filter(d => d.empId === ME_ID);
+
+          const filteredPapers = paperFilter === "All"
+            ? visiblePapers
+            : visiblePapers.filter(d => d.type === paperFilter);
+
+          const DOC_TYPES = ["Offer Letter", "Appointment Letter", "Payslip", "NDA", "Other"];
+
+          return (
+            <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
+              {/* ── Hero ── */}
+              <div style={{
+                position:"relative",
+                margin:`0 ${-pad}px 28px`,
+                padding: heroPadStd,
+                background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
+                borderBottom:`1px solid ${C.bdr}`,
+                overflow:"hidden",
+              }}>
+                <div style={{ position:"absolute", right:-40, top:-30, width:220, height:220, borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`, pointerEvents:"none" }} />
+                <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, flexWrap:"wrap" }}>
+                  <div>
+                    <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>📄 Documents</div>
+                    <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em" }}>Paperwork Hub</h1>
+                    <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55 }}>A central place to store, view, and manage all documents.</p>
+                  </div>
+                  <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center" }}>
+                    {isSA && (
+                      <div
+                        title={adminDocAccessGranted ? "Admins have full access — click to revoke" : "Admins currently see only their own docs — click to grant full access"}
+                        onClick={() => { setAdminDocAccessGranted(v => !v); toast(adminDocAccessGranted ? "Admin access revoked ✓" : "Full access granted to Admins ✓"); }}
+                        style={{
+                          display:"flex", alignItems:"center", gap:8, padding:"8px 14px",
+                          borderRadius:10, border:`1px solid ${adminDocAccessGranted ? C.p : C.bdr}`,
+                          background: adminDocAccessGranted ? `rgba(var(--p-rgb),.1)` : C.wht,
+                          cursor:"pointer", fontSize:11, fontWeight:600, color: adminDocAccessGranted ? C.p2 : C.sub,
+                          transition:"all .15s",
+                        }}
+                      >
+                        <span style={{ fontSize:13 }}>{adminDocAccessGranted ? "🔓" : "🔒"}</span>
+                        Admin access: <strong style={{ color: adminDocAccessGranted ? C.p : C.txt }}>{adminDocAccessGranted ? "Full" : "Own docs only"}</strong>
+                      </div>
+                    )}
+                    {canUploadPaper && (
+                      <button
+                        onClick={() => { setPaperForm({ name:"", empId: isSA ? "" : String(ME_ID), type:"Offer Letter", fileName:"" }); setPaperModal(true); }}
+                        style={{ padding:"10px 20px", borderRadius:10, border:"none", background:C.p, color:"#2a3326", fontSize:12, fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", gap:7, boxShadow:"0 2px 8px rgba(var(--p-rgb),.3)" }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Upload Document
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Access notice for Admin ── */}
+              {role === "Admin" && !isSA && (
+                <div style={{ marginBottom:20, padding:"12px 16px", borderRadius:12, background: adminDocAccessGranted ? `rgba(var(--p-rgb),.07)` : `rgba(var(--shadow-rgb),.04)`, border:`1px solid ${adminDocAccessGranted ? C.p : C.bdr}`, fontSize:12, color: adminDocAccessGranted ? C.p2 : C.sub, display:"flex", alignItems:"center", gap:8 }}>
+                  <span>{adminDocAccessGranted ? "🔓" : "🔒"}</span>
+                  {adminDocAccessGranted ? "You have been granted full document access by a Super Admin." : "You can see only your own documents. A Super Admin can grant you wider access."}
+                </div>
+              )}
+
+              {/* ── Templates ── */}
+              <div style={{ marginBottom:28 }}>
+                <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:12 }}>STARTER TEMPLATES</div>
+                <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "1fr 1fr", gap:14 }}>
+                  {PAPER_TEMPLATES.map(tpl => (
+                    <div key={tpl.id} style={{ background:C.wht, borderRadius:14, border:`1px solid ${C.bdr}`, padding:"16px 20px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:12, boxShadow:"0 2px 10px rgba(var(--shadow-rgb),.05)" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                        <div style={{ width:38, height:38, borderRadius:10, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.p} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div>
+                          <div style={{ fontWeight:700, fontSize:13, color:C.txt }}>{tpl.name}</div>
+                          <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>Static template · Step 1</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setPaperTemplatePreview(tpl)}
+                        style={{ padding:"7px 16px", borderRadius:8, border:`1px solid ${C.bdr}`, background:C.surf, color:C.txt, fontSize:11, fontWeight:600, cursor:"pointer" }}
+                      >Preview</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Document Table ── */}
+              <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06)" }}>
+                {/* Table header row with filter */}
+                <div style={{ padding:"16px 20px", borderBottom:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:10 }}>
+                  <div>
+                    <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:2 }}>DOCUMENTS</div>
+                    <div style={{ fontSize:11, color:C.sub }}>{filteredPapers.length} document{filteredPapers.length !== 1 ? "s" : ""}</div>
+                  </div>
+                  <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
+                    {["All", "Offer Letter", "Appointment Letter", "Payslip", "NDA", "Other"].map(f => (
+                      <button key={f} onClick={() => setPaperFilter(f)} style={{ padding:"5px 12px", borderRadius:20, border:`1px solid ${paperFilter === f ? C.p : C.bdr}`, background: paperFilter === f ? `rgba(var(--p-rgb),.12)` : "transparent", color: paperFilter === f ? C.p : C.sub, fontSize:11, fontWeight: paperFilter === f ? 700 : 400, cursor:"pointer", transition:"all .12s" }}>{f}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {filteredPapers.length === 0 ? (
+                  <div style={{ padding:"48px 24px", textAlign:"center" }}>
+                    <div style={{ fontSize:32, marginBottom:10, opacity:.5 }}>📄</div>
+                    <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>No documents yet</div>
+                    <div style={{ fontSize:12, color:C.sub, marginTop:5 }}>{canUploadPaper ? "Click \"Upload Document\" to add the first one." : "Documents shared with you will appear here."}</div>
+                  </div>
+                ) : (
+                  <div style={{ overflowX:"auto" }}>
+                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:13 }}>
+                      <thead>
+                        <tr style={{ background:C.surf }}>
+                          {["Document Name", "Person", "Type", "Date Created", ""].map(h => (
+                            <th key={h} style={{ padding:"11px 16px", textAlign:"left", color:C.sub, fontWeight:700, fontSize:10, letterSpacing:.5, borderBottom:`1px solid ${C.bdr}`, whiteSpace:"nowrap" }}>{h.toUpperCase()}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredPapers.map((doc, i) => {
+                          const docEmp = employees.find(e => e.id === doc.empId);
+                          return (
+                            <tr key={doc.id} style={{ borderBottom:`1px solid ${C.surf}`, transition:"background .1s" }}
+                              onMouseEnter={e => e.currentTarget.style.background = C.bg}
+                              onMouseLeave={e => e.currentTarget.style.background = ""}
+                            >
+                              <td style={{ padding:"13px 16px" }}>
+                                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                                  <div style={{ width:32, height:32, borderRadius:8, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.p} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                  </div>
+                                  <div>
+                                    <div style={{ fontWeight:600, color:C.txt }}>{doc.name}</div>
+                                    <div style={{ fontSize:11, color:C.sub, marginTop:1 }}>{doc.fileName}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style={{ padding:"13px 16px" }}>
+                                {docEmp ? (
+                                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                                    <Av ini={docEmp.ini} sz={26} bg={docEmp.avatarC} />
+                                    <span style={{ fontSize:12, color:C.txt, fontWeight:500 }}>{docEmp.name}</span>
+                                  </div>
+                                ) : <span style={{ color:C.sub }}>—</span>}
+                              </td>
+                              <td style={{ padding:"13px 16px" }}>
+                                <span style={{ padding:"3px 10px", borderRadius:20, background:C.surf, border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, color:C.sub }}>{doc.type}</span>
+                              </td>
+                              <td style={{ padding:"13px 16px", color:C.sub, fontSize:12, whiteSpace:"nowrap" }}>{doc.date}</td>
+                              <td style={{ padding:"13px 16px" }}>
+                                {canUploadPaper && (
+                                  <button
+                                    onClick={() => { setPapers(prev => prev.filter(d => d.id !== doc.id)); toast("Document removed ✓"); }}
+                                    style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:7, cursor:"pointer", color:C.sub, fontSize:11, padding:"4px 10px", fontWeight:600 }}
+                                  >Remove</button>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Upload Modal ── */}
+              {paperModal && (
+                <Modal title="Upload Document" onClose={() => setPaperModal(false)} width={440}>
+                  <div style={{ marginBottom:14 }}>
+                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT NAME</label>
+                    <input
+                      placeholder="e.g. Offer Letter — Priya"
+                      value={paperForm.name}
+                      onChange={e => setPaperForm(f => ({ ...f, name: e.target.value }))}
+                      style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }}
+                    />
+                  </div>
+
+                  {(isSA) && (
+                    <div style={{ marginBottom:14 }}>
+                      <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>LINK TO PERSON</label>
+                      <select
+                        value={paperForm.empId}
+                        onChange={e => setPaperForm(f => ({ ...f, empId: e.target.value }))}
+                        style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }}
+                      >
+                        <option value="">Select employee…</option>
+                        {employees.map(e => <option key={e.id} value={String(e.id)}>{e.name}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  {role === "Admin" && !isSA && (
+                    <div style={{ marginBottom:14 }}>
+                      <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>LINK TO PERSON</label>
+                      <select
+                        value={paperForm.empId}
+                        onChange={e => setPaperForm(f => ({ ...f, empId: e.target.value }))}
+                        style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }}
+                      >
+                        <option value={String(ME_ID)}>{meEmp?.name ?? "Me"}</option>
+                        {adminDocAccessGranted && employees.filter(e => e.id !== ME_ID).map(e => <option key={e.id} value={String(e.id)}>{e.name}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  <div style={{ marginBottom:14 }}>
+                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT TYPE</label>
+                    <select
+                      value={paperForm.type}
+                      onChange={e => setPaperForm(f => ({ ...f, type: e.target.value }))}
+                      style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }}
+                    >
+                      {DOC_TYPES.map(t => <option key={t}>{t}</option>)}
+                    </select>
+                  </div>
+
+                  <div style={{ marginBottom:20 }}>
+                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>FILE</label>
+                    <div
+                      onClick={() => {
+                        const fakeName = paperForm.name ? paperForm.name.toLowerCase().replace(/\s+/g,"-") + ".pdf" : "document.pdf";
+                        setPaperForm(f => ({ ...f, fileName: fakeName }));
+                        toast("File selected (simulated) ✓");
+                      }}
+                      style={{ width:"100%", padding:"22px", borderRadius:10, border:`2px dashed ${paperForm.fileName ? C.p : C.bdr}`, background: paperForm.fileName ? `rgba(var(--p-rgb),.05)` : C.surf, textAlign:"center", cursor:"pointer", boxSizing:"border-box", transition:"all .15s" }}
+                    >
+                      {paperForm.fileName ? (
+                        <div style={{ fontSize:12, color:C.p, fontWeight:600 }}>📎 {paperForm.fileName}</div>
+                      ) : (
+                        <div style={{ fontSize:12, color:C.sub }}>Click to select a file <span style={{ opacity:.6 }}>(simulated)</span></div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div style={{ display:"flex", gap:9, justifyContent:"flex-end" }}>
+                    <Btn variant="ghost" onClick={() => setPaperModal(false)}>Cancel</Btn>
+                    <Btn onClick={() => {
+                      if (!paperForm.name.trim()) return toast("Enter a document name.");
+                      if (!paperForm.empId) return toast("Select a person to link this document to.");
+                      if (!paperForm.fileName) return toast("Select a file first.");
+                      const now = new Date();
+                      const dateStr = `${now.getDate()} ${MONTHS_SHORT[now.getMonth()]} ${now.getFullYear()}`;
+                      const newDoc = {
+                        id: `doc-${Date.now()}`,
+                        name: paperForm.name.trim(),
+                        empId: Number(paperForm.empId),
+                        type: paperForm.type,
+                        date: dateStr,
+                        fileName: paperForm.fileName,
+                      };
+                      setPapers(prev => [newDoc, ...prev]);
+                      setPaperModal(false);
+                      toast("Document uploaded ✓");
+                    }}>Upload →</Btn>
+                  </div>
+                </Modal>
+              )}
+
+              {/* ── Template Preview Modal ── */}
+              {paperTemplatePreview && (
+                <Modal title={paperTemplatePreview.name} onClose={() => setPaperTemplatePreview(null)} width={560}>
+                  <div style={{ marginBottom:14, padding:"4px 10px", borderRadius:6, background:C.surf, display:"inline-block" }}>
+                    <span style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>STATIC TEMPLATE · STEP 1 — Dynamic fields coming in Step 2</span>
+                  </div>
+                  <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia,serif", fontSize:13, lineHeight:1.7, color:C.txt, margin:0, padding:"20px 22px", background:C.bg, borderRadius:12, border:`1px solid ${C.bdr}` }}>{paperTemplatePreview.body}</pre>
+                  <div style={{ display:"flex", justifyContent:"flex-end", marginTop:18 }}>
+                    <Btn variant="ghost" onClick={() => setPaperTemplatePreview(null)}>Close</Btn>
+                  </div>
+                </Modal>
+              )}
+            </div>
+          );
+        })()}
 
         {/* ─ RECOGNITION ─ */}
         {page==="Recognition" && (
