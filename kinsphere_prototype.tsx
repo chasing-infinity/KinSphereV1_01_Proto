@@ -1697,6 +1697,15 @@ export default function App() {
   const [selectedLeaveEmpId, setSelectedLeaveEmpId] = useState<number|null>(null);
   // { [empId]: { [leaveType]: totalDays } } — overrides per-employee entitlement
   const [empLeaveOverrides, setEmpLeaveOverrides] = useState<Record<number,Record<string,number>>>({});
+  // Draft for pending edits in the detail pane (before Save is clicked)
+  const [leaveDetailDraft, setLeaveDetailDraft] = useState<Record<string,number>>({});
+  const [leaveDetailHasChanges, setLeaveDetailHasChanges] = useState(false);
+  // Month/year filter for leave history in the detail pane (null = all)
+  const [leaveDetailHistoryMonth, setLeaveDetailHistoryMonth] = useState<number|null>(null);
+  const [leaveDetailHistoryYear, setLeaveDetailHistoryYear] = useState<number>(new Date().getFullYear());
+  // Year/month context for the leave balance summary table (null month = full year)
+  const [leaveBalYear, setLeaveBalYear] = useState<number>(new Date().getFullYear());
+  const [leaveBalMonth, setLeaveBalMonth] = useState<number|null>(null);
   const [policyDraft, setPolicyDraft] = useState(null);
 
   /** Compute used days per leave type for a given empId */
@@ -4789,12 +4798,42 @@ export default function App() {
 
       {showLeaveBal && (() => {
         const detailEmp = selectedLeaveEmpId !== null ? employees.find(e => e.id === selectedLeaveEmpId) : null;
-        const empHistory = detailEmp ? leaves.filter(l => l.empId === detailEmp.id) : [];
+        // Build filtered history based on month/year selectors
+        const allEmpHistory = detailEmp ? leaves.filter(l => l.empId === detailEmp.id) : [];
+        const empHistory = allEmpHistory.filter(l => {
+          if (!l.fromISO) return true;
+          const d = new Date(l.fromISO);
+          const yearOk = d.getFullYear() === leaveDetailHistoryYear;
+          const monthOk = leaveDetailHistoryMonth === null || d.getMonth() === leaveDetailHistoryMonth;
+          return yearOk && monthOk;
+        });
+        // Available years in history (for picker)
+        const historyYears = [...new Set(allEmpHistory.map(l => l.fromISO ? new Date(l.fromISO).getFullYear() : null).filter(Boolean))].sort((a,b)=>b-a);
+        if (historyYears.length === 0) historyYears.push(new Date().getFullYear());
+
+        // For balance summary: filter by leaveBalYear context for "used" calculation
+        const usedLeaveInYear = (empId, type, year, month) => {
+          return leaves
+            .filter(l => {
+              if (l.empId !== empId || l.type !== type || l.status === "rejected") return false;
+              if (!l.fromISO) return false;
+              const d = new Date(l.fromISO);
+              const yearOk = d.getFullYear() === year;
+              const monthOk = month === null || d.getMonth() === month;
+              return yearOk && monthOk;
+            })
+            .reduce((sum, l) => {
+              if (!l.fromISO || !l.toISO) return sum;
+              const days = Math.max(1, Math.round((new Date(l.toISO).getTime() - new Date(l.fromISO).getTime()) / 864e5) + 1);
+              return sum + (l.halfDay ? 0.5 : days);
+            }, 0);
+        };
+
         return (
           <Modal
             title={detailEmp ? `${detailEmp.name} — Leave Detail` : "Team Leave Balances"}
             onClose={() => { setShowLeaveBal(false); setSelectedLeaveEmpId(null); }}
-            width={820}
+            width={860}
           >
             {/* ── DETAIL VIEW ── */}
             {detailEmp ? (
@@ -4810,7 +4849,7 @@ export default function App() {
                 {/* Employee card */}
                 <div style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", background:C.surf, borderRadius:12, border:`1px solid ${C.bdr}`, marginBottom:22 }}>
                   <Av ini={detailEmp.ini} sz={44} bg={detailEmp.avatarC} />
-                  <div>
+                  <div style={{ flex:1 }}>
                     <div style={{ fontWeight:700, fontSize:16, color:C.txt }}>{detailEmp.name}</div>
                     <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{detailEmp.designation} · {detailEmp.dept}</div>
                   </div>
@@ -4818,7 +4857,30 @@ export default function App() {
 
                 {/* ── Entitlement overrides ── */}
                 <div style={{ marginBottom:24 }}>
-                  <div style={{ fontSize:11, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:12 }}>LEAVE ENTITLEMENTS (override per-employee)</div>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:10, marginBottom:12 }}>
+                    <div style={{ fontSize:11, fontWeight:700, color:C.p, letterSpacing:1 }}>LEAVE ENTITLEMENTS (override per-employee)</div>
+                    <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                      <Btn
+                        variant="outline"
+                        style={{ padding:"5px 14px", fontSize:11 }}
+                        onClick={() => {
+                          // Reset all overrides for this employee to policy defaults
+                          setEmpLeaveOverrides(prev => {
+                            const next = { ...prev };
+                            delete next[detailEmp.id];
+                            return next;
+                          });
+                          toast("Reset to policy defaults ✓");
+                        }}
+                      >↩ Reset all</Btn>
+                      <Btn
+                        style={{ padding:"5px 16px", fontSize:11 }}
+                        onClick={() => {
+                          toast(`Leave entitlements saved for ${detailEmp.name} ✓`);
+                        }}
+                      >💾 Save changes</Btn>
+                    </div>
+                  </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px, 1fr))", gap:12 }}>
                     {Object.entries(leavePolicy).map(([type, pol]) => {
                       const override = empLeaveOverrides[detailEmp.id]?.[type];
@@ -4826,7 +4888,7 @@ export default function App() {
                       const used = usedLeave(detailEmp.id, type);
                       const rem = effectiveTotal - used;
                       return (
-                        <div key={type} style={{ background:C.wht, border:`1px solid ${C.bdr}`, borderRadius:12, padding:"14px 16px" }}>
+                        <div key={type} style={{ background:C.wht, border:`1px solid ${C.bdr}`, borderRadius:12, padding:"14px 16px", transition:"box-shadow .15s" }}>
                           <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:8 }}>{type.toUpperCase()}</div>
                           <div style={{ fontSize:12, color:C.txt, marginBottom:6 }}>
                             <span style={{ fontWeight:700, color: rem < 0 ? "#dc2626" : (rem < 2 ? "#b45309" : C.p) }}>{rem}</span>
@@ -4837,7 +4899,7 @@ export default function App() {
                             <input
                               type="number"
                               min={0}
-                              value={override !== undefined ? override : (pol.total as number)}
+                              value={effectiveTotal}
                               onChange={ev => {
                                 const v = Number(ev.target.value);
                                 setEmpLeaveOverrides(prev => ({
@@ -4859,7 +4921,7 @@ export default function App() {
                               }}
                               style={{ fontSize:9, color:C.sub, background:"none", border:"none", cursor:"pointer", marginTop:4, padding:0 }}
                             >
-                              ↩ Reset to policy default ({pol.total as number}d)
+                              ↩ Reset to default ({pol.total as number}d)
                             </button>
                           )}
                         </div>
@@ -4870,9 +4932,38 @@ export default function App() {
 
                 {/* ── Leave history ── */}
                 <div>
-                  <div style={{ fontSize:11, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:12 }}>LEAVE HISTORY</div>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:10, marginBottom:12 }}>
+                    <div style={{ fontSize:11, fontWeight:700, color:C.p, letterSpacing:1 }}>LEAVE HISTORY</div>
+                    {/* Month/Year pickers */}
+                    <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+                      <select
+                        value={leaveDetailHistoryYear}
+                        onChange={ev => setLeaveDetailHistoryYear(Number(ev.target.value))}
+                        style={{ ...payFilterSelectStyle, padding:"6px 32px 6px 10px", fontSize:11, minWidth:80 }}
+                      >
+                        {historyYears.map(y => <option key={y} value={y}>{y}</option>)}
+                        {!historyYears.includes(new Date().getFullYear()) && <option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>}
+                      </select>
+                      <select
+                        value={leaveDetailHistoryMonth === null ? "" : leaveDetailHistoryMonth}
+                        onChange={ev => setLeaveDetailHistoryMonth(ev.target.value === "" ? null : Number(ev.target.value))}
+                        style={{ ...payFilterSelectStyle, padding:"6px 32px 6px 10px", fontSize:11, minWidth:100 }}
+                      >
+                        <option value="">All months</option>
+                        {MONTHS_SHORT.map((m, i) => <option key={i} value={i}>{m}</option>)}
+                      </select>
+                      {(leaveDetailHistoryMonth !== null) && (
+                        <button
+                          onClick={() => setLeaveDetailHistoryMonth(null)}
+                          style={{ fontSize:10, color:C.sub, background:"none", border:`1px solid ${C.bdr}`, borderRadius:6, padding:"5px 8px", cursor:"pointer" }}
+                        >Clear</button>
+                      )}
+                    </div>
+                  </div>
                   {empHistory.length === 0 ? (
-                    <div style={{ textAlign:"center", padding:"28px 12px", background:C.bg, borderRadius:12, border:`1px dashed ${C.bdr}`, fontSize:12, color:C.sub }}>No leave requests yet.</div>
+                    <div style={{ textAlign:"center", padding:"28px 12px", background:C.bg, borderRadius:12, border:`1px dashed ${C.bdr}`, fontSize:12, color:C.sub }}>
+                      No leave records for {leaveDetailHistoryMonth !== null ? `${MONTHS_SHORT[leaveDetailHistoryMonth]} ` : ""}{leaveDetailHistoryYear}.
+                    </div>
                   ) : (
                     <div style={{ borderRadius:12, border:`1px solid ${C.bdr}`, overflow:"hidden" }}>
                       <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
@@ -4904,7 +4995,37 @@ export default function App() {
             ) : (
               /* ── SUMMARY TABLE ── */
               <div>
-                <div style={{ fontSize:12, color:C.sub, marginBottom:16 }}>Click an employee to view their leave history and edit entitlements.</div>
+                {/* Year / Month context row */}
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:12, marginBottom:16 }}>
+                  <div style={{ fontSize:12, color:C.sub }}>Click an employee to view their leave history and edit entitlements.</div>
+                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                    <span style={{ fontSize:11, fontWeight:600, color:C.sub }}>Viewing:</span>
+                    <select
+                      value={leaveBalYear}
+                      onChange={ev => setLeaveBalYear(Number(ev.target.value))}
+                      style={{ ...payFilterSelectStyle, padding:"6px 32px 6px 10px", fontSize:11, minWidth:80 }}
+                    >
+                      {[2024, 2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
+                    </select>
+                    <select
+                      value={leaveBalMonth === null ? "" : leaveBalMonth}
+                      onChange={ev => setLeaveBalMonth(ev.target.value === "" ? null : Number(ev.target.value))}
+                      style={{ ...payFilterSelectStyle, padding:"6px 32px 6px 10px", fontSize:11, minWidth:110 }}
+                    >
+                      <option value="">Full year</option>
+                      {MONTHS_SHORT.map((m,i) => <option key={i} value={i}>{m}</option>)}
+                    </select>
+                    {leaveBalMonth !== null && (
+                      <button
+                        onClick={() => setLeaveBalMonth(null)}
+                        style={{ fontSize:10, color:C.sub, background:"none", border:`1px solid ${C.bdr}`, borderRadius:6, padding:"5px 8px", cursor:"pointer" }}
+                      >Clear</button>
+                    )}
+                  </div>
+                </div>
+                <div style={{ fontSize:10, color:C.bdr, marginBottom:10, fontStyle:"italic" }}>
+                  Showing used days for {leaveBalMonth !== null ? `${MONTHS_SHORT[leaveBalMonth]} ` : ""}{leaveBalYear}{leaveBalMonth === null ? " (full year)" : ""}
+                </div>
                 <div style={{ overflowX:"auto", borderRadius:12, border:`1px solid ${C.bdr}` }}>
                   <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
                     <thead>
@@ -4937,19 +5058,33 @@ export default function App() {
                           {Object.entries(leavePolicy).map(([type, pol]) => {
                             const override = empLeaveOverrides[e.id]?.[type];
                             const effectiveTotal = override !== undefined ? override : (pol.total as number);
-                            const used = usedLeave(e.id, type);
+                            const used = usedLeaveInYear(e.id, type, leaveBalYear, leaveBalMonth);
                             const rem = effectiveTotal - used;
                             return (
                               <td key={type} style={{ padding:"11px 12px" }}>
-                                <div style={{ fontWeight:700, fontSize:12, color: rem < 0 ? "#dc2626" : (rem < 2 ? "#b45309" : C.p) }}>
-                                  {rem} <span style={{ fontWeight:400, color:C.bdr }}>/ {effectiveTotal}</span>
+                                <div style={{ fontWeight:700, fontSize:12, color: used > 0 ? (rem < 0 ? "#dc2626" : (rem < 2 ? "#b45309" : C.p)) : C.bdr }}>
+                                  {used > 0 ? (<>{rem} <span style={{ fontWeight:400, color:C.bdr }}>/ {effectiveTotal}</span></>) : (
+                                    <span style={{ color:C.bdr, fontWeight:400 }}>0 used</span>
+                                  )}
                                 </div>
                                 <div style={{ fontSize:9, color:C.bdr }}>Used: {used}d{override !== undefined ? " · custom" : ""}</div>
                               </td>
                             );
                           })}
                           <td style={{ padding:"11px 12px" }}>
-                            <span style={{ fontSize:10, color:C.sub }}>{leaves.filter(l => l.empId === e.id).length} request{leaves.filter(l => l.empId === e.id).length !== 1 ? "s" : ""}</span>
+                            <span style={{ fontSize:10, color:C.sub }}>
+                              {leaves.filter(l => {
+                                if (l.empId !== e.id || !l.fromISO) return false;
+                                const d = new Date(l.fromISO);
+                                const yOk = d.getFullYear() === leaveBalYear;
+                                const mOk = leaveBalMonth === null || d.getMonth() === leaveBalMonth;
+                                return yOk && mOk;
+                              }).length} request{leaves.filter(l => {
+                                if (l.empId !== e.id || !l.fromISO) return false;
+                                const d = new Date(l.fromISO);
+                                return d.getFullYear() === leaveBalYear && (leaveBalMonth === null || d.getMonth() === leaveBalMonth);
+                              }).length !== 1 ? "s" : ""}
+                            </span>
                           </td>
                         </tr>
                       ))}
