@@ -1694,6 +1694,10 @@ export default function App() {
     "Casual Leave":  { total: 6,  accrual: "annual" },
   });
   const [showLeavePolicy, setShowLeavePolicy] = useState(false);
+  const [showLeaveBal,    setShowLeaveBal]    = useState(false);
+  const [selectedLeaveEmpId, setSelectedLeaveEmpId] = useState<number|null>(null);
+  // { [empId]: { [leaveType]: totalDays } } — overrides per-employee entitlement
+  const [empLeaveOverrides, setEmpLeaveOverrides] = useState<Record<number,Record<string,number>>>({});
   const [policyDraft, setPolicyDraft] = useState(null);
 
   /** Compute used days per leave type for a given empId */
@@ -2885,7 +2889,10 @@ export default function App() {
                 </div>
                 <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                   {isSA && (
-                    <Btn variant="outline" onClick={()=>{ setPolicyDraft(JSON.parse(JSON.stringify(leavePolicy))); setShowLeavePolicy(true); }} style={{ padding:"10px 18px", color:C.sub, borderColor:C.bdr }}>Leave Policy</Btn>
+                    <div style={{ display:"flex", gap:10 }}>
+                      <Btn variant="outline" onClick={()=>{ setPolicyDraft(JSON.parse(JSON.stringify(leavePolicy))); setShowLeavePolicy(true); }} style={{ padding:"10px 18px", color:C.sub, borderColor:C.bdr }}>Leave Policy</Btn>
+                      <Btn variant="outline" onClick={()=>setShowLeaveBal(true)} style={{ padding:"10px 18px", color:C.sub, borderColor:C.bdr }}>Leave balance</Btn>
+                    </div>
                   )}
                   <Btn variant="outline" onClick={()=>setShowHolidays(true)} style={{ padding:"10px 18px", color:C.p, borderColor:C.p }}>
                     {isSA ? "+ Add/View Holidays" : "View Holidays"}
@@ -4768,7 +4775,183 @@ export default function App() {
         )}
       </main>
 
-      {/* ─ SALARY CONFIG (SA) ─ */}
+      {showLeaveBal && (() => {
+        const detailEmp = selectedLeaveEmpId !== null ? employees.find(e => e.id === selectedLeaveEmpId) : null;
+        const empHistory = detailEmp ? leaves.filter(l => l.empId === detailEmp.id) : [];
+        return (
+          <Modal
+            title={detailEmp ? `${detailEmp.name} — Leave Detail` : "Team Leave Balances"}
+            onClose={() => { setShowLeaveBal(false); setSelectedLeaveEmpId(null); }}
+            width={820}
+          >
+            {/* ── DETAIL VIEW ── */}
+            {detailEmp ? (
+              <div>
+                {/* Back */}
+                <button
+                  onClick={() => setSelectedLeaveEmpId(null)}
+                  style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 14px", fontSize:12, fontWeight:600, color:C.sub, cursor:"pointer", marginBottom:20 }}
+                >
+                  ← Back to all employees
+                </button>
+
+                {/* Employee card */}
+                <div style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", background:C.surf, borderRadius:12, border:`1px solid ${C.bdr}`, marginBottom:22 }}>
+                  <Av ini={detailEmp.ini} sz={44} bg={detailEmp.avatarC} />
+                  <div>
+                    <div style={{ fontWeight:700, fontSize:16, color:C.txt }}>{detailEmp.name}</div>
+                    <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{detailEmp.designation} · {detailEmp.dept}</div>
+                  </div>
+                </div>
+
+                {/* ── Entitlement overrides ── */}
+                <div style={{ marginBottom:24 }}>
+                  <div style={{ fontSize:11, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:12 }}>LEAVE ENTITLEMENTS (override per-employee)</div>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px, 1fr))", gap:12 }}>
+                    {Object.entries(leavePolicy).map(([type, pol]) => {
+                      const override = empLeaveOverrides[detailEmp.id]?.[type];
+                      const effectiveTotal = override !== undefined ? override : (pol.total as number);
+                      const used = usedLeave(detailEmp.id, type);
+                      const rem = effectiveTotal - used;
+                      return (
+                        <div key={type} style={{ background:C.wht, border:`1px solid ${C.bdr}`, borderRadius:12, padding:"14px 16px" }}>
+                          <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:8 }}>{type.toUpperCase()}</div>
+                          <div style={{ fontSize:12, color:C.txt, marginBottom:6 }}>
+                            <span style={{ fontWeight:700, color: rem < 0 ? "#dc2626" : (rem < 2 ? "#b45309" : C.p) }}>{rem}</span>
+                            <span style={{ color:C.bdr }}> / {effectiveTotal} remaining</span>
+                          </div>
+                          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                            <label style={{ fontSize:10, color:C.sub, flexShrink:0 }}>Total:</label>
+                            <input
+                              type="number"
+                              min={0}
+                              value={override !== undefined ? override : (pol.total as number)}
+                              onChange={ev => {
+                                const v = Number(ev.target.value);
+                                setEmpLeaveOverrides(prev => ({
+                                  ...prev,
+                                  [detailEmp.id]: { ...(prev[detailEmp.id] || {}), [type]: v }
+                                }));
+                              }}
+                              style={{ width:"100%", padding:"5px 8px", borderRadius:7, border:`1px solid ${C.bdr}`, fontSize:12, color:C.txt, background:C.bg, outline:"none" }}
+                            />
+                          </div>
+                          {override !== undefined && override !== (pol.total as number) && (
+                            <button
+                              onClick={() => {
+                                setEmpLeaveOverrides(prev => {
+                                  const next = { ...prev, [detailEmp.id]: { ...(prev[detailEmp.id] || {}) } };
+                                  delete next[detailEmp.id][type];
+                                  return next;
+                                });
+                              }}
+                              style={{ fontSize:9, color:C.sub, background:"none", border:"none", cursor:"pointer", marginTop:4, padding:0 }}
+                            >
+                              ↩ Reset to policy default ({pol.total as number}d)
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* ── Leave history ── */}
+                <div>
+                  <div style={{ fontSize:11, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:12 }}>LEAVE HISTORY</div>
+                  {empHistory.length === 0 ? (
+                    <div style={{ textAlign:"center", padding:"28px 12px", background:C.bg, borderRadius:12, border:`1px dashed ${C.bdr}`, fontSize:12, color:C.sub }}>No leave requests yet.</div>
+                  ) : (
+                    <div style={{ borderRadius:12, border:`1px solid ${C.bdr}`, overflow:"hidden" }}>
+                      <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
+                        <thead>
+                          <tr style={{ background:C.surf }}>
+                            {["Type","From","To","Days","Reason","Approver","Status"].map(h => (
+                              <th key={h} style={{ padding:"9px 12px", textAlign:"left", fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, borderBottom:`1px solid ${C.bdr}` }}>{h.toUpperCase()}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {empHistory.sort((a,b) => b.fromISO?.localeCompare(a.fromISO||"")||0).map(l => (
+                            <tr key={l.id} style={{ borderBottom:`1px solid ${C.surf}` }}>
+                              <td style={{ padding:"10px 12px", fontWeight:600 }}>{l.type}</td>
+                              <td style={{ padding:"10px 12px", color:C.sub }}>{l.from}</td>
+                              <td style={{ padding:"10px 12px", color:C.sub }}>{l.to}</td>
+                              <td style={{ padding:"10px 12px", fontWeight:600 }}>{l.days}</td>
+                              <td style={{ padding:"10px 12px", color:C.sub, maxWidth:120, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{l.reason}</td>
+                              <td style={{ padding:"10px 12px" }}><Pill txt={l.approver} bg={C.surf} c={C.sub} /></td>
+                              <td style={{ padding:"10px 12px" }}><Badge s={l.status} /></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* ── SUMMARY TABLE ── */
+              <div>
+                <div style={{ fontSize:12, color:C.sub, marginBottom:16 }}>Click an employee to view their leave history and edit entitlements.</div>
+                <div style={{ overflowX:"auto", borderRadius:12, border:`1px solid ${C.bdr}` }}>
+                  <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
+                    <thead>
+                      <tr style={{ background:C.surf }}>
+                        <th style={{ padding:"10px 12px", textAlign:"left", borderBottom:`1px solid ${C.bdr}`, fontWeight:700, color:C.sub, letterSpacing:.5, fontSize:10 }}>EMPLOYEE</th>
+                        {Object.keys(leavePolicy).map(t => (
+                          <th key={t} style={{ padding:"10px 12px", textAlign:"left", borderBottom:`1px solid ${C.bdr}`, fontWeight:700, color:C.sub, letterSpacing:.5, fontSize:10 }}>{t.toUpperCase()}</th>
+                        ))}
+                        <th style={{ padding:"10px 12px", textAlign:"left", borderBottom:`1px solid ${C.bdr}`, fontWeight:700, color:C.sub, letterSpacing:.5, fontSize:10 }}>HISTORY</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {employees.map(e => (
+                        <tr
+                          key={e.id}
+                          style={{ borderBottom:`1px solid ${C.surf}`, cursor:"pointer", transition:"background .12s" }}
+                          onClick={() => setSelectedLeaveEmpId(e.id)}
+                          onMouseEnter={ev => ev.currentTarget.style.background = C.bg}
+                          onMouseLeave={ev => ev.currentTarget.style.background = "transparent"}
+                        >
+                          <td style={{ padding:"11px 12px" }}>
+                            <div style={{ display:"flex", alignItems:"center", gap:9 }}>
+                              <Av ini={e.ini} sz={26} bg={e.avatarC} />
+                              <div>
+                                <div style={{ fontWeight:600, color:C.p }}>{e.name} <span style={{ fontSize:10, color:C.bdr }}>↗</span></div>
+                                <div style={{ fontSize:10, color:C.sub }}>{e.designation || e.dept}</div>
+                              </div>
+                            </div>
+                          </td>
+                          {Object.entries(leavePolicy).map(([type, pol]) => {
+                            const override = empLeaveOverrides[e.id]?.[type];
+                            const effectiveTotal = override !== undefined ? override : (pol.total as number);
+                            const used = usedLeave(e.id, type);
+                            const rem = effectiveTotal - used;
+                            return (
+                              <td key={type} style={{ padding:"11px 12px" }}>
+                                <div style={{ fontWeight:700, fontSize:12, color: rem < 0 ? "#dc2626" : (rem < 2 ? "#b45309" : C.p) }}>
+                                  {rem} <span style={{ fontWeight:400, color:C.bdr }}>/ {effectiveTotal}</span>
+                                </div>
+                                <div style={{ fontSize:9, color:C.bdr }}>Used: {used}d{override !== undefined ? " · custom" : ""}</div>
+                              </td>
+                            );
+                          })}
+                          <td style={{ padding:"11px 12px" }}>
+                            <span style={{ fontSize:10, color:C.sub }}>{leaves.filter(l => l.empId === e.id).length} request{leaves.filter(l => l.empId === e.id).length !== 1 ? "s" : ""}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </Modal>
+        );
+      })()}
+
+
+      {/* ─ LEAVE CONFIG MODAL ─ */}
       {salaryModal && (
         <Modal onClose={()=>setSalaryModal(null)} width={540}>
           {(() => {
