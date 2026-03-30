@@ -564,11 +564,10 @@ function isWeeklyOff(d) {
   return d.getDay() === 0;
 }
 function leaveColor(status) {
-  /** Subtler yellow for pending with a slight transparency for "lighter visual" */
-  if (status === "pending") return "rgba(254, 240, 138, 0.5)";
-  /** Same fill as <Badge approved /> (`C.surf`). */
-  if (status === "approved") return C.surf;
-  return "#e5e7eb";
+  if (status === "pending") return "#fef9c3";
+  if (status === "approved") return "#dcfce7";
+  if (status === "rejected") return "#fee2e2";
+  return "#ffffff";
 }
 
 /** All leave rows active on a calendar day (inclusive range). */
@@ -577,14 +576,14 @@ function leavesOnDate(allLeaves, d) {
 }
 
 function saDayCellBg(isOff, dayLeaves) {
-  if (isOff) return "#e8e8e4";
+  if (isOff) return "#f3f4f6";
   if (!dayLeaves.length) return "#ffffff";
   const hasP = dayLeaves.some(l => l.status === "pending");
   const hasA = dayLeaves.some(l => l.status === "approved");
-  if (hasP && hasA) return "rgba(253, 230, 138, 0.7)";
-  if (hasP) return leaveColor("pending");
-  if (hasA) return leaveColor("approved");
-  return leaveColor("rejected");
+  if (hasP && hasA) return "#ffedd5"; // Mixed
+  if (hasP) return "#fef9c3";
+  if (hasA) return "#dcfce7";
+  return "#fee2e2"; // Rejected
 }
 
 const RECOGS = [
@@ -2910,12 +2909,12 @@ export default function App() {
                     </div>
                     <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
                       <span style={{ fontSize:11, fontWeight:600, color:C.sub }}>Legend:</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fef08a", border:`1px solid ${C.bdr}` }} /> Pending</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:C.surf, border:`1px solid ${C.bdr}` }} /> Approved</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e5e7eb", border:`1px solid ${C.bdr}` }} /> Rejected</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fde68a", border:`1px solid ${C.bdr}` }} /> Mixed</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"rgba(175,192,165,.45)", border:`1px solid ${C.bdr}` }} />🏖 Holiday</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e8e8e4" }} /> Sunday (off)</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fef9c3", border:`1px solid ${C.bdr}` }} /> Pending</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#dcfce7", border:`1px solid ${C.bdr}` }} /> Approved</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fee2e2", border:`1px solid ${C.bdr}` }} /> Rejected</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#ffedd5", border:`1px solid ${C.bdr}` }} /> Mixed</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e0e7ff", border:`1px solid ${C.bdr}` }} />🏖 Holiday</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#f3f4f6" }} /> Sunday (off)</span>
                     </div>
                   </div>
                 </div>
@@ -2950,7 +2949,7 @@ export default function App() {
                           const holidayObj = holidays.find(h => h.dISO === isoStr);
                           const dayLeaves = leavesOnDate(leaves, cellDate);
                           let bg = saDayCellBg(isOff, dayLeaves);
-                          if (isHoliday) bg = "rgba(175,192,165,.45)";
+                          if (isHoliday) bg = "#e0e7ff";
                           const tipLines = [
                             ...(isHoliday ? [`🏖 ${holidayObj?.n}${holidayObj?.desc ? ` — ${holidayObj.desc}` : ""}`] : []),
                             ...dayLeaves.map(l => `${l.emp} — ${l.type} (${l.status})`),
@@ -3065,9 +3064,12 @@ export default function App() {
                     </div>
                     <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                       <span style={{ fontSize:11, fontWeight:600, color:C.sub }}>Legend:</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fef08a", border:`1px solid ${C.bdr}` }} /> Pending</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:C.surf, border:`1px solid ${C.bdr}` }} /> Approved</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e8e8e4" }} /> Sunday (off)</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fef9c3", border:`1px solid ${C.bdr}` }} /> Pending</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#dcfce7", border:`1px solid ${C.bdr}` }} /> Approved</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fee2e2", border:`1px solid ${C.bdr}` }} /> Rejected</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#ffedd5", border:`1px solid ${C.bdr}` }} /> Mixed</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e0e7ff", border:`1px solid ${C.bdr}` }} />🏖 Holiday</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#f3f4f6" }} /> Sunday (off)</span>
                     </div>
                   </div>
                 </div>
