@@ -2914,6 +2914,7 @@ export default function App() {
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:C.surf, border:`1px solid ${C.bdr}` }} /> Approved</span>
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e5e7eb", border:`1px solid ${C.bdr}` }} /> Rejected</span>
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fde68a", border:`1px solid ${C.bdr}` }} /> Mixed</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"rgba(175,192,165,.45)", border:`1px solid ${C.bdr}` }} />🏖 Holiday</span>
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e8e8e4" }} /> Sunday (off)</span>
                     </div>
                   </div>
@@ -2943,23 +2944,32 @@ export default function App() {
                         for (let i = 0; i < first; i++) cells.push(<div key={`sa-e${i}`} />);
                         for (let day = 1; day <= dim; day++) {
                           const cellDate = new Date(y, m, day);
+                          const isoStr = `${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
                           const isOff = isWeeklyOff(cellDate);
+                          const isHoliday = !isOff && holidays.some(h => h.dISO === isoStr);
+                          const holidayObj = holidays.find(h => h.dISO === isoStr);
                           const dayLeaves = leavesOnDate(leaves, cellDate);
-                          const bg = saDayCellBg(isOff, dayLeaves);
-                          const tipLines = dayLeaves.map(l => `${l.emp} — ${l.type} (${l.status})`);
+                          let bg = saDayCellBg(isOff, dayLeaves);
+                          if (isHoliday) bg = "rgba(175,192,165,.45)";
+                          const tipLines = [
+                            ...(isHoliday ? [`🏖 ${holidayObj?.n}${holidayObj?.desc ? ` — ${holidayObj.desc}` : ""}`] : []),
+                            ...dayLeaves.map(l => `${l.emp} — ${l.type} (${l.status})`),
+                          ];
+                          const hasTooltip = tipLines.length > 0;
                           cells.push(
                             <div
                               key={`sa-${day}`}
+                              title={isHoliday && !dayLeaves.length ? `${holidayObj?.n}` : undefined}
                               style={{
                                 position:"relative",
-                                minHeight:52, borderRadius:8, border:`1px solid ${C.bdr}`,
+                                minHeight:52, borderRadius:8, border:`1px solid ${isHoliday ? C.p : C.bdr}`,
                                 background:bg, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
                                 fontSize:12, fontWeight:600, color:isOff ? C.bdr : C.txt,
-                                cursor: dayLeaves.length ? "pointer" : "default",
+                                cursor: hasTooltip ? "pointer" : "default",
                                 transition:"box-shadow .12s",
                               }}
                               onMouseEnter={e=>{
-                                if (!dayLeaves.length) return;
+                                if (!hasTooltip) return;
                                 setSaCalTooltip({
                                   left: e.clientX + 12,
                                   top: e.clientY + 12,
@@ -2968,7 +2978,7 @@ export default function App() {
                                 e.currentTarget.style.boxShadow=`0 0 0 2px ${C.p}`;
                               }}
                               onMouseMove={e=>{
-                                if (!dayLeaves.length) return;
+                                if (!hasTooltip) return;
                                 setSaCalTooltip({
                                   left: e.clientX + 12,
                                   top: e.clientY + 12,
