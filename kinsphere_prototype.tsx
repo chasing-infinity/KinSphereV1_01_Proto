@@ -1,47 +1,105 @@
 import { useState, useRef, useEffect } from "react";
 
-const CSS_THEME = `
-:root {
-  --p: #afc0a5;
-  --p-rgb: 175, 192, 165;
-  --p2: #8a9a80;
-  --acc: #afc0a5;
-  --bg: #fffef8;
-  --mid: #dce3c7;
-  --surf: #dbead2;
-  --bdr: #c1d0b5;
-  --dk: #3a4832;
-  --dk2: #2d3a28;
-  --dkAcc: #c1d0b5;
-  --txt: #2a3326;
-  --sub: #5a6e52;
-  --wht: #ffffff;
-  --shadow-rgb: 42, 51, 38;
-}
-.dark {
-  --p: #afc0a5;
-  --p-rgb: 175, 192, 165;
-  --p2: #8a9a80;
-  --acc: #afc0a5;
+const THEMES = {
+  Original: {
+    p: "#afc0a5",
+    p_rgb: "175, 192, 165",
+    p2: "#8a9a80",
+    bg: "#fffef8",
+    mid: "#dce3c7",
+    surf: "#dbead2",
+    bdr: "#c1d0b5",
+    dk: "#3a4832",
+    txt: "#2a3326",
+    sub: "#5a6e52",
+  },
+  Sombre: {
+    p: "#92ADA4",
+    p_rgb: "146, 173, 164",
+    p2: "#A1B5A8",
+    bg: "#f2f4f1",
+    mid: "#959E96",
+    surf: "#d0d9d6",
+    bdr: "#b4c2be",
+    dk: "#35403e",
+    txt: "#1d2624",
+    sub: "#495954",
+  },
+  "Classi-que": {
+    p: "#9B7D61",
+    p_rgb: "155, 125, 97",
+    p2: "#CBB093",
+    bg: "#f8f6f3",
+    mid: "#B9AF91",
+    surf: "#e4ded4",
+    bdr: "#d3c9ba",
+    dk: "#483a2d",
+    txt: "#2c231a",
+    sub: "#695646",
+  },
+  Peppy: {
+    p: "#DAA38F",
+    p_rgb: "218, 163, 143",
+    p2: "#E8C4A9",
+    bg: "#fcf8f6",
+    mid: "#DDBEA9",
+    surf: "#f2e1d7",
+    bdr: "#e7cec0",
+    dk: "#5d3d32",
+    txt: "#3b2620",
+    sub: "#8c6455",
+  }
+};
+
+const getThemeCss = (themeName: string, isDark: boolean) => {
+  const t = THEMES[themeName] || THEMES.Original;
+  if (isDark) {
+    return `:root {
+  --p: ${t.p};
+  --p-rgb: ${t.p_rgb};
+  --p2: ${t.p2};
+  --acc: ${t.p};
   --bg: #161814;
   --mid: #252922;
   --surf: #2b3028;
   --bdr: #3d4538;
   --dk: #0d100d;
   --dk2: #161814;
-  --dkAcc: #8a9a80;
+  --dkAcc: ${t.p2};
   --txt: #e8ece6;
   --sub: #a1afa0;
   --wht: #1d211b;
   --shadow-rgb: 0, 0, 0;
 }
-body { background: var(--bg); color: var(--txt); transition: background 0.3s, color 0.3s; margin:0; padding:0; }
-`;
-if (typeof document !== 'undefined') {
-  const style = document.createElement('style');
-  style.innerHTML = CSS_THEME;
+body { background: var(--bg); color: var(--txt); transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s; margin:0; padding:0; }`;
+  }
+  return `:root {
+  --p: ${t.p};
+  --p-rgb: ${t.p_rgb};
+  --p2: ${t.p2};
+  --acc: ${t.p};
+  --bg: ${t.bg};
+  --mid: ${t.mid};
+  --surf: ${t.surf};
+  --bdr: ${t.bdr};
+  --dk: ${t.dk};
+  --dk2: #2d3a28;
+  --dkAcc: ${t.bdr};
+  --txt: ${t.txt};
+  --sub: ${t.sub};
+  --wht: #ffffff;
+  --shadow-rgb: ${t.p_rgb};
+}
+body { background: var(--bg); color: var(--txt); transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s; margin:0; padding:0; }`;
+};
+
+if (typeof document !== "undefined") {
+  const style = document.createElement("style");
+  style.id = "kinsphere-theme-vars";
+  style.innerHTML = getThemeCss("Original", false);
   document.head.appendChild(style);
 }
+
 
 const C = {
   p:     "var(--p)",
@@ -1796,12 +1854,28 @@ export default function App() {
 
   const [navOpen, setNavOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("kinsphere-theme") || "Original";
+    }
+    return "Original";
+  });
+
   const isAdmin = role === "Admin";
   const navItems = navItemsForRole(isSA);
+
   useEffect(() => {
-    if (isDark) document.documentElement.className = 'dark';
-    else document.documentElement.className = '';
-  }, [isDark]);
+    if (typeof document !== "undefined") {
+      const style = document.getElementById("kinsphere-theme-vars");
+      if (style) {
+        style.innerHTML = getThemeCss(theme, isDark);
+      }
+      localStorage.setItem("kinsphere-theme", theme);
+      
+      if (isDark) document.documentElement.className = "dark";
+      else document.documentElement.className = "";
+    }
+  }, [theme, isDark]);
   const [winW, setWinW] = useState(() => (typeof window !== "undefined" ? window.innerWidth : 1200));
   useEffect(() => {
     const onResize = () => setWinW(window.innerWidth);
@@ -4592,6 +4666,67 @@ export default function App() {
                 Role is preview-only here — use <strong style={{ color:C.txt }}>Switch role</strong> in the sidebar to try Employee, Admin, or Super Admin in this prototype.
               </p>
             </SettingsPanel>
+
+            <SettingsPanel label="Appearance" title="Color Theme" accent={C.p}>
+              <p style={{ margin:"0 0 16px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
+                Personalize your workspace experience with curated color palettes.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr 1fr" : "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, marginBottom: 20 }}>
+                {Object.keys(THEMES).map(t => {
+                  const data = THEMES[t];
+                  return (
+                    <button
+                      key={t}
+                      onClick={() => {
+                        setTheme(t);
+                        toast(`${t} theme applied ✓`);
+                      }}
+                      style={{
+                        padding: "14px 12px",
+                        borderRadius: 14,
+                        border: `2px solid ${theme === t ? C.p : C.bdr}`,
+                        background: theme === t ? `rgba(var(--p-rgb), 0.08)` : C.bg,
+                        cursor: "pointer",
+                        textAlign: "left",
+                        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                        boxShadow: theme === t ? "0 4px 12px rgba(var(--p-rgb), 0.12)" : "none",
+                        display:"flex",
+                        flexDirection:"column",
+                        alignItems:"center"
+                      }}
+                    >
+                      <div style={{ display: "flex", gap: 3, marginBottom: 10 }}>
+                        <div style={{ width: 18, height: 18, borderRadius: 5, background: data.p, border:`1px solid rgba(0,0,0,0.05)` }} />
+                        <div style={{ width: 18, height: 18, borderRadius: 5, background: data.p2, border:`1px solid rgba(0,0,0,0.05)` }} />
+                        <div style={{ width: 18, height: 18, borderRadius: 5, background: data.mid, border:`1px solid rgba(0,0,0,0.05)` }} />
+                      </div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: theme === t ? C.p : C.txt, textAlign:"center" }}>{t}</div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, padding:"12px 14px", borderRadius:12, border:`1px solid ${C.bdr}`, background:C.bg }}>
+                <div>
+                  <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>Dark Mode</div>
+                  <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>Use low-light interface</div>
+                </div>
+                <button 
+                  onClick={() => setIsDark(!isDark)}
+                  style={{ 
+                    position:"relative", width:44, height:24, borderRadius:20, 
+                    background: isDark ? C.p : C.bdr, cursor:"pointer", border:"none",
+                    transition:"background 0.3s"
+                  }}
+                >
+                  <div style={{ 
+                    position:"absolute", left: isDark ? 22 : 2, top: 2, width:20, height:20, 
+                    borderRadius:"50%", background:"#fff", transition:"left 0.3s"
+                  }} />
+                </button>
+              </div>
+            </SettingsPanel>
+
 
             {isSA && (
               <>
