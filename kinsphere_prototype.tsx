@@ -550,7 +550,7 @@ const navItemsForRole = isSA =>
 function daysInMonth(y, m0) {
   return new Date(y, m0 + 1, 0).getDate();
 }
-function parseISODate(s) {
+function parseISODate(s: string) {
   const [y, mo, d] = s.split("-").map(Number);
   return new Date(y, mo - 1, d);
 }
@@ -1159,9 +1159,10 @@ const ParticlesBackground = () => {
     const ctx = canvas.getContext("2d");
     let animationFrameId;
     let particlesArray = [];
-    let mouse = { x: null, y: null, radius: 150 };
+    let mouse = { x: null, y: null, radius: 180 };
 
     const handleResize = () => {
+      if (!canvas.parentElement) return;
       canvas.width = canvas.parentElement.offsetWidth;
       canvas.height = canvas.parentElement.offsetHeight;
       init();
@@ -1179,89 +1180,164 @@ const ParticlesBackground = () => {
     };
 
     window.addEventListener("resize", handleResize);
-    canvas.parentElement.addEventListener("mousemove", handleMouseMove);
-    canvas.parentElement.addEventListener("mouseleave", handleMouseLeave);
+    canvas.parentElement.addEventListener("mousemove", handleMouseMove, { passive: true });
+    canvas.parentElement.addEventListener("mouseleave", handleMouseLeave, { passive: true });
 
     class Particle {
-      constructor(x, y, directionX, directionY, size, color) {
+      constructor(x, y, speedX, speedY, size, opacity, parallax) {
         this.x = x;
         this.y = y;
-        this.directionX = directionX;
-        this.directionY = directionY;
+        this.speedX = speedX;
+        this.speedY = speedY;
         this.size = size;
-        this.color = color;
+        this.baseOpacity = opacity;
+        this.opacity = opacity;
+        this.parallax = parallax;
+        this.pulse = Math.random() * Math.PI * 2;
+        this.pulseSpeed = 0.01 + Math.random() * 0.015;
       }
       draw() {
+        // Main particle
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+
+        // Faster glow (simulated shadowBlur)
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2, false);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.2})`;
         ctx.fill();
       }
       update() {
-        if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
-        if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+        if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+        if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
 
-        // Mouse interaction (subtle attraction)
-        if (mouse.x != null && mouse.y != null) {
+        if (mouse.x !== null && mouse.y !== null) {
           let dx = mouse.x - this.x;
           let dy = mouse.y - this.y;
           let distance = Math.sqrt(dx * dx + dy * dy);
+          
           if (distance < mouse.radius) {
-            this.x += dx * 0.01;
-            this.y += dy * 0.01;
+            if (distance < 50) {
+              const angle = Math.atan2(dy, dx);
+              this.x -= Math.cos(angle) * 1.2;
+              this.y -= Math.sin(angle) * 1.2;
+            } else {
+              this.x += dx * 0.003;
+              this.y += dy * 0.003;
+            }
           }
         }
 
-        this.x += this.directionX;
-        this.y += this.directionY;
+        this.x += this.speedX * this.parallax;
+        this.y += this.speedY * this.parallax;
+        
+        this.pulse += this.pulseSpeed;
+        this.opacity = this.baseOpacity * (0.6 + Math.sin(this.pulse) * 0.4);
+
         this.draw();
       }
     }
 
     const init = () => {
       particlesArray = [];
-      let numberOfParticles = (canvas.width * canvas.height) / 9000;
-      for (let i = 0; i < numberOfParticles; i++) {
-        let size = Math.random() * 2 + 1;
-        let x = Math.random() * (canvas.width - size * 2) + size;
-        let y = Math.random() * (canvas.height - size * 2) + size;
-        let directionX = (Math.random() * 0.4) - 0.2;
-        let directionY = (Math.random() * 0.4) - 0.2;
-        let color = "rgba(255, 255, 255, 0.4)";
-        particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+      // Foreground layer
+      let fgCount = (canvas.width * canvas.height) / 35000;
+      for (let i = 0; i < fgCount; i++) {
+        let size = Math.random() * 2 + 1.2;
+        let x = Math.random() * canvas.width;
+        let y = Math.random() * canvas.height;
+        let vx = (Math.random() - 0.5) * 0.4;
+        let vy = (Math.random() - 0.5) * 0.4;
+        particlesArray.push(new Particle(x, y, vx, vy, size, 0.5, 1.2));
       }
+      // Background layer
+      let bgCount = (canvas.width * canvas.height) / 18000;
+      for (let i = 0; i < bgCount; i++) {
+        let size = Math.random() * 1.2 + 0.4;
+        let x = Math.random() * canvas.width;
+        let y = Math.random() * canvas.height;
+        let vx = (Math.random() - 0.5) * 0.15;
+        let vy = (Math.random() - 0.5) * 0.15;
+        particlesArray.push(new Particle(x, y, vx, vy, size, 0.2, 0.6));
+      }
+    };
+
+    const drawAmbience = (time) => {
+      const g = ctx.createRadialGradient(
+        canvas.width * 0.3 + Math.sin(time * 0.0004) * 50,
+        canvas.height * 0.4 + Math.cos(time * 0.0003) * 50,
+        0,
+        canvas.width * 0.3,
+        canvas.height * 0.4,
+        Math.min(canvas.width, canvas.height) * 0.8
+      );
+      g.addColorStop(0, "rgba(255, 255, 255, 0.02)");
+      g.addColorStop(1, "rgba(255, 255, 255, 0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
     const connect = () => {
-      let opacityValue = 1;
+      ctx.lineWidth = 0.7;
+      const maxDist = (canvas.width > 800 ? 150 : 110);
+      
+      // Group lines by opacity/state for fewer path cycles if possible, 
+      // but sharing a single stroke() for now.
+      ctx.beginPath();
       for (let a = 0; a < particlesArray.length; a++) {
-        for (let b = a; b < particlesArray.length; b++) {
-          let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) +
-                         ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
-          if (distance < (canvas.width / 7) * (canvas.height / 7)) {
-            opacityValue = 1 - (distance / 20000);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacityValue * 0.15})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-            ctx.stroke();
+        for (let b = a + 1; b < particlesArray.length; b++) {
+          let dx = particlesArray[a].x - particlesArray[b].x;
+          let dy = particlesArray[a].y - particlesArray[b].y;
+          let distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < maxDist) {
+            let opacityValue = (1 - (distance / maxDist)) * 0.15;
+            
+            // Interaction highlight check
+            let isHighlight = false;
+            if (mouse.x !== null && mouse.y !== null) {
+              let mdx = mouse.x - (particlesArray[a].x + particlesArray[b].x) / 2;
+              let mdy = mouse.y - (particlesArray[a].y + particlesArray[b].y) / 2;
+              if (Math.sqrt(mdx * mdx + mdy * mdy) < 80) isHighlight = true;
+            }
+
+            if (isHighlight) {
+              // Stroke highlighted lines immediately to change color
+              ctx.stroke(); 
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(255, 255, 255, ${opacityValue * 2.5})`;
+              ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+              ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+              ctx.stroke();
+              ctx.beginPath();
+            } else {
+              ctx.strokeStyle = `rgba(255, 255, 255, ${opacityValue})`;
+              ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+              ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+            }
           }
         }
       }
+      ctx.stroke();
     };
 
-    const animate = () => {
-      requestAnimationFrame(animate);
+    const animate = (time) => {
+      animationFrameId = requestAnimationFrame(animate);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawAmbience(time);
+      
+      ctx.globalCompositeOperation = 'lighter';
       for (let i = 0; i < particlesArray.length; i++) {
         particlesArray[i].update();
       }
       connect();
+      ctx.globalCompositeOperation = 'source-over';
     };
 
     handleResize();
-    animate();
+    requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -1273,7 +1349,11 @@ const ParticlesBackground = () => {
     };
   }, []);
 
-  return <canvas ref={canvasRef} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }} />;
+  return (
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+      <canvas ref={canvasRef} style={{ width: "100%", height: "100%", opacity: 0.95 }} />
+    </div>
+  );
 };
 
 const LoginScreen = ({ onLogin, logoUrl, tagline }) => {
