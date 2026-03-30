@@ -665,16 +665,19 @@ const RECOGS = [
   },
 ];
 
-const SOOTHING_GREENS = ["#afc0a5", "#8a9a80", "#a3b18a", "#588157", "#3a5a40", "#7da890", "#6fa88a", "#94a89a"];
-const getSoothingGreen = (seed) => {
-  if (!seed) return SOOTHING_GREENS[0];
+const THEMED_AV_COLORS = [
+  "var(--p)", "var(--p2)", "var(--acc)", "rgba(var(--p-rgb), 0.8)", "rgba(var(--p-rgb), 0.7)", "rgba(var(--p-rgb), 0.9)"
+];
+
+const getThemedAvatarColor = (seed) => {
+  if (!seed) return THEMED_AV_COLORS[0];
   let hash = 0;
   for (let i = 0; i < seed.length; i++) hash = seed.charCodeAt(i) + ((hash << 5) - hash);
-  return SOOTHING_GREENS[Math.abs(hash) % SOOTHING_GREENS.length];
+  return THEMED_AV_COLORS[Math.abs(hash) % THEMED_AV_COLORS.length];
 };
 
 const Av = ({ ini, sz=34, bg }) => {
-  const finalBg = bg && bg !== C.p ? bg : getSoothingGreen(ini);
+  const finalBg = bg && bg !== "var(--p)" ? bg : getThemedAvatarColor(ini);
   return (
     <div style={{ width:sz, height:sz, borderRadius:"50%", background:finalBg, flexShrink:0,
       display:"flex", alignItems:"center", justifyContent:"center",
@@ -699,7 +702,7 @@ const Pill = ({ txt, bg, c }) => (
 
 const Btn = ({ children, onClick, variant="primary", style:s={} }) => {
   const base = { border:"none", borderRadius:9, fontSize:12, fontWeight:600, cursor:"pointer", padding:"8px 18px", transition:"opacity .15s", ...s };
-  const v = variant==="primary" ? { background:C.p,   color:"#2a3326" }
+  const v = variant==="primary" ? { background:C.p,   color:"#fff" }
           : variant==="ghost"   ? { background:"transparent", border:`1px solid ${C.bdr}`, color:C.sub }
           : variant==="outline" ? { background:C.surf, border:`1px solid ${C.bdr}`, color:C.txt }
           :                       { background:C.mid,  border:`1px solid ${C.bdr}`, color:C.txt };
@@ -2396,10 +2399,10 @@ export default function App() {
                   accent:C.p, iconBg:C.surf },
                 ...(isSA && pendingApprovalsForDashboard.length > 0
                   ? [{ lbl:"Pending leave approvals", val:String(pendingApprovalsForDashboard.length), sub:"All pending requests", icon:ICONS.ClipboardList,
-                    accent:"#b8860b", iconBg:C.surf }]
+                    accent:C.p2, iconBg:C.surf }]
                   : []),
                 { lbl:"On leave today", val:String(onLeaveTodayCount), sub:"Approved time away", icon:ICONS.CalendarCheck,
-                  accent:"#4a6b42", iconBg:C.surf },
+                  accent:C.p, iconBg:C.surf },
               ].map(m=>(
                 <div
                   key={m.lbl}
@@ -2562,7 +2565,7 @@ export default function App() {
                   position:"relative", background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
                   padding:"20px 22px 22px", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset", overflow:"hidden",
                 }}>
-                  <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:"#b8860b", borderRadius:"4px 0 0 4px" }} />
+                  <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:C.p2, borderRadius:"4px 0 0 4px" }} />
                   <div style={{ paddingLeft:8 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, marginBottom:10, flexWrap:"wrap" }}>
                       <div>
@@ -2658,14 +2661,15 @@ export default function App() {
                         onClick={()=>setShowEmp(true)}
                         style={{
                           display:"flex", alignItems:"center", gap:12, width:"100%", textAlign:"left",
-                          padding:"12px 14px", borderRadius:12, border:`1px solid #3a5a40`,
-                          background:`linear-gradient(155deg, #7da890 0%, #588157 100%)`,
+                          padding:"12px 14px", borderRadius:12, border:`1px solid ${C.dk}`,
+                          background:`linear-gradient(155deg, ${C.p} 0%, ${C.p2} 100%)`,
                           cursor:"pointer", fontSize:13, fontWeight:600, color:"#fff",
-                          boxShadow:"0 4px 15px rgba(88,129,87,.4), inset 0 1px 0 rgba(255,255,255,.2)",
+                          boxShadow:"0 4px 15px rgba(var(--p-rgb),.4), inset 0 1px 0 rgba(255,255,255,.2)",
                           transform:"translateY(0)", transition:"transform .1s, box-shadow .1s",
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.transform="translateY(-1px)"; e.currentTarget.style.boxShadow="0 6px 18px rgba(88,129,87,.5)"; }}
-                        onMouseLeave={e => { e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.boxShadow="0 4px 15px rgba(88,129,87,.4)"; }}
+                        onMouseEnter={e => { e.currentTarget.style.transform="translateY(-1px)"; e.currentTarget.style.boxShadow="0 6px 18px rgba(var(--p-rgb),.5)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.boxShadow="0 4px 15px rgba(var(--p-rgb),.4)"; }}
+
                       >
                         <span style={{ display:"flex", alignItems:"center", opacity:.95 }}>{ICONS["Add Employee"]}</span>
                         <span style={{ flex:1 }}>Add employee</span>
@@ -3525,8 +3529,8 @@ export default function App() {
                     )}
                     {canGenerate && (
                       <div style={{ display:"flex", background:C.wht, borderRadius:12, padding:4, border:`1px solid ${C.bdr}`, boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
-                        <button onClick={()=>setPaperTab("Documents")} style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Documents"?700:500, background: paperTab==="Documents"?C.p:"transparent", color: paperTab==="Documents"?"#2a3326":C.sub, transition:"all .2s" }}>Documents</button>
-                        <button onClick={()=>setPaperTab("Generate")}  style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Generate"?700:500,  background: paperTab==="Generate"?C.p:"transparent",  color: paperTab==="Generate"?"#2a3326":C.sub,  transition:"all .2s" }}>Generate</button>
+                        <button onClick={()=>setPaperTab("Documents")} style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Documents"?700:500, background: paperTab==="Documents"?C.p:"transparent", color: paperTab==="Documents"?"#fff":C.sub, transition:"all .2s" }}>Documents</button>
+                        <button onClick={()=>setPaperTab("Generate")}  style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Generate"?700:500,  background: paperTab==="Generate"?C.p:"transparent",  color: paperTab==="Generate"?"#fff":C.sub,  transition:"all .2s" }}>Generate</button>
                       </div>
                     )}
                   </div>
