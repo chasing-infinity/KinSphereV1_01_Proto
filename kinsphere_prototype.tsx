@@ -1505,56 +1505,62 @@ const LoginScreen = ({ onLogin, logoUrl, tagline }) => {
   );
 };
 
-const OnboardingFlow = ({ setPage, onBack, employees }) => {
-  const [step, setStep] = useState(0); 
-
-  // Fields and states
-  const [hireType, setHireType] = useState(""); 
-  const [doj, setDoj] = useState("");
-  const [newHire, setNewHire] = useState({ name: "", email: "", role: "" });
-  const [existingId, setExistingId] = useState("");
-
-  const [offerSent, setOfferSent] = useState(false);
-  const [offerSigned, setOfferSigned] = useState(false);
-  const [docsCollected, setDocsCollected] = useState(false);
-  const [inviteSent, setInviteSent] = useState(false);
-  const [apptSent, setApptSent] = useState(false);
-  const [roleAssigned, setRoleAssigned] = useState(false);
-  const [addedOrg, setAddedOrg] = useState(false);
-  const [salarySet, setSalarySet] = useState(false);
-  const [bankSet, setBankSet] = useState(false);
-  const [policyShared, setPolicyShared] = useState(false);
-  const [policyAck, setPolicyAck] = useState(false);
-  const [planTraining, setPlanTraining] = useState(null); 
-  const [sessions, setSessions] = useState([]);
-  const [sName, setSName] = useState("");
-  const [sDate, setSDate] = useState("");
-  const [empVisible, setEmpVisible] = useState(false);
-  const [basicSetup, setBasicSetup] = useState(false);
-
-  const canGoNext = () => {
-    if (step === 1) return hireType && doj && (hireType === "Existing" ? existingId && existingId !== "Select..." : newHire.name.trim() !== "");
-    if (step === 2) return hireType === "New" ? offerSent : offerSent; 
-    if (step === 3) return offerSigned && docsCollected;
-    if (step === 4) return inviteSent;
-    if (step === 5) return apptSent;
-    if (step === 6) return roleAssigned && addedOrg;
-    if (step === 7) return salarySet && bankSet;
-    if (step === 8) return policyShared && policyAck;
-    if (step === 9) {
-      if (planTraining === null) return false;
-      if (planTraining === true) return true;
-      return true;
+let GLOBAL_ONBOARDINGS = [
+  {
+    id: "ob1",
+    hireType: "New",
+    name: "Aman Verma",
+    role: "Backend Engineer",
+    email: "aman@bipolarfactory.com",
+    doj: "2026-05-15",
+    state: {
+      offerSent: true, offerSigned: true, docsCollected: true,
+      inviteSent: false, empVisible: false, basicSetup: false,
+      roleAssigned: false, addedOrg: false, salarySet: false, bankSet: false,
+      apptSent: false, policyShared: false, policyAck: false, sessionsDone: false
     }
-    if (step === 10) return apptSent && empVisible && basicSetup;
-    return true;
+  }
+];
+
+const OnboardingFlow = ({ setPage, onBack, employees }) => {
+  const [obs, setObs] = useState(GLOBAL_ONBOARDINGS);
+  const [activeId, setActiveId] = useState(null);
+  const [showNew, setShowNew] = useState(false);
+
+  // New Form states
+  const [hireType, setHireType] = useState("New");
+  const [newHire, setNewHire] = useState({ name:"", email:"", role:"" });
+  const [existingId, setExistingId] = useState("");
+  const [doj, setDoj] = useState("");
+
+  useEffect(() => { GLOBAL_ONBOARDINGS = obs; }, [obs]);
+
+  const handleCreate = () => {
+    let name = "", email = "", role = "";
+    if (hireType === "New") {
+      name = newHire.name; email = newHire.email; role = newHire.role;
+    } else {
+      const e = employees.find(x => x.name === existingId);
+      if (e) { name = e.name; email = e.email; role = e.role; }
+      else { name = existingId; }
+    }
+    const ob = {
+      id: "ob"+Date.now(), hireType, name, email, role, doj,
+      state: {
+        offerSent: false, offerSigned: false, docsCollected: false,
+        inviteSent: false, empVisible: false, basicSetup: false,
+        roleAssigned: false, addedOrg: false, salarySet: false, bankSet: false,
+        apptSent: false, policyShared: false, policyAck: false, sessionsDone: false
+      }
+    };
+    setObs([ob, ...obs]);
+    setShowNew(false);
+    setActiveId(ob.id);
+    setNewHire({ name:"", email:"", role:"" }); setExistingId(""); setDoj(""); 
   };
 
-  const nextStep = () => { if (canGoNext()) setStep(s => s + 1); };
-  const prevStep = () => setStep(s => Math.max(1, s - 1));
-
   const CheckboxRow = ({ label, checked, onChange, cta, onCtaClick }) => (
-    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background:checked ? "rgba(var(--p-rgb),0.05)" : C.surf, borderRadius:12, border:`1px solid ${checked ? C.p : C.bdr}`, marginBottom:10, transition:"all 0.2s" }}>
+    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background:checked ? "rgba(var(--p-rgb),0.05)" : C.surf, borderRadius:12, border:\`1px solid \${checked ? C.p : C.bdr}\`, marginBottom:10, transition:"all 0.2s" }}>
       <label style={{ display:"flex", alignItems:"center", gap:12, cursor:"pointer", flex:1, minWidth:0, paddingRight:12 }}>
         <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} style={{ transform:"scale(1.2)", accentColor:C.p, flexShrink:0 }} />
         <span style={{ fontSize:14, color:C.txt, fontWeight: checked ? 600 : 400, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", transition:"color 0.2s" }}>{label}</span>
@@ -1565,252 +1571,158 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
     </div>
   );
 
-  if (step === 0) {
+  if (showNew) {
     return (
-      <div style={{ textAlign:"center", padding:"80px 20px", background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)", maxWidth:600, margin:"0 auto" }}>
-        <div style={{ fontSize:56, marginBottom:20, animation:"bounce 2s infinite" }}>🎉</div>
-        <h2 style={{ fontFamily:"Georgia,serif", fontSize:32, fontWeight:700, color:C.txt, marginBottom:16 }}>Congratulations on the new hire!</h2>
-        <p style={{ fontSize:18, color:C.sub, marginBottom:36 }}>Expanding our Work Fam!</p>
-        <Btn onClick={() => setStep(1)} style={{ padding:"16px 36px", fontSize:16, borderRadius:12, boxShadow:"0 8px 20px rgba(var(--p-rgb), 0.25)" }}>Start Onboarding</Btn>
-      </div>
-    );
-  }
-
-  if (step === 11) {
-    return (
-      <div style={{ textAlign:"center", padding:"80px 20px", background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)", maxWidth:600, margin:"0 auto" }}>
-        <div style={{ fontSize:56, marginBottom:20 }}>✨</div>
-        <h2 style={{ fontFamily:"Georgia,serif", fontSize:32, fontWeight:700, color:C.txt, marginBottom:16 }}>Onboarding complete.</h2>
-        <p style={{ fontSize:18, color:C.sub, marginBottom:36 }}>They’re all set for a successful journey.</p>
-        <Btn onClick={onBack} style={{ padding:"14px 28px", fontSize:15, borderRadius:12 }}>Finish & Return</Btn>
-      </div>
-    );
-  }
-
-  const stepsList = [
-    "Who", "Offer Letter", "Pre-Joining Setup", "HRMS Invite", "Appointment Letter",
-    "Role & Org", "Payroll", "Policy Ack.", "HR Sessions", "Day 1 Readiness"
-  ];
-  const stepName = stepsList[step - 1];
-
-  return (
-    <div style={{ maxWidth:700, margin:"0 auto", width:"100%" }}>
-      {/* Stepper Header */}
-      <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24, background:C.wht, padding:"16px 20px", borderRadius:14, border:`1px solid ${C.bdr}` }}>
-        <button onClick={prevStep} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:18, padding:4, display:"flex", alignItems:"center" }}>←</button>
-        <div style={{ flex:1 }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:6 }}>
-            <span style={{ fontSize:12, fontWeight:700, color:C.p, textTransform:"uppercase", letterSpacing:1 }}>STEP {step} OF 10: {stepName}</span>
-            <span style={{ fontSize:11, fontWeight:700, color:C.sub }}>{Math.round((step / 10) * 100)}%</span>
-          </div>
-          <div style={{ height:6, background:C.surf, borderRadius:3, overflow:"hidden" }}>
-            <div style={{ height:"100%", background:C.p, width:`${(step / 10) * 100}%`, transition:"width 0.4s cubic-bezier(0.4, 0, 0.2, 1)" }} />
-          </div>
+      <div style={{ maxWidth:600, margin:"0 auto", width:"100%" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
+          <button onClick={() => setShowNew(false)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:20 }}>←</button>
+          <h2 style={{ fontSize:20, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>Start New Onboarding</h2>
         </div>
-        <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:12, fontWeight:600, padding:8 }}>Cancel</button>
+        <Card>
+          <div style={{ display:"flex", gap:16, marginBottom:24, flexWrap:"wrap" }}>
+            <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:\`2px solid \${hireType === "New" ? C.p : C.surf}\`, background:hireType === "New" ? \`rgba(var(--p-rgb),0.03)\` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
+              <input type="radio" checked={hireType === "New"} onChange={() => setHireType("New")} style={{ transform:"scale(1.2)", accentColor:C.p }} />
+              <span style={{ fontWeight:600, fontSize:15, color:C.txt }}>New Hire</span>
+            </label>
+            <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:\`2px solid \${hireType === "Existing" ? C.p : C.surf}\`, background:hireType === "Existing" ? \`rgba(var(--p-rgb),0.03)\` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
+              <input type="radio" checked={hireType === "Existing"} onChange={() => setHireType("Existing")} style={{ transform:"scale(1.2)", accentColor:C.p }} />
+              <span style={{ fontWeight:600, fontSize:15, color:C.txt }}>Existing Employee</span>
+            </label>
+          </div>
+          
+          {hireType === "New" ? (
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px 20px" }}>
+              <Inp label="Full Name" value={newHire.name} onChange={e=>setNewHire({...newHire, name:e.target.value})} />
+              <Inp label="Email" type="email" value={newHire.email} onChange={e=>setNewHire({...newHire, email:e.target.value})} />
+              <Inp label="Role" value={newHire.role} onChange={e=>setNewHire({...newHire, role:e.target.value})} />
+              <Inp label="Date of Joining" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
+            </div>
+          ) : (
+            <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:16 }}>
+              <Inp label="Select Employee" value={existingId} onChange={e=>setExistingId(e.target.value)} opts={["Select...", ...employees.map(e=>e.name)]} />
+              <Inp label="Date of Joining (if missing)" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
+            </div>
+          )}
+          
+          <div style={{ display:"flex", justifyContent:"flex-end", marginTop:32 }}>
+            <Btn onClick={handleCreate} disabled={!(doj && (hireType==="New" ? newHire.name : (existingId && existingId!=="Select...")))} style={{ padding:"12px 24px" }}>Start Onboarding</Btn>
+          </div>
+        </Card>
       </div>
+    );
+  }
 
-      <Card style={{ padding:"clamp(24px, 5vw, 40px)", minHeight:400, display:"flex", flexDirection:"column" }}>
-        <div style={{ flex:1 }}>
-          {step === 1 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 24px", fontFamily:"Georgia,serif" }}>Who are we onboarding?</h3>
-              <div style={{ display:"flex", gap:16, marginBottom:28, flexWrap:"wrap" }}>
-                <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:`2px solid ${hireType === "New" ? C.p : C.surf}`, background:hireType === "New" ? `rgba(var(--p-rgb),0.03)` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
-                  <input type="radio" checked={hireType === "New"} onChange={() => { setHireType("New"); setOfferSent(false); setOfferSigned(false); }} style={{ transform:"scale(1.2)", accentColor:C.p }} />
-                  <span style={{ fontWeight:600, fontSize:15, color:C.txt }}>New Hire</span>
-                </label>
-                <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:`2px solid ${hireType === "Existing" ? C.p : C.surf}`, background:hireType === "Existing" ? `rgba(var(--p-rgb),0.03)` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
-                  <input type="radio" checked={hireType === "Existing"} onChange={() => { setHireType("Existing"); setOfferSent(false); setOfferSigned(false); }} style={{ transform:"scale(1.2)", accentColor:C.p }} />
-                  <span style={{ fontWeight:600, fontSize:15, color:C.txt }}>Existing Employee</span>
-                </label>
-              </div>
-              
-              {hireType === "New" && (
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px 20px", animation:"fadeIn 0.3s" }}>
-                  <Inp label="Full Name" value={newHire.name} onChange={e=>setNewHire({...newHire, name:e.target.value})} />
-                  <Inp label="Email" type="email" value={newHire.email} onChange={e=>setNewHire({...newHire, email:e.target.value})} />
-                  <Inp label="Role" value={newHire.role} onChange={e=>setNewHire({...newHire, role:e.target.value})} />
-                  <Inp label="Date of Joining" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
-                </div>
-              )}
-              
-              {hireType === "Existing" && (
-                <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:16, animation:"fadeIn 0.3s" }}>
-                  <Inp label="Select Employee" value={existingId} onChange={e=>setExistingId(e.target.value)} opts={["Select...", ...employees.map(e=>e.name)]} />
-                  <Inp label="Date of Joining (if missing)" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
-                </div>
-              )}
-            </div>
-          )}
+  if (activeId) {
+    const ob = obs.find(o => o.id === activeId);
+    if (!ob) return null;
+    const s = ob.state;
+    const setS = (k, v) => setObs(obs.map(o => o.id === activeId ? { ...o, state:{ ...o.state, [k]: v } } : o));
 
-          {step === 2 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 24px", fontFamily:"Georgia,serif" }}>Offer Letter</h3>
-              {hireType === "New" ? (
-                <>
-                  <p style={{ color:C.sub, fontSize:15, marginBottom:24 }}>Let’s send them an offer letter to make it official.</p>
-                  <Btn onClick={() => setPage("Paperwork Hub")} style={{ marginBottom:32, padding:"12px 24px" }}>Generate Offer Letter ↗</Btn>
-                  
-                  <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:12 }}>POST-SEND CHECKLIST</div>
-                  <CheckboxRow label="Mark as Sent" checked={offerSent} onChange={setOfferSent} />
-                  <div style={{ opacity: offerSent ? 1 : 0.4, pointerEvents: offerSent ? "auto" : "none", transition:"all 0.3s" }}>
-                    <CheckboxRow label="Offer letter has been signed" checked={offerSigned} onChange={setOfferSigned} />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p style={{ color:C.sub, fontSize:15, marginBottom:32 }}>Have we sent them an offer letter yet?</p>
-                  <div style={{ display:"flex", gap:16 }}>
-                    <Btn 
-                      variant={offerSent && offerSigned ? "primary" : "outline"} 
-                      onClick={() => { setOfferSent(true); setOfferSigned(true); }}
-                      style={{ padding:"14px 24px" }}
-                    >
-                      Yes, it's sent & signed
-                    </Btn>
-                    <Btn 
-                      variant="outline" 
-                      onClick={() => setPage("Paperwork Hub")}
-                      style={{ padding:"14px 24px" }}
-                    >
-                      No, Generate One ↗
-                    </Btn>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
+    const total = 14;
+    const done = Object.values(s).filter(Boolean).length;
+    const progress = Math.round((done / total) * 100);
 
-          {step === 3 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>Pre-Joining Setup</h3>
-              <p style={{ color:C.sub, fontSize:15, marginBottom:28 }}>Let’s get everything ready before their first day.</p>
-              
-              <CheckboxRow label="Offer letter signed" checked={offerSigned} onChange={setOfferSigned} cta="Open Paperwork Hub" onCtaClick={()=>setPage("Paperwork Hub")} />
-              <CheckboxRow label="Collect documents (ID, Bank details, etc.)" checked={docsCollected} onChange={setDocsCollected} cta="Open Paperwork Hub" onCtaClick={()=>setPage("Paperwork Hub")} />
-            </div>
-          )}
-
-          {step === 4 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>Invite to HRMS</h3>
-              <p style={{ color:C.sub, fontSize:15, marginBottom:28 }}>
-                {offerSigned ? "Now that the offer is signed, let's invite them to KinSphere." : "Wait until the offer is signed before sending the HRMS invite."}
-              </p>
-              <div style={{ opacity: offerSigned ? 1 : 0.4, pointerEvents: offerSigned ? "auto" : "none", transition:"opacity 0.3s" }}>
-                <Btn onClick={() => setPage("Employees")} style={{ marginBottom:32, padding:"12px 24px" }}>Send HRMS Invite ↗</Btn>
-                <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:12 }}>VERIFICATION</div>
-                <CheckboxRow label="Invite sent" checked={inviteSent} onChange={setInviteSent} />
-              </div>
-            </div>
-          )}
-
-          {step === 5 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>Appointment Letter</h3>
-              <p style={{ color:C.sub, fontSize:15, marginBottom:20 }}>Send the official appointment letter on their joining date.</p>
-              
-              <div style={{ padding:"14px 18px", background:"#fffbeb", border:"1px solid #fcd34d", borderRadius:12, marginBottom:28, display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ fontSize:20 }}>📅</div>
-                <div style={{ fontSize:13, color:"#92400e", fontWeight:600, lineHeight:1.5 }}>
-                  Reminder: Send on their joining date <strong style={{ textDecoration:"underline" }}>{doj ? doj : "TBD"}</strong>.
-                </div>
-              </div>
-
-              <Btn onClick={() => setPage("Paperwork Hub")} style={{ marginBottom:32, padding:"12px 24px" }}>Generate Appointment Letter ↗</Btn>
-              
-              <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:12 }}>VERIFICATION</div>
-              <CheckboxRow label="Appointment Letter Sent" checked={apptSent} onChange={setApptSent} />
-            </div>
-          )}
-
-          {step === 6 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>Role & Organization Setup</h3>
-              <p style={{ color:C.sub, fontSize:15, marginBottom:28 }}>Establish their reporting lines and place in the company.</p>
-
-              <CheckboxRow label="Assign manager" checked={roleAssigned} onChange={setRoleAssigned} cta="Open Org Chart" onCtaClick={()=>setPage("Org Chart")} />
-              <CheckboxRow label="Add to org chart" checked={addedOrg} onChange={setAddedOrg} cta="Open Org Chart" onCtaClick={()=>setPage("Org Chart")} />
-            </div>
-          )}
-
-          {step === 7 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>Payroll Setup</h3>
-              <p style={{ color:C.sub, fontSize:15, marginBottom:28 }}>Configure compensation and bank details so they get paid on time.</p>
-
-              <CheckboxRow label="Add salary structure" checked={salarySet} onChange={setSalarySet} cta="Open Paydays" onCtaClick={()=>setPage("Paydays")} />
-              <CheckboxRow label="Add bank details" checked={bankSet} onChange={setBankSet} cta="Open Paydays" onCtaClick={()=>setPage("Paydays")} />
-            </div>
-          )}
-
-          {step === 8 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>Policy Acknowledgment</h3>
-              <p style={{ color:C.sub, fontSize:15, marginBottom:28 }}>Ensure compliance by sharing and getting acknowledgment on company policies.</p>
-
-              <CheckboxRow label="Share company policies" checked={policyShared} onChange={setPolicyShared} cta="Open Paperwork" onCtaClick={()=>setPage("Paperwork Hub")} />
-              <CheckboxRow label="Get acknowledgment" checked={policyAck} onChange={setPolicyAck} />
-            </div>
-          )}
-
-          {step === 9 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>HR Sessions / Training</h3>
-              <p style={{ color:C.sub, fontSize:15, marginBottom:24 }}>Would you like to plan onboarding sessions or training?</p>
-              
-              <div style={{ display:"flex", gap:16, marginBottom:32 }}>
-                <Btn variant={planTraining === true ? "primary" : "outline"} onClick={() => setPlanTraining(true)} style={{ padding:"12px 24px", flex:1 }}>Yes, plan sessions</Btn>
-                <Btn variant={planTraining === false ? "primary" : "outline"} onClick={() => setPlanTraining(false)} style={{ padding:"12px 24px", flex:1 }}>No, skip</Btn>
-              </div>
-              
-              {planTraining && (
-                <div style={{ padding:20, border:`1px solid ${C.bdr}`, borderRadius:14, background:C.surf, animation:"fadeIn 0.3s" }}>
-                  <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:12 }}>ADD SESSION</div>
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr auto", gap:12, marginBottom:24, alignItems:"flex-end" }}>
-                    <Inp label="Session Name" value={sName} onChange={e=>setSName(e.target.value)} />
-                    <Inp label="Date" type="date" value={sDate} onChange={e=>setSDate(e.target.value)} />
-                    <Btn style={{ marginBottom:13, padding:"10px 20px" }} onClick={() => {
-                      if (sName) { setSessions([...sessions, { id:Date.now(), name:sName, date:sDate, done:false }]); setSName(""); setSDate(""); }
-                    }}>Add</Btn>
-                  </div>
-                  
-                  {sessions.length > 0 && <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:12 }}>PLANNED SESSIONS</div>}
-                  <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                    {sessions.map(s => (
-                      <label key={s.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background:C.wht, border:`1px solid ${s.done ? C.p : C.bdr}`, borderRadius:10, cursor:"pointer", transition:"all 0.2s" }}>
-                        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                          <input type="checkbox" checked={s.done} onChange={e=>setSessions(sessions.map(x => x.id === s.id ? {...x, done:e.target.checked} : x))} style={{ transform:"scale(1.2)", accentColor:C.p }} />
-                          <span style={{ fontWeight:s.done ? 600 : 400, color:C.txt, fontSize:14 }}>{s.name}</span>
-                        </div>
-                        <span style={{ fontSize:12, color:C.sub, fontWeight:600 }}>{s.date || "Anytime"}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {step === 10 && (
-            <div style={{ animation:"fadeIn 0.3s" }}>
-              <h3 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>Day 1 Readiness</h3>
-              <p style={{ color:C.sub, fontSize:15, marginBottom:28 }}>Final checklist to ensure they have a smooth start.</p>
-
-              <CheckboxRow label="Appointment letter sent" checked={apptSent} onChange={setApptSent} />
-              <CheckboxRow label="Employee visible in system" checked={empVisible} onChange={setEmpVisible} />
-              <CheckboxRow label="Basic setup complete" checked={basicSetup} onChange={setBasicSetup} />
-            </div>
-          )}
-
+    return (
+      <div style={{ maxWidth:800, margin:"0 auto", width:"100%", animation:"fadeIn 0.3s" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
+          <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:20 }}>←</button>
+          <div style={{ flex:1 }}>
+            <h2 style={{ fontSize:22, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{ob.name}</h2>
+            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>{ob.role} · Joining: {ob.doj}</div>
+          </div>
+          <div style={{ textAlign:"right" }}>
+            <div style={{ fontSize:14, fontWeight:700, color:progress===100?"#22c55e":C.p }}>{progress}% Complete</div>
+            <div style={{ fontSize:11, color:C.sub, marginTop:4, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5 }}>{done} of {total} tasks</div>
+          </div>
         </div>
         
-        <div style={{ display:"flex", justifyContent:"flex-end", marginTop:32, paddingTop:24, borderTop:`1px solid ${C.bdr}` }}>
-          <Btn onClick={nextStep} disabled={!canGoNext()} style={{ opacity: canGoNext() ? 1 : 0.4, padding:"14px 28px", fontSize:15, transition:"all 0.3s", boxShadow: canGoNext() ? "0 4px 12px rgba(var(--p-rgb), 0.2)" : "none" }}>{step === 10 ? "Complete Onboarding" : "Next Step →"}</Btn>
+        <div style={{ height:8, background:C.surf, borderRadius:4, overflow:"hidden", marginBottom:32 }}>
+          <div style={{ height:"100%", background:progress===100?"#22c55e":C.p, width:\`\${progress}%\`, transition:"width 0.4s cubic-bezier(0.4, 0, 0.2, 1)" }} />
         </div>
-      </Card>
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+
+        <div style={{ display:"grid", gap:20 }}>
+          <Card style={{ padding:"24px 28px" }}>
+            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 16px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>1. Pre-Joining & Paperwork</h3>
+            <CheckboxRow label="Offer Letter Sent" checked={s.offerSent} onChange={v=>setS("offerSent",v)} cta="Paperwork Hub" onCtaClick={()=>setPage("Paperwork Hub")} />
+            <CheckboxRow label="Offer Letter Signed" checked={s.offerSigned} onChange={v=>setS("offerSigned",v)} />
+            <CheckboxRow label="Documents Collected (ID, Bank, etc.)" checked={s.docsCollected} onChange={v=>setS("docsCollected",v)} />
+          </Card>
+
+          <Card style={{ padding:"24px 28px" }}>
+            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 16px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>2. Access & Security</h3>
+            <CheckboxRow label="HRMS Invite Sent" checked={s.inviteSent} onChange={v=>setS("inviteSent",v)} cta="Employees" onCtaClick={()=>setPage("Employees")} />
+            <CheckboxRow label="Employee Visible in System" checked={s.empVisible} onChange={v=>setS("empVisible",v)} />
+            <CheckboxRow label="Basic System Setup Complete" checked={s.basicSetup} onChange={v=>setS("basicSetup",v)} />
+          </Card>
+
+          <Card style={{ padding:"24px 28px" }}>
+            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 16px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>3. Role & Payroll</h3>
+            <CheckboxRow label="Manager Assigned" checked={s.roleAssigned} onChange={v=>setS("roleAssigned",v)} cta="Org Chart" onCtaClick={()=>setPage("Org Chart")} />
+            <CheckboxRow label="Added to Org Chart" checked={s.addedOrg} onChange={v=>setS("addedOrg",v)} cta="Org Chart" onCtaClick={()=>setPage("Org Chart")} />
+            <CheckboxRow label="Salary Structure Added" checked={s.salarySet} onChange={v=>setS("salarySet",v)} cta="Paydays" onCtaClick={()=>setPage("Paydays")} />
+            <CheckboxRow label="Bank Details Added" checked={s.bankSet} onChange={v=>setS("bankSet",v)} />
+          </Card>
+
+          <Card style={{ padding:"24px 28px" }}>
+            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 16px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>4. Compliance & Day 1</h3>
+            <CheckboxRow label="Appointment Letter Sent" checked={s.apptSent} onChange={v=>setS("apptSent",v)} cta="Paperwork Hub" onCtaClick={()=>setPage("Paperwork Hub")} />
+            <CheckboxRow label="Shared Company Policies" checked={s.policyShared} onChange={v=>setS("policyShared",v)} />
+            <CheckboxRow label="Got Policy Acknowledgment" checked={s.policyAck} onChange={v=>setS("policyAck",v)} />
+            <CheckboxRow label="Onboarding Sessions / Training Completed" checked={s.sessionsDone} onChange={v=>setS("sessionsDone",v)} />
+          </Card>
+        </div>
+        <style>{\`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }\`}</style>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ maxWidth:800, margin:"0 auto", width:"100%", animation:"fadeIn 0.3s" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
+        <div>
+          <h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Active Onboardings</h2>
+          <p style={{ color:C.sub, fontSize:15, margin:0 }}>Track employee onboarding progress globally.</p>
+        </div>
+        <Btn onClick={() => setShowNew(true)} style={{ padding:"12px 20px" }}>+ New Onboarding</Btn>
+      </div>
+
+      {obs.length === 0 ? (
+        <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:\`1px dashed \${C.bdr}\` }}>
+          <div style={{ fontSize:40, marginBottom:16 }}>🚀</div>
+          <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>No active onboardings</h3>
+          <p style={{ color:C.sub, fontSize:14 }}>Click "New Onboarding" to start the process for a new or existing employee.</p>
+        </div>
+      ) : (
+        <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+          {obs.map(o => {
+            const total = 14;
+            const done = Object.values(o.state).filter(Boolean).length;
+            const progress = Math.round((done / total) * 100);
+            return (
+              <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:"24px", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:\`1px solid \${C.bdr}\` }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.p; e.currentTarget.style.transform="translateY(-2px)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr; e.currentTarget.style.transform="none";}}>
+                <div style={{ width:48, height:48, borderRadius:"50%", background:\`rgba(var(--p-rgb),0.1)\`, border:\`1px solid rgba(var(--p-rgb), 0.2)\`, display:"flex", alignItems:"center", justifyContent:"center", color:C.p, fontSize:18, fontWeight:700 }}>
+                  {o.name.charAt(0)}
+                </div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:16, fontWeight:700, color:C.txt, marginBottom:4 }}>{o.name}</div>
+                  <div style={{ fontSize:13, color:C.sub }}>{o.role} · Joining: {o.doj}</div>
+                </div>
+                <div style={{ width:160 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, color:C.sub, marginBottom:6, fontWeight:600 }}>
+                    <span style={{ textTransform:"uppercase", letterSpacing:0.5 }}>{done} / {total} tasks</span>
+                    <span>{progress}%</span>
+                  </div>
+                  <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden", boxShadow:\`inset 0 1px 2px rgba(var(--shadow-rgb),0.05)\` }}>
+                    <div style={{ height:"100%", background: progress === 100 ? "#22c55e" : C.p, width:\`\${progress}%\`, transition:"width 0.3s" }} />
+                  </div>
+                </div>
+                <div style={{ color:C.sub, fontSize:20, opacity:0.5 }}>→</div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+      <style>{\`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }\`}</style>
     </div>
   );
 };
