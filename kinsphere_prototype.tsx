@@ -1033,7 +1033,7 @@ const ActivityTimeline = ({ events }) => {
   );
 };
 
-const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false }) => {
+const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false, onEditBank }) => {
   const mgr = mgrName(e.managerId, empList);
   const isOffboarded = e.status === "offboarded";
   const body = (
@@ -2248,11 +2248,19 @@ export default function App() {
       timeline: [{ type:"joined", label:`Joined the company (${e.joined})`, ts: Date.now() - 1e9 }]
     })));
   }, []);
+  const [bankPick, setBankPick] = useState(null);
+  const [bankForm, setBankForm] = useState({ acc: "", ifsc: "" });
   const [showEmp,    setShowEmp]  = useState(false);
   const [empForm, setEmpForm] = useState({
     firstName: "", lastName: "", email: "", phone: "", dob: "",
     role: "Employee", type: "Full Time", doj: "", designation: "", dept: "Technology", manager: "No Manager"
   });
+  useEffect(() => {
+    if (bankPick) {
+      const e = empById(bankPick, employees);
+      if (e) setBankForm({ acc: e.bankInfo?.accountNumber || "", ifsc: e.bankInfo?.ifsc || "" });
+    }
+  }, [bankPick, employees]);
   useEffect(() => {
     if (showEmp && profilePick) {
       const e = empById(profilePick, employees);
@@ -3310,7 +3318,7 @@ export default function App() {
             </div>
             {!isSA ? (
               <SettingsPanel label="Profile" title="Your details" accent={C.p}>
-                <ProfileDetail e={me} empList={employees} wrapCard={false} narrow={narrow} />
+                <ProfileDetail e={me} empList={employees} wrapCard={false} narrow={narrow} onEditBank={() => setBankPick(me.id)} />
               </SettingsPanel>
             ) : (
               <SettingsPanel label="Directory" title="Team members" accent={C.p}>
@@ -5929,7 +5937,7 @@ export default function App() {
       {/* ─ EMPLOYEE PROFILE (SA) ─ */}
       {profilePick != null && empById(profilePick, employees) && (
         <Modal title="Employee profile" onClose={()=>setProfilePick(null)} width={640}>
-          <ProfileDetail e={empById(profilePick, employees)} wrapCard={false} empList={employees} narrow={narrow} />
+          <ProfileDetail e={empById(profilePick, employees)} wrapCard={false} empList={employees} narrow={narrow} onEditBank={() => setBankPick(profilePick)} />
           
           {isSA && (
             <div style={{ marginTop: 24, paddingTop: 18, borderTop: `1px solid ${C.bdr}`, display: "flex", flexWrap: "wrap", gap: 10 }}>
@@ -5947,6 +5955,27 @@ export default function App() {
               <Btn variant="ghost" onClick={()=>setProfilePick(null)}>Close</Btn>
             </div>
           )}
+        </Modal>
+      )}
+
+      {bankPick && (
+        <Modal title="Update Bank Details" onClose={() => setBankPick(null)} width={400}>
+          <div style={{ marginBottom:16 }}>
+             <label style={{ fontSize:11, fontWeight:700, color:C.sub, display:"block", marginBottom:6 }}>ACCOUNT NUMBER</label>
+             <input value={bankForm.acc} onChange={e => setBankForm({ ...bankForm, acc: e.target.value })} style={{ width:"100%", boxSizing:"border-box", padding:"10px", borderRadius:8, border:`1px solid ${C.bdr}`, outline:"none", fontSize:14 }} />
+          </div>
+          <div style={{ marginBottom:20 }}>
+             <label style={{ fontSize:11, fontWeight:700, color:C.sub, display:"block", marginBottom:6 }}>IFSC CODE</label>
+             <input value={bankForm.ifsc} onChange={e => setBankForm({ ...bankForm, ifsc: e.target.value })} style={{ width:"100%", boxSizing:"border-box", padding:"10px", borderRadius:8, border:`1px solid ${C.bdr}`, outline:"none", fontSize:14 }} />
+          </div>
+          <div style={{ display:"flex", gap:10 }}>
+             <Btn variant="ghost" onClick={() => setBankPick(null)} style={{ flex:1 }}>Cancel</Btn>
+             <Btn onClick={() => {
+                setEmployees(emps => emps.map(emp => emp.id === bankPick ? { ...emp, bankInfo: { accountNumber: bankForm.acc, ifsc: bankForm.ifsc } } : emp));
+                toast("Bank details updated successfully ✓");
+                setBankPick(null);
+             }} style={{ flex:1, background:C.p, color:"#fff" }}>Save Bank Info</Btn>
+          </div>
         </Modal>
       )}
 
