@@ -1560,7 +1560,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
   };
 
   const CheckboxRow = ({ label, checked, onChange, cta, onCtaClick }) => (
-    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background:checked ? "rgba(var(--p-rgb),0.05)" : C.surf, borderRadius:12, border:\`1px solid \${checked ? C.p : C.bdr}\`, marginBottom:10, transition:"all 0.2s" }}>
+    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background:checked ? "rgba(var(--p-rgb),0.05)" : C.surf, borderRadius:12, border:`1px solid ${checked ? C.p : C.bdr}`, marginBottom:10, transition:"all 0.2s" }}>
       <label style={{ display:"flex", alignItems:"center", gap:12, cursor:"pointer", flex:1, minWidth:0, paddingRight:12 }}>
         <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} style={{ transform:"scale(1.2)", accentColor:C.p, flexShrink:0 }} />
         <span style={{ fontSize:14, color:C.txt, fontWeight: checked ? 600 : 400, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", transition:"color 0.2s" }}>{label}</span>
@@ -1580,11 +1580,11 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
         </div>
         <Card>
           <div style={{ display:"flex", gap:16, marginBottom:24, flexWrap:"wrap" }}>
-            <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:\`2px solid \${hireType === "New" ? C.p : C.surf}\`, background:hireType === "New" ? \`rgba(var(--p-rgb),0.03)\` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
+            <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:`2px solid ${hireType === "New" ? C.p : C.surf}`, background:hireType === "New" ? `rgba(var(--p-rgb),0.03)` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
               <input type="radio" checked={hireType === "New"} onChange={() => setHireType("New")} style={{ transform:"scale(1.2)", accentColor:C.p }} />
               <span style={{ fontWeight:600, fontSize:15, color:C.txt }}>New Hire</span>
             </label>
-            <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:\`2px solid \${hireType === "Existing" ? C.p : C.surf}\`, background:hireType === "Existing" ? \`rgba(var(--p-rgb),0.03)\` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
+            <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:`2px solid ${hireType === "Existing" ? C.p : C.surf}`, background:hireType === "Existing" ? `rgba(var(--p-rgb),0.03)` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
               <input type="radio" checked={hireType === "Existing"} onChange={() => setHireType("Existing")} style={{ transform:"scale(1.2)", accentColor:C.p }} />
               <span style={{ fontWeight:600, fontSize:15, color:C.txt }}>Existing Employee</span>
             </label>
@@ -1637,7 +1637,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
         </div>
         
         <div style={{ height:8, background:C.surf, borderRadius:4, overflow:"hidden", marginBottom:32 }}>
-          <div style={{ height:"100%", background:progress===100?"#22c55e":C.p, width:\`\${progress}%\`, transition:"width 0.4s cubic-bezier(0.4, 0, 0.2, 1)" }} />
+          <div style={{ height:"100%", background:progress===100?"#22c55e":C.p, width:`${progress}%`, transition:"width 0.4s cubic-bezier(0.4, 0, 0.2, 1)" }} />
         </div>
 
         <div style={{ display:"grid", gap:20 }}>
@@ -1671,7 +1671,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
             <CheckboxRow label="Onboarding Sessions / Training Completed" checked={s.sessionsDone} onChange={v=>setS("sessionsDone",v)} />
           </Card>
         </div>
-        <style>{\`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }\`}</style>
+        <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
       </div>
     );
   }
@@ -1687,7 +1687,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
       </div>
 
       {obs.length === 0 ? (
-        <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:\`1px dashed \${C.bdr}\` }}>
+        <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
           <div style={{ fontSize:40, marginBottom:16 }}>🚀</div>
           <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>No active onboardings</h3>
           <p style={{ color:C.sub, fontSize:14 }}>Click "New Onboarding" to start the process for a new or existing employee.</p>
@@ -1699,8 +1699,8 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
             const done = Object.values(o.state).filter(Boolean).length;
             const progress = Math.round((done / total) * 100);
             return (
-              <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:"24px", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:\`1px solid \${C.bdr}\` }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.p; e.currentTarget.style.transform="translateY(-2px)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr; e.currentTarget.style.transform="none";}}>
-                <div style={{ width:48, height:48, borderRadius:"50%", background:\`rgba(var(--p-rgb),0.1)\`, border:\`1px solid rgba(var(--p-rgb), 0.2)\`, display:"flex", alignItems:"center", justifyContent:"center", color:C.p, fontSize:18, fontWeight:700 }}>
+              <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:"24px", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.p; e.currentTarget.style.transform="translateY(-2px)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr; e.currentTarget.style.transform="none";}}>
+                <div style={{ width:48, height:48, borderRadius:"50%", background:`rgba(var(--p-rgb),0.1)`, border:`1px solid rgba(var(--p-rgb), 0.2)`, display:"flex", alignItems:"center", justifyContent:"center", color:C.p, fontSize:18, fontWeight:700 }}>
                   {o.name.charAt(0)}
                 </div>
                 <div style={{ flex:1 }}>
@@ -1712,8 +1712,8 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
                     <span style={{ textTransform:"uppercase", letterSpacing:0.5 }}>{done} / {total} tasks</span>
                     <span>{progress}%</span>
                   </div>
-                  <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden", boxShadow:\`inset 0 1px 2px rgba(var(--shadow-rgb),0.05)\` }}>
-                    <div style={{ height:"100%", background: progress === 100 ? "#22c55e" : C.p, width:\`\${progress}%\`, transition:"width 0.3s" }} />
+                  <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden", boxShadow:`inset 0 1px 2px rgba(var(--shadow-rgb),0.05)` }}>
+                    <div style={{ height:"100%", background: progress === 100 ? "#22c55e" : C.p, width:`${progress}%`, transition:"width 0.3s" }} />
                   </div>
                 </div>
                 <div style={{ color:C.sub, fontSize:20, opacity:0.5 }}>→</div>
@@ -1722,7 +1722,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
           })}
         </div>
       )}
-      <style>{\`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }\`}</style>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 };
