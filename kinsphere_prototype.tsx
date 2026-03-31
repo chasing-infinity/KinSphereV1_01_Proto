@@ -1069,6 +1069,26 @@ const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false, onE
         ))}
       </div>
       <div style={{ marginTop:18, paddingTop:16, borderTop:`1px solid ${C.bdr}` }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom:8 }}>
+          <div style={{ color:C.sub, fontWeight:600, fontSize:10, letterSpacing:.5 }}>BANK DETAILS</div>
+          {onEditBank && <button onClick={onEditBank} style={{ background:"none", border:`1px solid ${C.p}`, color:C.p, borderRadius:4, padding:"3px 8px", fontSize:10, fontWeight:700, cursor:"pointer" }}>Edit bank info</button>}
+        </div>
+        {e.bankInfo?.accountNumber || e.bankInfo?.ifsc ? (
+          <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "160px 1fr", gap:"12px 20px", fontSize:12 }}>
+            <div style={{ display:"contents" }}>
+              <div style={{ color:C.sub, fontWeight:600, fontSize:10, letterSpacing:.5 }}>ACCOUNT NUMBER</div>
+              <div style={{ color:C.txt, fontFamily:"monospace" }}>{e.bankInfo.accountNumber || "—"}</div>
+            </div>
+            <div style={{ display:"contents" }}>
+              <div style={{ color:C.sub, fontWeight:600, fontSize:10, letterSpacing:.5 }}>IFSC CODE</div>
+              <div style={{ color:C.txt, fontFamily:"monospace" }}>{e.bankInfo.ifsc || "—"}</div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ fontSize:12, color:C.sub, fontStyle:"italic" }}>No bank details provided.</div>
+        )}
+      </div>
+      <div style={{ marginTop:18, paddingTop:16, borderTop:`1px solid ${C.bdr}` }}>
         <div style={{ color:C.sub, fontWeight:600, fontSize:10, letterSpacing:.5, marginBottom:8 }}>ASSIGNED DEVICES</div>
         <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
           {(e.devices||[]).map(d => <span key={d} style={{ background:C.surf, padding:"5px 11px", borderRadius:8, border:`1px solid ${C.bdr}` }}>{d}</span>)}
