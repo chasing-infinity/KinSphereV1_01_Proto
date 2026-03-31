@@ -1739,17 +1739,27 @@ const PayrollWizardModal = ({
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Derive data
-  const monthPayslips = saPayslips.filter(p => p.monthIndex === selectedMonthIndex && parseInt(p.year) === currentYear);
-  const empStates = monthPayslips.map(p => {
-    const emp = employees.find(e => e.id === p.empId);
-    const hasBank = !!emp?.bankInfo?.accountNumber && !!emp?.bankInfo?.ifsc;
-    const isPaid = !!processedPayments[p.id];
+  const empStates = employees.map(emp => {
+    const existingPayslip = saPayslips.find(p => p.empId === emp.id && p.monthIndex === selectedMonthIndex && parseInt(p.year) === currentYear);
+    const pId = existingPayslip ? existingPayslip.id : `new_pay_${emp.id}_${selectedMonthIndex}`;
+    const netFallback = emp.ctc ? `₹${Math.round(parseInt(emp.ctc.replace(/\\D/g,'')) / 12).toLocaleString("en-IN")}` : "₹50,000";
+    
+    const p = existingPayslip || {
+      id: pId,
+      empId: emp.id,
+      name: emp.name,
+      net: netFallback
+    };
+    const hasBank = !!emp.bankInfo?.accountNumber && !!emp.bankInfo?.ifsc;
+    // For new payslips, they are naturally not paid yet
+    const isPaid = !!processedPayments[pId];
     return { p, emp, hasBank, isPaid };
   });
 
   const validUnpaid = empStates.filter(x => x.hasBank && !x.isPaid);
   const alreadyPaid = empStates.filter(x => x.isPaid);
   const missingBank = empStates.filter(x => !x.hasBank && !x.isPaid);
+
 
   const handleProceedToStep2 = () => {
     setSelectedIds(validUnpaid.map(x => x.p.id));
@@ -1783,7 +1793,7 @@ const PayrollWizardModal = ({
     return (
       <Modal title="Start Payroll" onClose={onClose} width={400}>
         <div style={{ padding: "10px 0 20px" }}>
-          <p style={{ color:C.sub, fontSize:14, marginBottom:20 }}>Select the month for the current year (${currentYear}) to process payroll.</p>
+          <p style={{ color:C.sub, fontSize:14, marginBottom:20 }}>Select the month for the current year ({currentYear}) to process payroll.</p>
           <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.6, marginBottom:8 }}>MONTH</div>
           <select 
             value={selectedMonthIndex} 
@@ -1849,7 +1859,7 @@ const PayrollWizardModal = ({
 
         {missingBank.length > 0 && (
           <div style={{ marginTop:24 }}>
-            <h4 style={{ fontSize:12, fontWeight:700, color:"#b91c1c", marginBottom:8, textTransform:"uppercase", letterSpacing:0.5 }}>Missing Bank Details (${missingBank.length})</h4>
+            <h4 style={{ fontSize:12, fontWeight:700, color:"#b91c1c", marginBottom:8, textTransform:"uppercase", letterSpacing:0.5 }}>Missing Bank Details ({missingBank.length})</h4>
             <div style={{ background:"#fef2f2", padding:"12px 16px", borderRadius:10, border:"1px solid #fecaca" }}>
               <div style={{ fontSize:13, color:"#991b1b" }}>These employees cannot be paid until bank details are added:</div>
               <div style={{ fontSize:13, color:"#7f1d1d", fontWeight:600, marginTop:4 }}>
@@ -1861,7 +1871,7 @@ const PayrollWizardModal = ({
 
         {alreadyPaid.length > 0 && (
           <div style={{ marginTop:24 }}>
-            <h4 style={{ fontSize:12, fontWeight:700, color:"#16a34a", marginBottom:8, textTransform:"uppercase", letterSpacing:0.5 }}>Already Paid (${alreadyPaid.length})</h4>
+            <h4 style={{ fontSize:12, fontWeight:700, color:"#16a34a", marginBottom:8, textTransform:"uppercase", letterSpacing:0.5 }}>Already Paid ({alreadyPaid.length})</h4>
             <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10 }}>
                {alreadyPaid.map(({ p }) => (
                   <div key={p.id} style={{ padding:"12px 16px", borderBottom:`1px solid #dcfce7`, display:"flex", justifyContent:"space-between", alignItems:"center", opacity:0.7 }}>
@@ -1888,7 +1898,7 @@ const PayrollWizardModal = ({
         <div style={{ textAlign:"center", padding:"20px 0" }}>
            <div style={{ fontSize:48, marginBottom:16 }}>💳</div>
            <h2 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Approve Payroll Release</h2>
-           <p style={{ fontSize:15, color:C.sub, margin:"0 0 32px" }}>You are paying ${selectedIds.length} out of ${employees.length} total employees for ${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}.</p>
+           <p style={{ fontSize:15, color:C.sub, margin:"0 0 32px" }}>You are paying {selectedIds.length} out of {employees.length} total employees for {MONTHS_SHORT[selectedMonthIndex]} {currentYear}.</p>
            
            <div style={{ background:C.surf, padding:24, borderRadius:16, border:`1px solid ${C.bdr}`, marginBottom:32 }}>
              <div style={{ fontSize:12, fontWeight:700, color:C.sub, letterSpacing:1, marginBottom:8 }}>TOTAL NET PAYOUT</div>
