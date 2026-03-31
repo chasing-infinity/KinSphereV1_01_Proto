@@ -170,7 +170,7 @@ function buildDemoPayslips() {
   const ps = [];
   const periods = [
     { y: 2025, months: [9, 10, 11] },
-    { y: 2026, months: [0, 1, 2, 3, 4, 5] },
+    { y: 2026, months: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
   ];
   for (const { y, months } of periods) {
     for (const m of months) {
@@ -1748,7 +1748,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
 };
 
 const PayrollWizardModal = ({ 
-  onClose, saPayslips, employees, processedPayments, setProcessedPayments, 
+  onClose, saPayslips, setSaPayslips, employees, processedPayments, setProcessedPayments, 
   editedSalaries, setPaymentLogs, toast, parseInr, C, MONTHS_SHORT 
 }) => {
   const currentYear = new Date().getFullYear();
@@ -1791,11 +1791,34 @@ const PayrollWizardModal = ({
     setTimeout(() => {
       const newProcessed = { ...processedPayments };
       let totalAmt = 0;
+      const newGlobalPayslips = [];
       selectedIds.forEach(id => {
         newProcessed[id] = true;
         const pState = validUnpaid.find(x => x.p.id === id);
-        if (pState) totalAmt += parseInr(editedSalaries[id] || pState.p.net);
+        if (pState) {
+           totalAmt += parseInr(editedSalaries[id] || pState.p.net);
+           if (!saPayslips.find(x => x.id === id)) {
+              newGlobalPayslips.push({
+                 id: id,
+                 empId: pState.emp.id,
+                 ini: pState.emp.ini,
+                 name: pState.emp.name,
+                 dept: pState.emp.dept,
+                 year: currentYear.toString(), // ensure year is string if expected
+                 month: selectedMonthIndex,
+                 monthIndex: selectedMonthIndex,
+                 monthLabel: `${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`,
+                 credited: new Date().toLocaleDateString("en-IN", {day:"numeric",month:"short",year:"numeric"}),
+                 gross: `₹${Math.round((parseInt(pState.p.net.replace(/\D/g,'')) || 50000) * 1.38).toLocaleString("en-IN")}`,
+                 net: pState.p.net,
+                 status: "Unpaid" // will be immediately processed
+              });
+           }
+        }
       });
+      if (newGlobalPayslips.length > 0) {
+         setSaPayslips(prev => [...prev, ...newGlobalPayslips]);
+      }
       setProcessedPayments(newProcessed);
       setPaymentLogs(prev => [{
         ts: new Date().toLocaleString("en-IN"),
@@ -1962,6 +1985,7 @@ export default function App() {
   const isSA  = role === "Super Admin";
   
   const [employees, setEmployees] = useState(() => JSON.parse(JSON.stringify(EMPS)));
+  const [saPayslips, setSaPayslips] = useState(DEMO_PAYSLIPS);
   const [leaves,     setLeaves]   = useState(INIT_LEAVES);
   const [holidays, setHolidays]   = useState(INIT_HOLIDAYS);
 
@@ -2392,10 +2416,10 @@ export default function App() {
     l => l.status === "approved" && l.fromISO <= todayISO && l.toISO >= todayISO
   ).length;
   const myLeaves = leaves.filter(l => l.empId === ME_ID);
-  const saPayslipRows = DEMO_PAYSLIPS.filter(p =>
+  const saPayslipRows = saPayslips.filter(p =>
     p.year === payYear && (payMonthFilter === null || p.month === payMonthFilter)
   ).sort((a, b) => a.month - b.month || a.name.localeCompare(b.name));
-  const myPayslipRows = DEMO_PAYSLIPS.filter(p => p.empId === ME_ID && p.year === payYear)
+  const myPayslipRows = saPayslips.filter(p => p.empId === ME_ID && p.year === payYear)
     .sort((a, b) => b.month - a.month);
   const onEmpProfilePage = page === "Employees" || page === "My Profile";
 
@@ -5942,7 +5966,7 @@ export default function App() {
             {payrollStep > 0 && (
         <PayrollWizardModal 
            onClose={() => setPayrollStep(0)} 
-           saPayslips={DEMO_PAYSLIPS}
+           saPayslips={saPayslips} setSaPayslips={setSaPayslips}
            employees={employees}
            processedPayments={processedPayments}
            setProcessedPayments={setProcessedPayments}
