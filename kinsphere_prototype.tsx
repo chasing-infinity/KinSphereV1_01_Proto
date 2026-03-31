@@ -2273,7 +2273,7 @@ export default function App() {
   const [showEmp,    setShowEmp]  = useState(false);
   const [empForm, setEmpForm] = useState({
     firstName: "", lastName: "", email: "", phone: "", dob: "",
-    role: "Employee", type: "Full Time", doj: "", designation: "", dept: "Technology", manager: "No Manager"
+    role: "Employee", type: "Full Time", doj: "", designation: "", dept: "Technology", manager: "No Manager", bankAcc: "", bankIfsc: ""
   });
   useEffect(() => {
     if (bankPick) {
@@ -2297,12 +2297,14 @@ export default function App() {
         doj: e.joined || "",
         designation: e.designation || "",
         dept: e.dept || "—",
-        manager: empById(e.managerId, employees)?.name || "No Manager"
+        manager: empById(e.managerId, employees)?.name || "No Manager",
+        bankAcc: e.bankInfo?.accountNumber || "",
+        bankIfsc: e.bankInfo?.ifsc || ""
       });
     } else if (showEmp) {
       setEmpForm({
         firstName: "", lastName: "", email: "", phone: "", dob: "",
-        role: "Employee", type: "Full Time", doj: "", designation: "", dept: "Technology", manager: "No Manager"
+        role: "Employee", type: "Full Time", doj: "", designation: "", dept: "Technology", manager: "No Manager", bankAcc: "", bankIfsc: ""
       });
     }
   }, [showEmp, profilePick]);
@@ -6423,6 +6425,11 @@ export default function App() {
             <Inp label="Phone" type="tel" value={empForm.ecPhone||""} onChange={e=>setEmpForm({...empForm, ecPhone:e.target.value})} />
             <Inp label="Relationship" value={empForm.ecRel||""} onChange={e=>setEmpForm({...empForm, ecRel:e.target.value})} />
           </div>
+          <div style={{ fontSize:10, fontWeight:700, color:C.p, margin:"16px 0 10px", letterSpacing:1 }}>BANK DETAILS</div>
+          <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "1fr 1fr", gap:12 }}>
+            <Inp label="Account Number" value={empForm.bankAcc||""} onChange={e=>setEmpForm({...empForm, bankAcc:e.target.value})} />
+            <Inp label="IFSC Code" value={empForm.bankIfsc||""} onChange={e=>setEmpForm({...empForm, bankIfsc:e.target.value})} />
+          </div>
           <div style={{ fontSize:10, fontWeight:700, color:C.p, margin:"16px 0 10px", letterSpacing:1 }}>CUSTOM FIELDS</div>
           <div style={{ display:"flex", gap:8, alignItems:"flex-end", marginBottom:10 }}>
             <Inp label="Field Name" value={empCustomFieldKey} onChange={e=>setEmpCustomFieldKey(e.target.value)} />
@@ -6466,10 +6473,32 @@ export default function App() {
                   ini: empForm.firstName[0].toUpperCase() + (empForm.lastName ? empForm.lastName[0].toUpperCase() : ""),
                   emergencyContact: ec,
                   customFields: empForm.customFields || [],
-                  timeline: [...(e.timeline||[]), ...changes]
+                  timeline: [...(e.timeline||[]), ...changes],
+                  bankInfo: { accountNumber: empForm.bankAcc, ifsc: empForm.bankIfsc }
                 } : e));
                 toast("Changes saved successfully ✓");
               } else {
+                const newId = Math.max(...employees.map(x => typeof x.id === 'number' ? x.id : 0), 0) + 1;
+                setEmployees(emps => [{
+                  id: newId,
+                  avatarC: "#" + Math.floor(Math.random() * 16777215).toString(16).padEnd(6, '0'),
+                  status: "active",
+                  name: targetName,
+                  email: empForm.email,
+                  phone: empForm.phone,
+                  dob: empForm.dob,
+                  role: empForm.role,
+                  type: empForm.type,
+                  joined: empForm.doj,
+                  designation: empForm.designation,
+                  dept: empForm.dept,
+                  managerId: managerObj ? managerObj.id : null,
+                  ini: empForm.firstName[0].toUpperCase() + (empForm.lastName ? empForm.lastName[0].toUpperCase() : ""),
+                  emergencyContact: ec,
+                  customFields: empForm.customFields || [],
+                  timeline: [{ type:"joined", label:`Joined the company (\${empForm.doj})`, ts: Date.now() }],
+                  bankInfo: { accountNumber: empForm.bankAcc, ifsc: empForm.bankIfsc }
+                }, ...emps]);
                 toast("Employee created & invite sent ✓");
               }
               setShowEmp(false);
