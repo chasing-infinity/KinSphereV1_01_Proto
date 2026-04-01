@@ -2948,7 +2948,6 @@ export default function App() {
     return "Original";
   });
 
-  const isAdmin = role === "Admin";
   const navItems = navItemsForRole(isSA);
 
   useEffect(() => {
