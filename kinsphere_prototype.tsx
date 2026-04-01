@@ -205,6 +205,24 @@ const INIT_HOLIDAYS = [
   { id:3, n:"Diwali",           d:"01 Nov 2026", dISO:"2026-11-01", desc:"Festival of Lights." },
 ];
 
+/**
+ * Notification visibility:
+ *  forEmpIds: [] means SA-only; a list targets those specific employee IDs.
+ *  forAll: true means every role sees it.
+ */
+const INIT_NOTIFICATIONS = [
+  { id:1,  icon:"🗓", title:"Leave request pending",       body:"Arjun Mehta applied for Sick Leave · 25 Mar",             time:"2h ago",  read:false, forSA:true,  forAll:false, forEmpIds:[] },
+  { id:2,  icon:"🗓", title:"Leave request pending",       body:"Priya Sharma applied for Casual Leave · 28 Mar",           time:"3h ago",  read:false, forSA:true,  forAll:false, forEmpIds:[] },
+  { id:3,  icon:"✅", title:"Your leave was approved",     body:"Sick Leave 10–11 Mar has been approved",                   time:"1d ago",  read:false, forSA:false, forAll:false, forEmpIds:[3] },
+  { id:4,  icon:"📄", title:"Document needs verification", body:"Nihit Agarwal · PAN Card uploaded · pending review",       time:"4h ago",  read:false, forSA:true,  forAll:false, forEmpIds:[] },
+  { id:5,  icon:"💰", title:"Payslip released",            body:"Your Mar 2026 payslip is now available in Paydays",        time:"2d ago",  read:true,  forSA:false, forAll:true,  forEmpIds:[] },
+  { id:6,  icon:"🎉", title:"You received a shout-out!",   body:"Arjun Mehta recognised you for Teamwork 🙌",              time:"5h ago",  read:false, forSA:false, forAll:false, forEmpIds:[3] },
+  { id:7,  icon:"👤", title:"New employee onboarded",      body:"Ridwanul Alam joined Technology · Software Engineer",     time:"1w ago",  read:true,  forSA:true,  forAll:false, forEmpIds:[] },
+  { id:8,  icon:"💳", title:"Payroll run completed",       body:"Mar 2026 payroll processed · 5 employees paid",           time:"2d ago",  read:true,  forSA:true,  forAll:false, forEmpIds:[] },
+  { id:9,  icon:"📋", title:"Onboarding task pending",     body:"3 employees have incomplete onboarding tasks",            time:"3d ago",  read:true,  forSA:true,  forAll:false, forEmpIds:[] },
+  { id:10, icon:"🗓", title:"Leave balance low",           body:"Your Earned Leave balance is below 3 days",               time:"3d ago",  read:true,  forSA:false, forAll:false, forEmpIds:[1] },
+];
+
 /** Templates with {{placeholder}} support for Step 2 dynamic fill. */
 const PAPER_TEMPLATES = [
   {
@@ -2275,6 +2293,11 @@ export default function App() {
   
   const [showImportCsv, setShowImportCsv] = useState(false);
   const [showHolidays, setShowHolidays] = useState(false);
+  const [notifications, setNotifications] = useState(INIT_NOTIFICATIONS);
+  const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const addNotif = (n: Omit<typeof INIT_NOTIFICATIONS[0], 'id' | 'time' | 'read'>) => {
+    setNotifications(prev => [{ ...n, id: Date.now(), time: "Just now", read: false }, ...prev]);
+  };
   const [newHolidayName, setNewHolidayName] = useState("");
   const [newHolidayDate, setNewHolidayDate] = useState("");
   const [newHolidayDesc, setNewHolidayDesc] = useState("");
@@ -2344,6 +2367,12 @@ export default function App() {
       currentPayslips.forEach(p => {
         newProcessed[p.id] = true;
         totalAmt += parseInr(editedSalaries[p.id] || p.net);
+        // Notify employee
+        addNotif({
+          icon: "💸", title: "Payment Processed",
+          body: `Your salary for ${MONTHS_SHORT[p.month]} ${p.year} has been processed.`,
+          forSA: false, forAll: false, forEmpIds: [p.empId]
+        });
       });
       setProcessedPayments(newProcessed);
       // We don't set payrollStatus to "Paid" globally anymore, just show logs
@@ -2398,6 +2427,15 @@ export default function App() {
       comments: []
     };
     setRecogs(p => [newR, ...p]);
+    // Notification for recognition
+    addNotif({
+      icon: "🎉",
+      title: "New Shout-out!",
+      body: `${me.name} recognised ${recogTo} for ${newRecogTags.join(", ")}`,
+      forSA: true,
+      forAll: false,
+      forEmpIds: target ? [target.id] : []
+    });
     setRecogTo("Choose a teammate…");
     setRecogMsg("");
     setNewRecogTags([]);
@@ -2414,6 +2452,21 @@ export default function App() {
       newReactions[type] = (newReactions[type] || 0) + 1;
       return { ...r, reactions: newReactions };
     }));
+    // Notification for reaction
+    const rr = recogs.find(x => x.id === recogId);
+    if (rr) {
+      const targetEmp = employees.find(e => e.name === rr.to);
+      if (targetEmp) {
+        addNotif({
+          icon: type === 'like' ? '👍' : '🎉',
+          title: "Reaction on your shout-out",
+          body: `${me.name} reacted to your ${rr.tags[0] || "shout-out"}`,
+          forSA: false,
+          forAll: false,
+          forEmpIds: [targetEmp.id]
+        });
+      }
+    }
     toast(`Reacted with ${type === 'like' ? '👍' : '🎉'} ✓`);
   };
 
@@ -2626,6 +2679,22 @@ export default function App() {
     const row = leaves.find(l => l.id === id);
     setLeaves(p=>p.map(l=>l.id===id ? {...l,status:act} : l));
     if (row) {
+      addNotif({
+        icon: act === "approved" ? "✅" : "❌",
+        title: `Leave ${act.charAt(0).toUpperCase() + act.slice(1)}`,
+        body: `Your ${row.type} request (${row.from}–${row.to}) has been ${act}.`,
+        forSA: false, forAll: false, forEmpIds: [row.empId]
+      });
+      // Also notify SA if someone else (like a manager) approved it, 
+      // but in this prototype usually it's the SA acting.
+      // If the current user is NOT SA, we can notify SA as well.
+      if (!isSA) {
+        addNotif({
+          icon: "🗓", title: `Leave ${act.charAt(0).toUpperCase() + act.slice(1)}`,
+          body: `${me.name} ${act} leave for ${row.emp}`,
+          forSA: true, forAll: false, forEmpIds: []
+        });
+      }
       toast(`${act === "approved" ? "Approved" : "Rejected"} leave for ${row.emp} — they have been notified ✓`);
     }
   };
@@ -3034,6 +3103,138 @@ export default function App() {
             wordBreak:"break-word",
           }}>{showToast}</div>
         )}
+
+        {/* ── NOTIFICATION BELL ── */}
+        {(() => {
+          const visibleNotifs = notifications.filter(n =>
+            isSA ? true
+            : n.forAll
+            || n.forEmpIds.includes(ME_ID)
+          );
+          const unread = visibleNotifs.filter(n => !n.read).length;
+          return (
+            <>
+              <button
+                id="notif-bell-btn"
+                onClick={() => setShowNotifPanel(v => !v)}
+                style={{
+                  position:"fixed",
+                  top: narrow ? "calc(52px + env(safe-area-inset-top,0px) + 10px)" : 18,
+                  right: narrow ? 14 : 18,
+                  zIndex: 250,
+                  width: 40, height: 40,
+                  borderRadius: 12,
+                  border: `1px solid ${C.bdr}`,
+                  background: showNotifPanel ? C.p : C.wht,
+                  color: showNotifPanel ? "#fff" : C.txt,
+                  cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "0 2px 12px rgba(var(--shadow-rgb),.1)",
+                  transition: "background .15s, color .15s, box-shadow .15s",
+                  flexShrink: 0,
+                }}
+                title="Notifications"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                {unread > 0 && (
+                  <span style={{
+                    position:"absolute", top:-4, right:-4,
+                    minWidth:17, height:17, borderRadius:999,
+                    background:"#dc2626", color:"#fff",
+                    fontSize:9, fontWeight:800, letterSpacing:.2,
+                    display:"flex", alignItems:"center", justifyContent:"center",
+                    padding:"0 4px", border:"2px solid #fff",
+                    lineHeight:1,
+                  }}>{unread > 9 ? "9+" : unread}</span>
+                )}
+              </button>
+
+              {showNotifPanel && (
+                <>
+                  <div
+                    style={{ position:"fixed", inset:0, zIndex:248 }}
+                    onClick={() => setShowNotifPanel(false)}
+                  />
+                  <div
+                    style={{
+                      position:"fixed",
+                      top: narrow ? "calc(52px + env(safe-area-inset-top,0px) + 56px)" : 66,
+                      right: narrow ? 10 : 18,
+                      zIndex: 249,
+                      width: Math.min(360, (typeof window !== "undefined" ? window.innerWidth : 400) - 20),
+                      maxHeight: "calc(100vh - 120px)",
+                      background: C.wht,
+                      borderRadius: 16,
+                      border: `1px solid ${C.bdr}`,
+                      boxShadow: "0 16px 48px rgba(var(--shadow-rgb),.18)",
+                      display: "flex", flexDirection: "column",
+                      overflow: "hidden",
+                      animation: "fadeIn .15s ease",
+                    }}
+                  >
+                    {/* Panel header */}
+                    <div style={{ padding:"14px 16px 10px", borderBottom:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between", alignItems:"center", flexShrink:0 }}>
+                      <div>
+                        <div style={{ fontWeight:700, fontSize:14, color:C.txt }}>Notifications</div>
+                        <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{unread} unread · {visibleNotifs.length} total</div>
+                      </div>
+                      {unread > 0 && (
+                        <button
+                          onClick={() => setNotifications(prev => prev.map(n => ({ ...n, read: true })))}
+                          style={{ background:"none", border:"none", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer", padding:"4px 8px", borderRadius:6 }}
+                        >Mark all read</button>
+                      )}
+                    </div>
+
+                    {/* Notification list */}
+                    <div style={{ overflowY:"auto", flex:1 }}>
+                      {visibleNotifs.length === 0 ? (
+                        <div style={{ padding:"40px 20px", textAlign:"center", color:C.sub, fontSize:12 }}>No notifications yet.</div>
+                      ) : visibleNotifs.map(n => (
+                        <div
+                          key={n.id}
+                          onClick={() => setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, read: true } : x))}
+                          style={{
+                            display:"flex", gap:12, padding:"12px 16px",
+                            borderBottom:`1px solid ${C.surf}`,
+                            background: n.read ? "transparent" : `rgba(var(--p-rgb),.06)`,
+                            cursor:"pointer", transition:"background .12s",
+                            position:"relative",
+                          }}
+                          onMouseEnter={ev => { ev.currentTarget.style.background = C.surf; }}
+                          onMouseLeave={ev => { ev.currentTarget.style.background = n.read ? "transparent" : `rgba(var(--p-rgb),.06)`; }}
+                        >
+                          {!n.read && (
+                            <span style={{ position:"absolute", left:6, top:"50%", transform:"translateY(-50%)", width:5, height:5, borderRadius:"50%", background:C.p }} />
+                          )}
+                          <div style={{ width:34, height:34, borderRadius:10, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>
+                            {n.icon}
+                          </div>
+                          <div style={{ flex:1, minWidth:0 }}>
+                            <div style={{ fontWeight: n.read ? 500 : 700, fontSize:12, color:C.txt, lineHeight:1.3 }}>{n.title}</div>
+                            <div style={{ fontSize:11, color:C.sub, marginTop:3, lineHeight:1.4, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{n.body}</div>
+                            <div style={{ fontSize:10, color:C.bdr, marginTop:4 }}>{n.time}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Panel footer */}
+                    <div style={{ padding:"10px 16px", borderTop:`1px solid ${C.bdr}`, display:"flex", justifyContent:"flex-end", flexShrink:0 }}>
+                      <button
+                        onClick={() => { setNotifications(prev => prev.filter(n => n.read)); }}
+                        style={{ background:"none", border:"none", fontSize:11, color:C.sub, cursor:"pointer", padding:"4px 8px", borderRadius:6 }}
+                      >Clear read</button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          );
+        })()}
 
         {saCalTooltip && (
           <div
@@ -6221,6 +6422,7 @@ export default function App() {
           parseInr={parseInr}
           C={C}
           MONTHS_SHORT={MONTHS_SHORT}
+          addNotif={addNotif}
         />
       )}
       {payrollStep > 0 && (
@@ -6236,6 +6438,7 @@ export default function App() {
            parseInr={parseInr}
            C={C}
            MONTHS_SHORT={MONTHS_SHORT}
+           addNotif={addNotif}
         />
       )}
 
@@ -6250,17 +6453,31 @@ export default function App() {
             narrow={narrow}
             onEditBank={() => setBankPick(profilePick)}
             onApproveDoc={isSA ? (docIdx) => {
+              const emp = empById(profilePick, employees);
+              const docName = emp?.documents[docIdx]?.n || "Document";
               setEmployees(emps => emps.map(emp => emp.id !== profilePick ? emp : {
                 ...emp,
                 documents: emp.documents.map((d, i) => i === docIdx ? { ...d, v: true } : d)
               }));
+              addNotif({
+                icon: "✅", title: "Document Verified",
+                body: `Your ${docName} has been approved and verified by HR`,
+                forSA: false, forAll: false, forEmpIds: [profilePick]
+              });
               toast("Document approved ✓");
             } : null}
             onRejectDoc={isSA ? (docIdx) => {
+              const emp = empById(profilePick, employees);
+              const docName = emp?.documents[docIdx]?.n || "Document";
               setEmployees(emps => emps.map(emp => emp.id !== profilePick ? emp : {
                 ...emp,
                 documents: emp.documents.filter((_, i) => i !== docIdx)
               }));
+              addNotif({
+                icon: "❌", title: "Document Rejected",
+                body: `Your ${docName} upload was rejected. Please re-upload with correct details.`,
+                forSA: false, forAll: false, forEmpIds: [profilePick]
+              });
               toast("Document rejected and removed");
             } : null}
             onPreviewDoc={(doc, emp) => setDocPreviewItem({ doc, emp })}
@@ -6840,7 +7057,10 @@ export default function App() {
                 if (res.error) { toast(res.error); return; }
                 const newRow: any = { ...(res.row || {}), halfDay: leaveApply.halfDay, halfDayPart: leaveApply.halfDayPart };
                 setLeaves(p => [...p, newRow]);
-                // Notification hook: notify approver
+                // Add notifications
+                const empName = isSA ? (employees.find(e => e.id === leaveApply.forEmpId)?.name ?? "Employee") : me.name;
+                addNotif({ icon:"🗓", title:"Leave request submitted", body:`${empName} applied for ${leaveApply.type} · ${leaveApply.from} to ${leaveApply.to}`, forSA:true, forAll:false, forEmpIds:[] });
+                if (!isSA) addNotif({ icon:"🗓", title:"Leave request sent", body:`Your ${leaveApply.type} request has been submitted to ${leaveApply.approver || "your approver"}`, forSA:false, forAll:false, forEmpIds:[ME_ID] });
                 toast(`Leave request submitted ✓ — ${res.row.approver} has been notified.`);
                 setShowLeave(false);
               }}
