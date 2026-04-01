@@ -2303,20 +2303,33 @@ const PresenceModule = ({
   const getDayStatus = (d) => {
     const date = new Date(year, month, d);
     const iso = date.toISOString().split('T')[0];
+    const dayOfWeek = date.getDay();
+
+    // Priority 1: Calendar holidays
     const hol = holidays.find(h => h.dISO === iso);
     if (hol) return { status: 'Holiday', label: hol.n, color: '#6366f1' };
+
+    // Priority 2: Sundays are treated as holidays
+    if (dayOfWeek === 0) return { status: 'Holiday', label: 'Sunday', color: '#6366f1' };
+
+    // Priority 3: Approved leave
     const leave = leaves.find(l => l.empId === presenceEmpId && l.status === 'approved' && l.fromISO <= iso && l.toISO >= iso);
     if (leave) return { status: 'On Leave', label: leave.type, color: '#f59e0b' };
-    const dayOfWeek = date.getDay();
-    if (attendanceMode === 'Auto') return (dayOfWeek === 0 || dayOfWeek === 6) ? { status: 'Weekend', color: C.bdr } : { status: 'Present', label: 'Present', color: '#10b981' };
+
+    // Priority 4: Saturday = Weekend (grey, not counted)
+    if (dayOfWeek === 6) return { status: 'Weekend', color: C.bdr };
+
+    // Priority 5: Mode-based logic for working days
+    if (attendanceMode === 'Auto') return { status: 'Present', label: 'Present', color: '#10b981' };
     if (attendanceMode === 'HRMS') {
       const data = attendanceData[presenceEmpId]?.[iso];
       if (data) return { status: 'Present', label: 'Present', color: '#10b981', details: data };
-      return (dayOfWeek === 0 || dayOfWeek === 6) ? { status: 'Weekend', color: C.bdr } : { status: 'Absent', label: 'Absent', color: '#ef4444' };
+      return { status: 'Absent', label: 'Absent', color: '#ef4444' };
     }
-    if (attendanceMode === 'SlackTeams') return (dayOfWeek === 0 || dayOfWeek === 6) ? { status: 'Weekend', color: C.bdr } : { status: 'Present', label: `Via ${slackTeamsPlatform}`, color: '#10b981' };
+    if (attendanceMode === 'SlackTeams') return { status: 'Present', label: `Via ${slackTeamsPlatform}`, color: '#10b981' };
     return { status: 'Unknown', color: C.bdr };
   };
+
 
   const stats = { present: 0, holiday: 0, leave: 0, absent: 0 };
   for (let i = 1; i <= totalDays; i++) {
