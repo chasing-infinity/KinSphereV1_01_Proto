@@ -5918,14 +5918,10 @@ export default function App() {
                 <div style={{ flex:1, minWidth:200 }}>
                   <div style={{ fontSize:12, color:C.sub, marginBottom:4 }}>{me.email}</div>
                   <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-                    <Pill txt={me.dept} bg={C.surf} c={C.sub} />
-                    <Pill txt={role} bg={C.bg} c={C.txt} />
+                    <Pill txt={role} bg={C.p} c="#fff" />
                   </div>
                 </div>
               </div>
-              <p style={{ margin:0, fontSize:12, color:C.sub, lineHeight:1.5 }}>
-                Role is preview-only here — use <strong style={{ color:C.txt }}>Switch role</strong> in the sidebar to try Employee, Admin, or Super Admin in this prototype.
-              </p>
             </SettingsPanel>
 
             <SettingsPanel label="Appearance" title="Color Theme" accent={C.p}>
@@ -5993,34 +5989,69 @@ export default function App() {
               <>
                 <SettingsPanel label="Organisation" title="Workspace & directory" accent={C.p}>
                   <p style={{ margin:"0 0 14px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
-                    High-level context for KinSphere. Tagline appears under the logo in the sidebar and on payslip headers.
+                    High-level context for KinSphere. This name appears across the product headers and documents.
                   </p>
                   <div style={{
                     display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:14, marginBottom:14,
                   }}>
                     <div style={{ padding:14, borderRadius:12, background:C.bg, border:`1px solid ${C.bdr}` }}>
-                      <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:6 }}>COMPANY TAGLINE</div>
-                      <div style={{ fontSize:14, fontWeight:600, color:C.txt }}>{companyTagline}</div>
+                      <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:8 }}>COMPANY NAME</div>
+                      <input 
+                        value={companyTagline} 
+                        onChange={(e) => setCompanyTagline(e.target.value)}
+                        style={{ width:"100%", border:"none", background:"transparent", fontSize:14, fontWeight:600, color:C.txt, padding:0, outline:"none" }}
+                        placeholder="Enter company name..."
+                      />
                     </div>
                     <div style={{ padding:14, borderRadius:12, background:C.bg, border:`1px solid ${C.bdr}` }}>
                       <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:6 }}>EMPLOYEES</div>
                       <div style={{ fontSize:22, fontWeight:700, color:C.txt, fontVariantNumeric:"tabular-nums" }}>{employees.length}</div>
-                      <div style={{ fontSize:11, color:C.sub, marginTop:4 }}>Active profiles in directory</div>
                     </div>
-                  </div>
-                  <div style={{ fontSize:11, color:C.sub, lineHeight:1.45 }}>
-                    Edit tagline via the <strong style={{ color:C.txt }}>✎</strong> control next to the company name in the sidebar. Upload the company logo by hovering the KinSphere mark (Super Admin).
                   </div>
                 </SettingsPanel>
 
-                <SettingsPanel label="Branding" title="Logo & payslips" accent="#6b7d5e">
-                  <p style={{ margin:"0 0 12px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
-                    Logo and tagline flow into payslip PDFs and the app shell. CSV employee export uses the same directory you manage under Employees.
-                  </p>
-                  <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-                    <Btn variant="outline" onClick={()=>toast("Opens Employees export (prototype) ✓")}>Review export format</Btn>
-                    <Btn variant="ghost" onClick={()=>setPage("Paydays")}>Open Paydays</Btn>
+                <SettingsPanel label="Branding" title="Logo" accent="#6b7d5e">
+                  <div style={{ display:"flex", alignItems:"center", gap:20 }}>
+                    <div style={{ width:60, height:60, borderRadius:12, border:`1px solid ${C.bdr}`, background:C.surf, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" }}>
+                      {companyLogoUrl ? <img src={companyLogoUrl} style={{ width:"100%", height:"100%", objectFit:"contain" }} /> : <span style={{ fontSize:20 }}>🏢</span>}
+                    </div>
+                    <Btn variant="outline" onClick={() => logoInputRef.current?.click()}>Upload Logo</Btn>
                   </div>
+                </SettingsPanel>
+
+                <SettingsPanel label="Access Control" title="Manage module access" accent={C.p}>
+                  <p style={{ margin:"0 0 16px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
+                    Grant specific permissions to Admins or Employees to view or manage individual modules.
+                  </p>
+                  <div style={{ marginBottom:20 }}>
+                    <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:8 }}>SELECT EMPLOYEE</div>
+                    <select 
+                      value={accessSelectedEmpId} 
+                      onChange={(e) => setAccessSelectedEmpId(e.target.value)}
+                      style={{ width:"100%", padding:"10px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.bg, fontSize:13, color:C.txt, outline:"none" }}
+                    >
+                      <option value="">-- Choose Employee --</option>
+                      {employees.filter(e => e.id !== ME_ID).map(e => (
+                        <option key={e.id} value={e.id}>{e.name} ({e.role})</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {accessSelectedEmpId && (
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                      {Object.keys(accessPermissions).map(key => (
+                        <div key={key} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 14px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf }}>
+                          <span style={{ fontSize:12, fontWeight:600, color:C.txt }}>{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                          <button 
+                            onClick={() => setAccessPermissions(prev => ({ ...prev, [key]: !prev[key] }))}
+                            style={{ width:36, height:18, borderRadius:20, background: accessPermissions[key] ? C.p : C.bdr, border:"none", position:"relative", cursor:"pointer", transition:".2s" }}
+                          >
+                            <div style={{ position:"absolute", top:2, left: accessPermissions[key] ? 20 : 2, width:14, height:14, borderRadius:"50%", background:"#fff", transition:".2s" }} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </SettingsPanel>
 
                 <SettingsPanel label="Security" title="Organisation security" accent="#b8860b">
@@ -6030,31 +6061,48 @@ export default function App() {
                   <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                     <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, padding:"12px 14px", borderRadius:12, border:`1px solid ${C.bdr}`, background:C.bg, flexWrap:"wrap" }}>
                       <div>
-                        <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>Two-factor authentication (org)</div>
-                        <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>Require 2FA for all Super Admins</div>
+                        <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>Two-factor authentication</div>
+                        <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>Require 2FA for all users to access the platform</div>
                       </div>
-                      <Btn variant="outline" onClick={()=>toast("2FA policy — coming in production ✓")} style={{ padding:"6px 12px", fontSize:11 }}>Configure</Btn>
+                      <button 
+                        onClick={() => setRequire2FAForAll(!require2FAForAll)}
+                        style={{ width:44, height:24, borderRadius:20, background: require2FAForAll ? C.p : C.bdr, border:"none", position:"relative", cursor:"pointer", transition:".3s" }}
+                      >
+                        <div style={{ position:"absolute", top:2, left: require2FAForAll ? 22 : 2, width:20, height:20, borderRadius:"50%", background:"#fff", transition:".3s" }} />
+                      </button>
                     </div>
                     <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, padding:"12px 14px", borderRadius:12, border:`1px solid ${C.bdr}`, background:C.bg, flexWrap:"wrap" }}>
                       <div>
-                        <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>Session policy</div>
-                        <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>Idle timeout and re-auth for sensitive actions</div>
+                        <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>Session Timeout</div>
+                        <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>Automatic logout after inactivity</div>
                       </div>
-                      <span style={{ fontSize:11, fontWeight:600, color:C.sub }}>Default · 8h</span>
+                      <div style={{ display:"flex", gap:8 }}>
+                        <input 
+                          type="number" 
+                          value={sessionTimeoutValue} 
+                          onChange={(e) => setSessionTimeoutValue(Number(e.target.value))}
+                          style={{ width:50, padding:6, borderRadius:6, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, textAlign:"center" }}
+                        />
+                        <select 
+                          value={sessionTimeoutUnit}
+                          onChange={(e) => setSessionTimeoutUnit(e.target.value)}
+                          style={{ padding:6, borderRadius:6, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:11 }}
+                        >
+                          <option>Hours</option>
+                          <option>Days</option>
+                          <option>Months</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </SettingsPanel>
 
-                <SettingsPanel label="Data" title="Exports & backups" accent={C.p2}>
+                <SettingsPanel label="Data" title="Exports" accent={C.p2}>
                   <p style={{ margin:"0 0 12px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
-                    Bulk people data and payroll-related exports should follow your retention policy.
+                    Download complete system records including employees, payroll history, and time away data for external reporting.
                   </p>
-                  <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:12 }}>
-                    <Btn variant="outline" onClick={()=>setPage("Employees")}>Employees CSV</Btn>
-                    <Btn variant="ghost" onClick={()=>toast("Backup scheduled — prototype ✓")}>Schedule backup</Btn>
-                  </div>
-                  <div style={{ fontSize:11, color:C.bdr, lineHeight:1.45 }}>
-                    Prototype only — no data leaves your browser.
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+                    <Btn variant="outline" onClick={()=>toast("Exporting complete system data (CSV)... ✓")}>Export Complete System Data</Btn>
                   </div>
                 </SettingsPanel>
 
@@ -6089,14 +6137,41 @@ export default function App() {
                   </div>
                 </SettingsPanel>
 
-                <SettingsPanel label="Integrations" title="Connected services" accent="#7a8e6e">
-                  <p style={{ margin:"0 0 12px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
-                    Hook KinSphere into HRIS, Slack, or your IdP when you move beyond the prototype.
-                  </p>
-                  <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-                    <Btn variant="outline" onClick={()=>toast("Slack — connect in production ✓")}>Slack</Btn>
-                    <Btn variant="ghost" onClick={()=>toast("HRIS sync — coming soon ✓")}>HRIS</Btn>
-                    <Btn variant="ghost" onClick={()=>toast("SCIM — enterprise ✓")}>SCIM</Btn>
+                <SettingsPanel label="Integrations" title="Integrations & Notifications" accent="#7a8e6e">
+                  <div style={{ marginBottom:20 }}>
+                    <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:12 }}>CONNECTED SERVICES</div>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(130px, 1fr))", gap:10 }}>
+                      {["Slack", "Teams", "HRIS", "Other"].map(svc => (
+                        <div key={svc} style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 14px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf }}>
+                          <span style={{ fontSize:16 }}>{svc === 'Slack' ? '💬' : svc === 'Teams' ? '👥' : svc === 'HRIS' ? '🧬' : '🔗'}</span>
+                          <span style={{ fontSize:12, fontWeight:600, color:C.txt }}>{svc}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:12 }}>NOTIFICATION ALERTS</div>
+                    <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+                      {[
+                        { id: 'directory', lbl: 'Directory Changes', sub: 'Employee imports, role changes, new joiners' },
+                        { id: 'payroll', lbl: 'Payroll alerts', sub: 'Salary config edits, payslip generation' },
+                        { id: 'security', lbl: 'Security updates', sub: 'Critical system and access changes' }
+                      ].map(row => (
+                        <div key={row.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"4px 0" }}>
+                          <div>
+                            <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>{row.lbl}</div>
+                            <div style={{ fontSize:11, color:C.sub }}>{row.sub}</div>
+                          </div>
+                          <button 
+                            onClick={() => setSettingNotifs(prev => ({ ...prev, [row.id]: !prev[row.id] }))}
+                            style={{ width:40, height:20, borderRadius:20, background: settingNotifs[row.id] ? C.p : C.sub, border:"none", position:"relative", cursor:"pointer", transition:".2s" }}
+                          >
+                            <div style={{ position:"absolute", top:2, left: settingNotifs[row.id] ? 22 : 2, width:16, height:16, borderRadius:"50%", background:"#fff", transition:".2s" }} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </SettingsPanel>
               </>
