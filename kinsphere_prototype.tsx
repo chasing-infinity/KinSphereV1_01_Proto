@@ -2520,6 +2520,7 @@ export default function App() {
   const [page,       setPage]     = useState("Dashboard");
   const [role,       setRole]     = useState("Super Admin");
   const isSA  = role === "Super Admin";
+  const isAdmin = role === "Admin" || role === "Super Admin";
   
   const [employees, setEmployees] = useState(() => JSON.parse(JSON.stringify(EMPS)));
   const [saPayslips, setSaPayslips] = useState(DEMO_PAYSLIPS);
@@ -2580,6 +2581,16 @@ export default function App() {
   const [companyTagline, setCompanyTagline] = useState("Bipolar Factory");
   const [showTaglineEdit, setShowTaglineEdit] = useState(false);
   const [taglineDraft, setTaglineDraft] = useState("");
+  const [require2FAForAll, setRequire2FAForAll] = useState(false);
+  const [sessionTimeoutValue, setSessionTimeoutValue] = useState(8);
+  const [sessionTimeoutUnit, setSessionTimeoutUnit] = useState("Hours");
+  const [accessSelectedEmpId, setAccessSelectedEmpId] = useState("");
+  const [accessPermissions, setAccessPermissions] = useState({
+    Employees: true, Paydays: true, TimeAway: true, PaperworkHub: true, Presence: true, PeopleChapters: true
+  });
+  const [settingNotifs, setSettingNotifs] = useState({
+    directory: true, payroll: true, security: true
+  });
   const [payslipPreview, setPayslipPreview] = useState(null);
   const [brandLogoHovered, setBrandLogoHovered] = useState(false);
   const [docPreviewItem, setDocPreviewItem] = useState<{doc: any, emp: any} | null>(null);
@@ -3282,16 +3293,6 @@ export default function App() {
               <div style={{ color:"#fff", fontWeight:700, fontSize:14, fontFamily:"Georgia,serif", lineHeight:1.25, margin:0 }}>KinSphere</div>
               <div style={{ display:"flex", alignItems:"center", gap:5, minHeight:14 }}>
                 <span style={{ color:C.dkAcc, fontSize:9, letterSpacing:.3, lineHeight:1.25 }}>{companyTagline}</span>
-                {isSA && (
-                  <button
-                    type="button"
-                    title="Edit company tagline"
-                    onClick={() => { setTaglineDraft(companyTagline); setShowTaglineEdit(true); }}
-                    style={{
-                      background:"none", border:"none", color:C.p, cursor:"pointer", fontSize:11, padding:0, lineHeight:1, flexShrink:0,
-                    }}
-                  >✎</button>
-                )}
               </div>
             </div>
           </div>
