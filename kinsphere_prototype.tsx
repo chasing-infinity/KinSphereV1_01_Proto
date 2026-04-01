@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const THEMES = {
   Original: {
@@ -694,7 +694,7 @@ const getThemedAvatarColor = (seed) => {
   return THEMED_AV_COLORS[Math.abs(hash) % THEMED_AV_COLORS.length];
 };
 
-const Av = ({ ini, sz=34, bg }) => {
+const Av = ({ ini, sz=34, bg }: { ini: any; sz?: number; bg?: any }) => {
   const finalBg = bg && bg !== "var(--p)" ? bg : getThemedAvatarColor(ini);
   return (
     <div style={{ width:sz, height:sz, borderRadius:"50%", background:finalBg, flexShrink:0,
@@ -718,16 +718,16 @@ const Pill = ({ txt, bg, c }) => (
   <span style={{ background:bg, color:c, padding:"2px 9px", borderRadius:20, fontSize:10, fontWeight:700 }}>{txt}</span>
 );
 
-const Btn = ({ children, onClick, variant="primary", style:s={} }) => {
-  const base = { border:"none", borderRadius:9, fontSize:12, fontWeight:600, cursor:"pointer", padding:"8px 18px", transition:"opacity .15s", ...s };
+const Btn = ({ children, onClick, variant="primary", style:s={}, disabled=false }: { children: any; onClick?: any; variant?: string; style?: any; disabled?: boolean }) => {
+  const base = { border:"none", borderRadius:9, fontSize:12, fontWeight:600, cursor: disabled ? "not-allowed" : "pointer", padding:"8px 18px", transition:"opacity .15s", opacity: disabled ? 0.6 : 1, ...s };
   const v = variant==="primary" ? { background:C.p,   color:"#fff" }
           : variant==="ghost"   ? { background:"transparent", border:`1px solid ${C.bdr}`, color:C.sub }
           : variant==="outline" ? { background:C.surf, border:`1px solid ${C.bdr}`, color:C.txt }
           :                       { background:C.mid,  border:`1px solid ${C.bdr}`, color:C.txt };
   return (
-    <button onClick={onClick} style={{...base,...v}}
-      onMouseEnter={e=>e.currentTarget.style.opacity=".82"}
-      onMouseLeave={e=>e.currentTarget.style.opacity="1"}>{children}</button>
+    <button onClick={onClick} style={{...base,...v}} disabled={disabled}
+      onMouseEnter={e=>{ if(!disabled) e.currentTarget.style.opacity=".82"}}
+      onMouseLeave={e=>{ if(!disabled) e.currentTarget.style.opacity="1"}}>{children}</button>
   );
 };
 
@@ -1805,7 +1805,6 @@ const PayrollWizardModal = ({
   const currentYear = new Date().getFullYear();
   const [step, setStep] = useState(1);
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(new Date().getMonth());
-  
   const [selectedIds, setSelectedIds] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -1813,16 +1812,9 @@ const PayrollWizardModal = ({
   const empStates = employees.map(emp => {
     const existingPayslip = saPayslips.find(p => p.empId === emp.id && p.monthIndex === selectedMonthIndex && parseInt(p.year) === currentYear);
     const pId = existingPayslip ? existingPayslip.id : `new_pay_${emp.id}_${selectedMonthIndex}`;
-    const netFallback = emp.ctc ? `₹${Math.round(parseInt(emp.ctc.replace(/\\D/g,'')) / 12).toLocaleString("en-IN")}` : "₹50,000";
-    
-    const p = existingPayslip || {
-      id: pId,
-      empId: emp.id,
-      name: emp.name,
-      net: netFallback
-    };
-    const hasBank = !!emp.bankInfo?.accountNumber && !!emp.bankInfo?.ifsc;
-    // For new payslips, they are naturally not paid yet
+    const netFallback = emp.ctc ? `₹${Math.round(parseInt(emp.ctc.replace(/\D/g,'')) / 12).toLocaleString("en-IN")}` : "₹50,000";
+    const p = existingPayslip || { id: pId, empId: emp.id, name: emp.name, net: netFallback };
+    const hasBank = !!emp.bankInfo?.acc && !!emp.bankInfo?.ifsc;
     const isPaid = !!processedPayments[pId];
     return { p, emp, hasBank, isPaid };
   });
@@ -1830,7 +1822,6 @@ const PayrollWizardModal = ({
   const validUnpaid = empStates.filter(x => x.hasBank && !x.isPaid);
   const alreadyPaid = empStates.filter(x => x.isPaid);
   const missingBank = empStates.filter(x => !x.hasBank && !x.isPaid);
-
 
   const handleProceedToStep2 = () => {
     setSelectedIds(validUnpaid.map(x => x.p.id));
@@ -1850,33 +1841,22 @@ const PayrollWizardModal = ({
            totalAmt += parseInr(editedSalaries[id] || pState.p.net);
            if (!saPayslips.find(x => x.id === id)) {
               newGlobalPayslips.push({
-                 id: id,
-                 empId: pState.emp.id,
-                 ini: pState.emp.ini,
-                 name: pState.emp.name,
-                 dept: pState.emp.dept,
-                 year: currentYear.toString(), // ensure year is string if expected
-                 month: selectedMonthIndex,
-                 monthIndex: selectedMonthIndex,
+                 id: id, empId: pState.emp.id, ini: pState.emp.ini, name: pState.emp.name, dept: pState.emp.dept,
+                 year: currentYear.toString(), month: selectedMonthIndex, monthIndex: selectedMonthIndex,
                  monthLabel: `${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`,
                  credited: new Date().toLocaleDateString("en-IN", {day:"numeric",month:"short",year:"numeric"}),
                  gross: `₹${Math.round((parseInt(pState.p.net.replace(/\D/g,'')) || 50000) * 1.38).toLocaleString("en-IN")}`,
-                 net: pState.p.net,
-                 status: "Unpaid" // will be immediately processed
+                 net: pState.p.net, status: "Unpaid"
               });
            }
         }
       });
-      if (newGlobalPayslips.length > 0) {
-         setSaPayslips(prev => [...prev, ...newGlobalPayslips]);
-      }
+      if (newGlobalPayslips.length > 0) setSaPayslips(prev => [...prev, ...newGlobalPayslips]);
       setProcessedPayments(newProcessed);
       setPaymentLogs(prev => [{
-        ts: new Date().toLocaleString("en-IN"),
-        actor: "Super Admin",
+        ts: new Date().toLocaleString("en-IN"), actor: "Super Admin",
         monthYear: `${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`,
-        amount: `₹${totalAmt.toLocaleString("en-IN")}`,
-        count: selectedIds.length
+        amount: `₹${totalAmt.toLocaleString("en-IN")}`, count: selectedIds.length
       }, ...prev]);
       setIsProcessing(false);
       setStep(4);
@@ -1885,22 +1865,35 @@ const PayrollWizardModal = ({
 
   if (step === 1) {
     return (
-      <Modal title="Start Payroll" onClose={onClose} width={400}>
-        <div style={{ padding: "10px 0 20px" }}>
-          <p style={{ color:C.sub, fontSize:14, marginBottom:20 }}>Select the month for the current year ({currentYear}) to process payroll.</p>
-          <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.6, marginBottom:8 }}>MONTH</div>
-          <select 
-            value={selectedMonthIndex} 
-            onChange={e => setSelectedMonthIndex(Number(e.target.value))}
-            style={{ width:"100%", padding:"12px 14px", borderRadius:12, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:15, color:C.txt, outline:"none" }}
-          >
-            {MONTHS_SHORT.map((m, i) => (
-              <option key={m} value={i}>{m}</option>
-            ))}
-          </select>
-          <div style={{ display:"flex", justifyContent:"flex-end", marginTop:32 }}>
-             <Btn variant="ghost" onClick={onClose} style={{marginRight:12}}>Cancel</Btn>
-             <Btn onClick={handleProceedToStep2} style={{ padding:"12px 24px", background:C.p, color:"#fff" }}>Continue</Btn>
+      <Modal title="Start Payroll" onClose={onClose} width={420}>
+        <div style={{ padding: "8px 0" }}>
+          <p style={{ color:C.sub, fontSize:14, marginBottom:24, lineHeight:1.5 }}>Initialize payroll processing for the selected month.</p>
+          
+          <div style={{ background:C.surf, padding:20, borderRadius:16, border:`1px solid ${C.bdr}` }}>
+            <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:10 }}>SELECT PERIOD</div>
+            <div style={{ position:"relative" }}>
+              <select 
+                value={selectedMonthIndex} 
+                onChange={e => setSelectedMonthIndex(Number(e.target.value))}
+                style={{ 
+                  width:"100%", padding:"14px 16px", borderRadius:12, border:`1px solid ${C.bdr}`, 
+                  background:C.wht, fontSize:15, fontWeight:600, color:C.txt, outline:"none",
+                  cursor:"pointer", appearance:"none"
+                }}
+              >
+                {MONTHS_SHORT.map((m, i) => (
+                  <option key={m} value={i}>{m} {currentYear}</option>
+                ))}
+              </select>
+              <div style={{ position:"absolute", right:16, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", color:C.sub }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display:"flex", justifyContent:"flex-end", marginTop:32, gap:12 }}>
+             <Btn variant="ghost" onClick={onClose} style={{ flex:1 }}>Cancel</Btn>
+             <Btn onClick={handleProceedToStep2} style={{ flex:2, padding:"12px", background:C.p, color:"#fff", fontSize:14 }}>Continue to Review</Btn>
           </div>
         </div>
       </Modal>
@@ -1909,77 +1902,95 @@ const PayrollWizardModal = ({
 
   if (step === 2) {
     return (
-      <Modal title={`Payroll: ${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`} onClose={onClose} width={700}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-          <h3 style={{ fontSize:16, fontWeight:700, color:C.txt, margin:0 }}>Select Employees to Pay</h3>
+      <Modal title={`Payroll Review: ${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`} onClose={onClose} width={760}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
+          <div>
+            <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:0, fontFamily:"Georgia,serif" }}>Employee Selection</h3>
+            <p style={{ fontSize:12, color:C.sub, margin:"4px 0 0" }}>{validUnpaid.length} employees eligible for payment</p>
+          </div>
           {validUnpaid.length > 0 && (
-            <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, fontWeight:600, color:C.sub }}>
+            <label style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer", padding:"8px 12px", background:C.surf, borderRadius:10, border:`1px solid ${C.bdr}`, fontSize:13, fontWeight:600, color:C.txt }}>
               <input 
                 type="checkbox" 
                 checked={selectedIds.length === validUnpaid.length} 
                 onChange={e => setSelectedIds(e.target.checked ? validUnpaid.map(x => x.p.id) : [])}
-                style={{ accentColor:C.p, transform:"scale(1.1)" }}
+                style={{ accentColor:C.p, width:16, height:16 }}
               />
-              Select All Eligible
+              Select All
             </label>
           )}
         </div>
         
-        <div style={{ maxHeight: 380, overflowY:"auto", borderRadius:12, border:`1px solid ${C.bdr}` }}>
-          <table style={{ width:"100%", borderCollapse:"collapse", fontSize:13 }}>
-             <thead style={{ position:"sticky", top:0, background:C.surf, zIndex:1, borderBottom:`1px solid ${C.bdr}` }}>
+        <div style={{ maxHeight: 400, overflowY:"auto", borderRadius:14, border:`1px solid ${C.bdr}`, background:C.wht, boxShadow:"0 4px 20px rgba(0,0,0,0.03)" }}>
+          <table style={{ width:"100%", borderCollapse:"collapse", textAlign:"left" }}>
+             <thead style={{ position:"sticky", top:0, background:C.surf, zIndex:10, borderBottom:`1px solid ${C.bdr}` }}>
                 <tr>
-                   <th style={{ padding:"12px", width:40, textAlign:"center" }}></th>
-                   <th style={{ padding:"12px", textAlign:"left", color:C.sub, fontSize:10, fontWeight:700 }}>EMPLOYEE</th>
-                   <th style={{ padding:"12px", textAlign:"left", color:C.sub, fontSize:10, fontWeight:700 }}>NET PAY</th>
+                   <th style={{ padding:"14px 16px", width:40 }}></th>
+                   <th style={{ padding:"14px 16px", color:C.sub, fontSize:10, fontWeight:700, letterSpacing:1 }}>EMPLOYEE</th>
+                   <th style={{ padding:"14px 16px", color:C.sub, fontSize:10, fontWeight:700, letterSpacing:1 }}>DEPARTMENT</th>
+                   <th style={{ padding:"14px 16px", textAlign:"right", color:C.sub, fontSize:10, fontWeight:700, letterSpacing:1 }}>NET PAYABLE</th>
                 </tr>
              </thead>
              <tbody>
                 {validUnpaid.map(({ p, emp }) => (
-                  <tr key={p.id} style={{ borderBottom:`1px solid ${C.surf}` }}>
-                     <td style={{ padding:"12px", textAlign:"center" }}>
-                        <input type="checkbox" checked={selectedIds.includes(p.id)} onChange={() => setSelectedIds(prev => prev.includes(p.id) ? prev.filter(x => x !== p.id) : [...prev, p.id])} style={{ accentColor:C.p, transform:"scale(1.1)" }} />
+                  <tr key={p.id} style={{ borderBottom:`1px solid ${C.surf}`, transition:"background .2s" }} onMouseEnter={e=>e.currentTarget.style.background=`rgba(var(--p-rgb),.02)`} onMouseLeave={e=>e.currentTarget.style.background="none"}>
+                     <td style={{ padding:"14px 16px", textAlign:"center" }}>
+                        <input type="checkbox" checked={selectedIds.includes(p.id)} onChange={() => setSelectedIds(prev => prev.includes(p.id) ? prev.filter(x => x !== p.id) : [...prev, p.id])} style={{ accentColor:C.p, width:16, height:16 }} />
                      </td>
-                     <td style={{ padding:"12px", fontWeight:600 }}>{p.name}</td>
-                     <td style={{ padding:"12px", fontWeight:700, color:C.txt }}>{editedSalaries[p.id] || p.net}</td>
+                     <td style={{ padding:"14px 16px" }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                          <Av ini={emp.ini} sz={28} />
+                          <span style={{ fontWeight:600, color:C.txt, fontSize:13 }}>{p.name}</span>
+                        </div>
+                     </td>
+                     <td style={{ padding:"14px 16px", color:C.sub, fontSize:13 }}>{emp.dept || "—"}</td>
+                     <td style={{ padding:"14px 16px", textAlign:"right", fontWeight:700, color:C.p, fontSize:14 }}>{editedSalaries[p.id] || p.net}</td>
                   </tr>
                 ))}
                 {validUnpaid.length === 0 && (
-                  <tr><td colSpan={3} style={{ padding:"32px", textAlign:"center", color:C.sub }}>No eligible unpaid employees found for this month.</td></tr>
+                  <tr><td colSpan={4} style={{ padding:"60px 20px", textAlign:"center", color:C.sub, fontSize:14 }}>No eligible unpaid employees found for this period.</td></tr>
                 )}
              </tbody>
           </table>
         </div>
 
-        {missingBank.length > 0 && (
-          <div style={{ marginTop:24 }}>
-            <h4 style={{ fontSize:12, fontWeight:700, color:"#b91c1c", marginBottom:8, textTransform:"uppercase", letterSpacing:0.5 }}>Missing Bank Details ({missingBank.length})</h4>
-            <div style={{ background:"#fef2f2", padding:"12px 16px", borderRadius:10, border:"1px solid #fecaca" }}>
-              <div style={{ fontSize:13, color:"#991b1b" }}>These employees cannot be paid until bank details are added:</div>
-              <div style={{ fontSize:13, color:"#7f1d1d", fontWeight:600, marginTop:4 }}>
-                {missingBank.map(x => x.p.name).join(", ")}
+        {(missingBank.length > 0 || alreadyPaid.length > 0) && (
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginTop:24 }}>
+            {missingBank.length > 0 && (
+              <div style={{ background:"#fff5f5", borderRadius:12, border:"1px solid #fee2e2", padding:16 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span style={{ fontSize:11, fontWeight:800, color:"#991b1b", letterSpacing:.5 }}>MISSING BANK DETAILS ({missingBank.length})</span>
+                </div>
+                <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+                  {missingBank.map(x => (
+                    <span key={x.emp.id} style={{ fontSize:10, fontWeight:600, color:"#b91c1c", background:"rgba(220,38,38,.08)", padding:"3px 8px", borderRadius:6 }}>{x.emp.name}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-          </div>
-        )}
-
-        {alreadyPaid.length > 0 && (
-          <div style={{ marginTop:24 }}>
-            <h4 style={{ fontSize:12, fontWeight:700, color:"#16a34a", marginBottom:8, textTransform:"uppercase", letterSpacing:0.5 }}>Already Paid ({alreadyPaid.length})</h4>
-            <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:10 }}>
-               {alreadyPaid.map(({ p }) => (
-                  <div key={p.id} style={{ padding:"12px 16px", borderBottom:`1px solid #dcfce7`, display:"flex", justifyContent:"space-between", alignItems:"center", opacity:0.7 }}>
-                     <span style={{ fontSize:13, fontWeight:600, color:"#166534" }}>{p.name}</span>
-                     <span style={{ fontSize:13, fontWeight:700, color:"#15803d" }}>Processed: {editedSalaries[p.id] || p.net}</span>
-                  </div>
-               ))}
-            </div>
+            )}
+            {alreadyPaid.length > 0 && (
+              <div style={{ background:"#f0fdf4", borderRadius:12, border:"1px solid #dcfce7", padding:16 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span style={{ fontSize:11, fontWeight:800, color:"#166534", letterSpacing:.5 }}>ALREADY PAID ({alreadyPaid.length})</span>
+                </div>
+                <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+                  {alreadyPaid.map(x => (
+                    <span key={x.emp.id} style={{ fontSize:10, fontWeight:600, color:"#15803d", background:"rgba(22,163,74,.08)", padding:"3px 8px", borderRadius:6 }}>{x.emp.name}</span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:32, paddingTop:24, borderTop:`1px solid ${C.bdr}` }}>
-           <Btn variant="ghost" onClick={() => setStep(1)}>← Back</Btn>
-           <Btn style={{ padding:"12px 28px", background:C.p, color:"#fff" }} disabled={selectedIds.length === 0} onClick={() => setStep(3)}>Review Payment Summary</Btn>
+           <Btn variant="ghost" onClick={() => setStep(1)}>← Change Month</Btn>
+           <div style={{ display:"flex", gap:12 }}>
+             <Btn variant="outline" onClick={onClose}>Cancel</Btn>
+             <Btn style={{ padding:"12px 28px", background:C.p, color:"#fff", fontSize:14, boxShadow:`0 4px 12px rgba(var(--p-rgb),.3)` }} disabled={selectedIds.length === 0} onClick={() => setStep(3)}>Proceed to Summary</Btn>
+           </div>
         </div>
       </Modal>
     );
@@ -1988,25 +1999,43 @@ const PayrollWizardModal = ({
   if (step === 3) {
     const totalAmt = selectedIds.reduce((acc, id) => acc + parseInr(editedSalaries[id] || validUnpaid.find(x => x.p.id === id)?.p.net || "0"), 0);
     return (
-      <Modal title="Payment Summary" onClose={onClose} width={500}>
-        <div style={{ textAlign:"center", padding:"20px 0" }}>
-           <div style={{ fontSize:48, marginBottom:16 }}>💳</div>
-           <h2 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Approve Payroll Release</h2>
-           <p style={{ fontSize:15, color:C.sub, margin:"0 0 32px" }}>You are paying {selectedIds.length} out of {employees.length} total employees for {MONTHS_SHORT[selectedMonthIndex]} {currentYear}.</p>
+      <Modal title="Payment Authorization" onClose={onClose} width={500}>
+        <div style={{ textAlign:"center", padding:"10px 0 20px" }}>
+           <div style={{ width:64, height:64, borderRadius:20, background:C.surf, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 24px", color:C.p }}>
+             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><path d="M7 15h.01"/><path d="M11 15h2"/></svg>
+           </div>
+           <h2 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>Confirm Payroll Release</h2>
+           <p style={{ fontSize:14, color:C.sub, margin:"0 0 32px", lineHeight:1.6, padding:"0 20px" }}>
+             You are about to authorize payments for <strong style={{ color:C.txt }}>{selectedIds.length} employees</strong> for the <strong style={{ color:C.txt }}>{MONTHS_SHORT[selectedMonthIndex]} {currentYear}</strong> cycle.
+           </p>
            
-           <div style={{ background:C.surf, padding:24, borderRadius:16, border:`1px solid ${C.bdr}`, marginBottom:32 }}>
-             <div style={{ fontSize:12, fontWeight:700, color:C.sub, letterSpacing:1, marginBottom:8 }}>TOTAL NET PAYOUT</div>
-             <div style={{ fontSize:32, fontWeight:800, color:C.p }}>₹{totalAmt.toLocaleString("en-IN")}</div>
+           <div style={{ background:C.dk, padding:32, borderRadius:24, marginBottom:32, position:"relative", overflow:"hidden" }}>
+             <div style={{ position:"absolute", top:0, left:0, right:0, height:4, background:C.p }} />
+             <div style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,0.5)", letterSpacing:1.5, marginBottom:12 }}>TOTAL DISBURSEMENT</div>
+             <div style={{ fontSize:42, fontWeight:800, color:"#fff", fontFamily:"system-ui" }}>₹{totalAmt.toLocaleString("en-IN")}</div>
+             <div style={{ fontSize:12, color:"rgba(255,255,255,0.4)", marginTop:12 }}>Secure transfer via Institutional Gateway</div>
            </div>
 
-           <Btn 
-             onClick={handlePay} 
-             disabled={isProcessing}
-             style={{ width:"100%", padding:"16px", fontSize:16, background:isProcessing ? C.sub : "#0f172a", color:"#fff", border:"none", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", gap:12, transition:"all 0.2s", boxShadow: isProcessing ? "none" : "0 8px 16px rgba(0,0,0,0.15)" }}
-           >
-             {isProcessing ? "Processing via Secure Gateway..." : "Proceed to Payment Gateway →"}
-           </Btn>
-           <Btn variant="ghost" onClick={() => setStep(2)} style={{ width:"100%", marginTop:12 }}>Go Back</Btn>
+           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+             <Btn 
+               onClick={handlePay} 
+               disabled={isProcessing}
+               style={{ 
+                 width:"100%", padding:"18px", fontSize:16, fontWeight:700,
+                 background: isProcessing ? C.sub : C.p, color:"#fff", border:"none", borderRadius:16, 
+                 display:"flex", alignItems:"center", justifyContent:"center", gap:12, transition:"all 0.2s",
+                 boxShadow: isProcessing ? "none" : `0 10px 24px rgba(var(--p-rgb),.3)`
+               }}
+             >
+               {isProcessing ? (
+                 <>
+                   <svg style={{ animation:"spin 1s linear infinite" }} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                   Processing...
+                 </>
+               ) : "Authorize & Disburse Batch"}
+             </Btn>
+             <Btn variant="ghost" onClick={() => setStep(2)} style={{ width:"100%", padding:"14px", color:C.sub }}>Go Back</Btn>
+           </div>
         </div>
       </Modal>
     );
@@ -2014,14 +2043,16 @@ const PayrollWizardModal = ({
 
   if (step === 4) {
     return (
-      <Modal title="Success!" onClose={onClose} width={400}>
-         <div style={{ textAlign:"center", padding:"40px 20px 20px" }}>
-            <div style={{ fontSize:64, marginBottom:20, color:"#22c55e", animation:"bounce 1s infinite" }}>✓</div>
-            <h2 style={{ fontSize:22, fontWeight:700, color:C.txt, margin:"0 0 12px" }}>Payments Processed</h2>
-            <p style={{ fontSize:15, color:C.sub, margin:"0 0 32px", lineHeight:1.5 }}>
-              The payroll batch of {selectedIds.length} employees has been pushed to the banking gateway successfully.
+      <Modal title="Success" onClose={onClose} width={420}>
+         <div style={{ textAlign:"center", padding:"40px 20px 30px" }}>
+            <div style={{ width:80, height:80, borderRadius:99, background:"#f0fdf4", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 24px", color:"#22c55e" }}>
+               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h2 style={{ fontSize:24, fontWeight:700, color:C.txt, margin:"0 0 12px", fontFamily:"Georgia,serif" }}>Execution Complete</h2>
+            <p style={{ fontSize:15, color:C.sub, margin:"0 0 32px", lineHeight:1.6 }}>
+              The payroll batch for {selectedIds.length} employees has been successfully transmitted to the gateway.
             </p>
-            <Btn style={{ width:"100%", padding:"14px", fontSize:15 }} onClick={() => { toast("Payroll successfully completed!"); onClose(); }}>View Processed Payments</Btn>
+            <Btn style={{ width:"100%", padding:"16px", fontSize:15, fontWeight:700, background:C.txt, color:"#fff", borderRadius:14 }} onClick={() => { toast("Payroll successfully completed!"); onClose(); }}>Return to Dashboard</Btn>
          </div>
       </Modal>
     );
@@ -2036,27 +2067,17 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
   const currentMonth = new Date().getMonth();
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(currentMonth);
   const [selectedIds, setSelectedIds] = useState([]);
-  
-  // Custom days map: id -> days
   const [editedDays, setEditedDays] = useState({});
 
   const totalDaysInMonth = new Date(currentYear, selectedMonthIndex + 1, 0).getDate();
 
-  // Generate the active employee states to display
   const targetEmployees = employees.filter(e => e.status !== "inactive");
   const rowData = targetEmployees.map(emp => {
     const existingPayslip = saPayslips.find(p => p.empId === emp.id && p.monthIndex === selectedMonthIndex && parseInt(p.year) === currentYear);
     const pId = existingPayslip ? existingPayslip.id : `new_pay_${emp.id}_${selectedMonthIndex}`;
     const netFallback = emp.ctc ? `₹${Math.round(parseInt(emp.ctc.replace(/\D/g,'')) / 12).toLocaleString("en-IN")}` : "₹50,000";
     
-    const p = existingPayslip || {
-      id: pId,
-      empId: emp.id,
-      name: emp.name,
-      net: netFallback,
-      released: false
-    };
-
+    const p = existingPayslip || { id: pId, empId: emp.id, name: emp.name, net: netFallback, released: false };
     const isReleased = !!p.released;
     const daysWorked = editedDays[pId] !== undefined ? editedDays[pId] : totalDaysInMonth;
     const baseNet = parseInr(p.net);
@@ -2086,30 +2107,19 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
       count++;
       const pState = validUnreleased.find(x => x.p.id === id);
       if (pState) {
-        // If it exists in saPayslips, update it
         if (!saPayslips.find(x => x.id === id)) {
            newGlobalPayslips.push({
-              id: id,
-              empId: pState.emp.id,
-              ini: pState.emp.ini,
-              name: pState.emp.name,
-              dept: pState.emp.dept,
-              year: currentYear.toString(),
-              month: selectedMonthIndex,
-              monthIndex: selectedMonthIndex,
+              id: id, empId: pState.emp.id, ini: pState.emp.ini, name: pState.emp.name, dept: pState.emp.dept,
+              year: currentYear.toString(), month: selectedMonthIndex, monthIndex: selectedMonthIndex,
               monthLabel: `${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`,
               credited: new Date().toLocaleDateString("en-IN", {day:"numeric",month:"short",year:"numeric"}),
               gross: `₹${Math.round((parseInr(pState.p.net) || 50000) * 1.38).toLocaleString("en-IN")}`,
-              net: pState.calcNetStr,
-              workedDays: pState.daysWorked,
-              released: true,
-              status: "Unpaid"
+              net: pState.calcNetStr, workedDays: pState.daysWorked, released: true, status: "Unpaid"
            });
         }
       }
     });
 
-    // Update existing ones individually in the main array
     const updatedGlobal = saPayslips.map(ps => {
        if (selectedIds.includes(ps.id)) {
            const match = validUnreleased.find(x => x.p.id === ps.id);
@@ -2125,21 +2135,36 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
 
   if (step === 1) {
     return (
-      <Modal title="Release Payslips" onClose={onClose} width={400}>
-        <div style={{ padding: "10px 0 20px" }}>
-          <p style={{ color:C.sub, fontSize:14, marginBottom:20 }}>Select the month for the current year ({currentYear}) to release payslips.</p>
-          <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.6, marginBottom:8 }}>MONTH</div>
-          <select
-            value={selectedMonthIndex}
-            onChange={e => setSelectedMonthIndex(parseInt(e.target.value))}
-            style={{ width:"100%", padding:"10px 14px", borderRadius:8, border:`1px solid ${C.bdr}`, outline:"none", appearance:"none", background:"#fff" }}
-          >
-            {MONTHS_SHORT.map((m, i) => <option key={i} value={i}>{m}</option>)}
-          </select>
-        </div>
-        <div style={{ display:"flex", gap:10 }}>
-          <Btn variant="ghost" onClick={onClose} style={{ flex:1 }}>Cancel</Btn>
-          <Btn onClick={() => setStep(2)} style={{ flex:1, background:C.p, color:"#fff" }}>Next →</Btn>
+      <Modal title="Release Payslips" onClose={onClose} width={420}>
+        <div style={{ padding: "8px 0" }}>
+          <p style={{ color:C.sub, fontSize:14, marginBottom:24, lineHeight:1.5 }}>Select the payroll period to release payslips for employees.</p>
+          
+          <div style={{ background:C.surf, padding:20, borderRadius:16, border:`1px solid ${C.bdr}` }}>
+            <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:10 }}>SELECT PERIOD</div>
+            <div style={{ position:"relative" }}>
+              <select 
+                value={selectedMonthIndex} 
+                onChange={e => setSelectedMonthIndex(Number(e.target.value))}
+                style={{ 
+                  width:"100%", padding:"14px 16px", borderRadius:12, border:`1px solid ${C.bdr}`, 
+                  background:C.wht, fontSize:15, fontWeight:600, color:C.txt, outline:"none",
+                  cursor:"pointer", appearance:"none"
+                }}
+              >
+                {MONTHS_SHORT.map((m, i) => (
+                  <option key={i} value={i}>{m} {currentYear}</option>
+                ))}
+              </select>
+              <div style={{ position:"absolute", right:16, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", color:C.sub }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display:"flex", justifyContent:"flex-end", marginTop:32, gap:12 }}>
+             <Btn variant="ghost" onClick={onClose} style={{ flex:1 }}>Cancel</Btn>
+             <Btn onClick={() => setStep(2)} style={{ flex:2, padding:"12px", background:C.p, color:"#fff", fontSize:14 }}>Proceed to Adjustments</Btn>
+          </div>
         </div>
       </Modal>
     );
@@ -2148,77 +2173,106 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
   if (step === 2) {
     const isAllSelected = validUnreleased.length > 0 && selectedIds.length === validUnreleased.length;
     return (
-      <Modal title="Select Employees & Adjust Days" onClose={onClose} width={600}>
-        <div style={{ marginBottom:16, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-          <p style={{ color:C.sub, fontSize:13, margin:0 }}>{MONTHS_SHORT[selectedMonthIndex]} {currentYear} · {totalDaysInMonth} Days Total</p>
+      <Modal title={`Adjust Days: ${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`} onClose={onClose} width={760}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
+          <div>
+            <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:0, fontFamily:"Georgia,serif" }}>Release Selection</h3>
+            <p style={{ fontSize:12, color:C.sub, margin:"4px 0 0" }}>{totalDaysInMonth} total days in {MONTHS_SHORT[selectedMonthIndex]}</p>
+          </div>
           {validUnreleased.length > 0 && (
-            <label style={{ display:"flex", alignItems:"center", gap:8, fontSize:13, fontWeight:600, cursor:"pointer", color:C.txt }}>
-              <input type="checkbox" checked={isAllSelected} onChange={e => setSelectedIds(e.target.checked ? validUnreleased.map(x=>x.p.id) : [])} style={{ cursor:"pointer" }} />
+            <label style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer", padding:"8px 12px", background:C.surf, borderRadius:10, border:`1px solid ${C.bdr}`, fontSize:13, fontWeight:600, color:C.txt }}>
+              <input 
+                type="checkbox" 
+                checked={isAllSelected} 
+                onChange={e => setSelectedIds(e.target.checked ? validUnreleased.map(x=>x.p.id) : [])}
+                style={{ accentColor:C.p, width:16, height:16 }}
+              />
               Select All
             </label>
           )}
         </div>
         
         {validUnreleased.length === 0 ? (
-          <div style={{ padding:"30px", textAlign:"center", color:C.sub, background:C.surf, borderRadius:8 }}>
-            No eligible unreleased payslips found for this month.
+          <div style={{ padding:"60px 20px", textAlign:"center", color:C.sub, background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
+            No eligible unreleased payslips found for this period.
           </div>
         ) : (
-          <div style={{ maxHeight:300, overflowY:"auto", border:`1px solid ${C.bdr}`, borderRadius:8, background:"#fff" }}>
-            {validUnreleased.map(({ p, emp, daysWorked, calcNetStr, pId }) => (
-              <label key={pId} style={{ display:"flex", alignItems:"center", padding:"12px 16px", borderBottom:`1px solid ${C.bdr}`, cursor:"pointer", transition:"background .2s" }} onMouseEnter={e=>(e.currentTarget.style.background=C.surf)} onMouseLeave={e=>(e.currentTarget.style.background="none")}>
-                <input type="checkbox" checked={selectedIds.includes(pId)} onChange={() => toggleSelect(pId)} style={{ marginRight:12, cursor:"pointer" }} />
-                <div style={{ flex:1, display:"flex", flexDirection:"column" }}>
-                  <span style={{ fontSize:14, fontWeight:600, color:C.txt }}>{emp.name}</span>
-                </div>
-                <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                    <span style={{ fontSize:11, color:C.sub, fontWeight:600 }}>DAYS</span>
-                    <input 
-                       type="number" 
-                       value={daysWorked} 
-                       min={0} 
-                       max={totalDaysInMonth}
-                       onChange={e => {
-                         let v = parseInt(e.target.value) || 0;
-                         if (v > totalDaysInMonth) v = totalDaysInMonth;
-                         if (v < 0) v = 0;
-                         setEditedDays(prev => ({...prev, [pId]: v }));
-                       }}
-                       onClick={e => e.stopPropagation()}
-                       style={{ width:40, padding:"4px", textAlign:"center", border:`1px solid ${C.bdr}`, borderRadius:6, fontSize:13, fontWeight:600 }}
-                    />
-                  </div>
-                  <span style={{ fontSize:14, fontWeight:700, color:C.p, width:90, textAlign:"right" }}>{calcNetStr}</span>
-                </div>
-              </label>
-            ))}
+          <div style={{ maxHeight:400, overflowY:"auto", borderRadius:14, border:`1px solid ${C.bdr}`, background:C.wht, boxShadow:"0 4px 20px rgba(0,0,0,0.03)" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse", textAlign:"left" }}>
+              <thead style={{ position:"sticky", top:0, background:C.surf, zIndex:10, borderBottom:`1px solid ${C.bdr}` }}>
+                <tr>
+                   <th style={{ padding:"14px 16px", width:40 }}></th>
+                   <th style={{ padding:"14px 16px", color:C.sub, fontSize:10, fontWeight:700, letterSpacing:1 }}>EMPLOYEE</th>
+                   <th style={{ padding:"14px 16px", textAlign:"center", color:C.sub, fontSize:10, fontWeight:700, letterSpacing:1 }}>WORKED DAYS</th>
+                   <th style={{ padding:"14px 16px", textAlign:"right", color:C.sub, fontSize:10, fontWeight:700, letterSpacing:1 }}>FINAL NET</th>
+                </tr>
+              </thead>
+              <tbody>
+                {validUnreleased.map(({ p, emp, daysWorked, calcNetStr, pId }) => (
+                  <tr key={pId} style={{ borderBottom:`1px solid ${C.surf}`, transition:"background .2s" }} onMouseEnter={e=>e.currentTarget.style.background=`rgba(var(--p-rgb),.02)`} onMouseLeave={e=>e.currentTarget.style.background="none"}>
+                    <td style={{ padding:"14px 16px", textAlign:"center" }}>
+                        <input type="checkbox" checked={selectedIds.includes(pId)} onChange={() => toggleSelect(pId)} style={{ accentColor:C.p, width:16, height:16 }} />
+                    </td>
+                    <td style={{ padding:"14px 16px" }}>
+                       <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                         <Av ini={emp.ini} sz={28} />
+                         <span style={{ fontWeight:600, color:C.txt, fontSize:13 }}>{emp.name}</span>
+                       </div>
+                    </td>
+                    <td style={{ padding:"14px 16px", textAlign:"center" }}>
+                        <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:C.surf, padding:"4px 8px", borderRadius:8, border:`1px solid ${C.bdr}` }}>
+                          <input 
+                             type="number" 
+                             value={daysWorked} 
+                             min={0} max={totalDaysInMonth}
+                             onChange={e => {
+                               let v = parseInt(e.target.value) || 0;
+                               if (v > totalDaysInMonth) v = totalDaysInMonth;
+                               if (v < 0) v = 0;
+                               setEditedDays(prev => ({...prev, [pId]: v }));
+                             }}
+                             style={{ width:32, background:"transparent", border:"none", textAlign:"center", fontSize:13, fontWeight:700, color:C.p, outline:"none" }}
+                          />
+                          <span style={{ fontSize:10, fontWeight:700, color:C.sub }}>/ {totalDaysInMonth}</span>
+                        </div>
+                    </td>
+                    <td style={{ padding:"14px 16px", textAlign:"right", fontWeight:700, color:C.p, fontSize:14 }}>{calcNetStr}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
         {releasedList.length > 0 && (
-          <div style={{ marginTop:24 }}>
-            <div style={{ fontSize:11, fontWeight:700, color:C.sub, marginBottom:8, letterSpacing:0.5 }}>ALREADY RELEASED</div>
-            <div style={{ opacity:0.6 }}>
+          <div style={{ marginTop:24, background:C.surf, padding:16, borderRadius:12, border:`1px solid ${C.bdr}` }}>
+            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.sub} strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+               <span style={{ fontSize:11, fontWeight:800, color:C.sub, letterSpacing:.5 }}>ALREADY DISPATCHED ({releasedList.length})</span>
+            </div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
               {releasedList.map(r => (
-                <div key={r.pId} style={{ display:"flex", justifyContent:"space-between", padding:"8px", fontSize:13 }}>
+                <div key={r.pId} style={{ fontSize:10, fontWeight:600, color:C.sub, background:C.wht, padding:"4px 10px", borderRadius:8, border:`1px solid ${C.bdr}`, display:"flex", gap:8 }}>
                   <span>{r.emp.name}</span>
-                  <span style={{ display:"flex", gap:16 }}><span>{r.daysWorked} Days</span> <strong>{r.calcNetStr}</strong></span>
+                  <span style={{ fontWeight:700, color:C.txt }}>{r.calcNetStr}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
-
-        <div style={{ display:"flex", gap:10, marginTop:24 }}>
-          <Btn variant="ghost" onClick={() => setStep(1)} style={{ flex:1 }}>← Back</Btn>
-          <Btn onClick={handleRelease} style={{ flex:2, background:C.p, color:"#fff" }} disabled={selectedIds.length === 0}>
-            Release Payslips ({selectedIds.length})
-          </Btn>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:32, paddingTop:24, borderTop:`1px solid ${C.bdr}` }}>
+           <Btn variant="ghost" onClick={() => setStep(1)}>← Change Period</Btn>
+           <div style={{ display:"flex", gap:12 }}>
+             <Btn variant="outline" onClick={onClose}>Cancel</Btn>
+             <Btn onClick={handleRelease} style={{ padding:"12px 28px", background:C.p, color:"#fff", fontSize:14, fontWeight:700, boxShadow:`0 4px 12px rgba(var(--p-rgb),.3)` }} disabled={selectedIds.length === 0}>
+               Release Payslips ({selectedIds.length})
+             </Btn>
+           </div>
         </div>
       </Modal>
     );
   }
+  return null;
 };
 
 
