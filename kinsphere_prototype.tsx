@@ -2223,7 +2223,7 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
                        </div>
                     </td>
                     <td style={{ padding:"14px 16px", textAlign:"center" }}>
-                        <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:C.surf, padding:"5px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, minWidth:70, justifyContent:"center" }}>
+                        <div style={{ display:"inline-flex", alignItems:"center", background:C.surf, padding:"6px 16px", borderRadius:10, border:`1px solid ${C.bdr}`, minWidth:100, justifyContent:"space-between" }}>
                           <input 
                              type="number" 
                              value={daysWorked} 
@@ -2235,14 +2235,14 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
                                setEditedDays(prev => ({...prev, [pId]: v }));
                              }}
                              style={{ 
-                               width:28, background:"transparent", border:"none", textAlign:"right", 
+                               width:38, background:"transparent", border:"none", textAlign:"right", 
                                fontSize:14, fontWeight:800, color:C.p, outline:"none",
                                fontFamily:"'JetBrains Mono', 'Roboto Mono', monospace",
-                               appearance: "none", margin: 0
+                               appearance: "none", margin: 0, padding: "0 4px"
                              }}
                           />
-                          <span style={{ fontSize:14, fontWeight:700, color:C.bdr, margin:"0 2px" }}>/</span>
-                          <span style={{ width:28, fontSize:14, fontWeight:800, color:C.sub, fontFamily:"'JetBrains Mono', 'Roboto Mono', monospace" }}>{totalDaysInMonth}</span>
+                          <span style={{ fontSize:12, fontWeight:700, color:C.bdr, opacity:0.6 }}>/</span>
+                          <span style={{ width:38, fontSize:14, fontWeight:800, color:C.sub, fontFamily:"'JetBrains Mono', 'Roboto Mono', monospace", padding:"0 4px" }}>{totalDaysInMonth}</span>
                         </div>
                     </td>
                     <td style={{ padding:"14px 16px", textAlign:"right", fontWeight:800, color:C.p, fontSize:14, fontFamily:"'JetBrains Mono', 'Roboto Mono', monospace" }}>{calcNetStr}</td>
