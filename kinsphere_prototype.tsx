@@ -3559,6 +3559,9 @@ export default function App() {
             {!isSA ? (
               <SettingsPanel label="Profile" title="Your details" accent={C.p}>
                 <ProfileDetail e={me} empList={employees} wrapCard={false} narrow={narrow} onEditBank={() => setBankPick(me.id)} />
+                <div style={{ marginTop: 20, paddingTop: 18, borderTop: `1px solid ${C.bdr}` }}>
+                  <Btn variant="outline" onClick={() => { setProfilePick(me.id); setShowUploadDoc(true); }} style={{ borderColor: "#4a7c59", color: "#4a7c59" }}>+ Upload Document</Btn>
+                </div>
               </SettingsPanel>
             ) : (
               <SettingsPanel label="Directory" title="Team members" accent={C.p}>
@@ -6282,7 +6285,8 @@ export default function App() {
             <Btn variant="ghost" onClick={()=>setShowUploadDoc(false)} style={{ flex:1 }}>Cancel</Btn>
             <Btn style={{ flex:1 }} onClick={() => {
               if(!docForm.name) return toast("Enter a document name");
-              setEmployees(emps => emps.map(e => e.id === profilePick ? { ...e, documents: [...e.documents, { n: docForm.name, v: false }] } : e));
+              const targetId = profilePick ?? ME_ID;
+              setEmployees(emps => emps.map(e => e.id === targetId ? { ...e, documents: [...e.documents, { n: docForm.name, v: false }] } : e));
               setShowUploadDoc(false);
               setDocForm({ name: "", type: "ID", file: "" });
               toast("Document uploaded successfully ✓");
