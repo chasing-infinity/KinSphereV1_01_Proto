@@ -606,11 +606,12 @@ const ICONS = {
   "Add Employee": <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>,
   Users: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   ClipboardList: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><line x1="12" y1="11" x2="16" y2="11"/><line x1="12" y1="16" x2="16" y2="16"/><line x1="8" y1="11" x2="8.01" y2="11"/><line x1="8" y1="16" x2="8.01" y2="16"/></svg>,
-  CalendarCheck: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>,
+  Presence: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
 };
 
 const NAV = [
   { key:"Dashboard" },
+  { key:"Presence" },
   { key:"Employees" },
   { key:"Time Away" },
   { key:"Paydays" },
@@ -2285,6 +2286,147 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
 };
 
 
+// ─── Presence (Attendance) Module ──────────────────────────────────────────
+const PresenceModule = ({ 
+  isSA, isClockedIn, setIsClockedIn, attendanceMode, setAttendanceMode, 
+  attendanceData, setAttendanceData, presenceEmpId, setPresenceEmpId, 
+  presenceMonth, setPresenceMonth, selectedADate, setSelectedADate, 
+  slackTeamsPlatform, setSlackTeamsPlatform, employees, leaves, holidays, 
+  toast, C, ME_ID, narrow, pad, padBottom, heroPadStd, Btn, Av, Inp
+}) => {
+  const year = presenceMonth.getFullYear();
+  const month = presenceMonth.getMonth();
+  const totalDays = daysInMonth(year, month);
+  const firstDay = new Date(year, month, 1).getDay();
+  const monthLabel = presenceMonth.toLocaleString("default", { month: "long" });
+
+  const getDayStatus = (d) => {
+    const date = new Date(year, month, d);
+    const iso = date.toISOString().split('T')[0];
+    const hol = holidays.find(h => h.dISO === iso);
+    if (hol) return { status: 'Holiday', label: hol.n, color: '#6366f1' };
+    const leave = leaves.find(l => l.empId === presenceEmpId && l.status === 'approved' && l.fromISO <= iso && l.toISO >= iso);
+    if (leave) return { status: 'On Leave', label: leave.type, color: '#f59e0b' };
+    const dayOfWeek = date.getDay();
+    if (attendanceMode === 'Auto') return (dayOfWeek === 0 || dayOfWeek === 6) ? { status: 'Weekend', color: C.bdr } : { status: 'Present', label: 'Present', color: '#10b981' };
+    if (attendanceMode === 'HRMS') {
+      const data = attendanceData[presenceEmpId]?.[iso];
+      if (data) return { status: 'Present', label: 'Present', color: '#10b981', details: data };
+      return (dayOfWeek === 0 || dayOfWeek === 6) ? { status: 'Weekend', color: C.bdr } : { status: 'Absent', label: 'Absent', color: '#ef4444' };
+    }
+    if (attendanceMode === 'SlackTeams') return (dayOfWeek === 0 || dayOfWeek === 6) ? { status: 'Weekend', color: C.bdr } : { status: 'Present', label: `Via ${slackTeamsPlatform}`, color: '#10b981' };
+    return { status: 'Unknown', color: C.bdr };
+  };
+
+  const stats = { present: 0, leave: 0, absent: 0 };
+  for (let i = 1; i <= totalDays; i++) {
+    const s = getDayStatus(i).status;
+    if (s === 'Present') stats.present++; else if (s === 'On Leave') stats.leave++; else if (s === 'Absent') stats.absent++;
+  }
+
+  const handleClockToggle = () => {
+    const now = new Date();
+    const iso = now.toISOString().split('T')[0];
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (!isClockedIn) {
+      setAttendanceData(prev => ({ ...prev, [ME_ID]: { ...(prev[ME_ID] || {}), [iso]: { checkIn: time, checkOut: '--', hours: '--' } } }));
+      setIsClockedIn(true); toast(`Clocked in at ${time} ✓`);
+    } else {
+      const entry = attendanceData[presenceEmpId]?.[iso] || { checkIn: '09:00' };
+      setAttendanceData(prev => ({ ...prev, [ME_ID]: { ...(prev[ME_ID] || {}), [iso]: { ...entry, checkOut: time, hours: '8.5' } } }));
+      setIsClockedIn(false); toast(`Clocked out at ${time} ✓`);
+    }
+  };
+
+  return (
+    <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
+      <div style={{ position:"relative", margin:`0 ${-pad}px 28px`, padding: heroPadStd, background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`, borderBottom:`1px solid ${C.bdr}`, overflow:"hidden" }}>
+        <div style={{ position:"absolute", right:-40, top:-30, width:220, height:220, borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`, pointerEvents:"none" }} />
+        <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:20, flexWrap:"wrap" }}>
+          <div><div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>◉ Presence</div><h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12 }}>Attendance</h1><p style={{ color:C.sub, fontSize:13, margin:"10px 0 0" }}>{isSA ? "Monitoring org-wide engagement." : "Your personal activity feed."}</p></div>
+          <div style={{ display:"flex", gap:12, alignItems:"center" }}>
+            {attendanceMode === 'HRMS' && presenceEmpId === ME_ID && (
+              <Btn onClick={handleClockToggle} style={{ padding:"10px 24px", background: isClockedIn ? "none" : C.p, color: isClockedIn ? C.p : "#fff", border: isClockedIn ? `1px solid ${C.p}` : "none" }}>{isClockedIn ? "Clock Out" : "Clock In Now"}</Btn>
+            )}
+            <div style={{ display:"flex", background:C.wht, borderRadius:12, padding:4, border:`1px solid ${C.bdr}` }}>
+               <button onClick={() => setPresenceMonth(new Date(year, month - 1))} style={{ padding:"4px 10px", background:"none", border:"none", cursor:"pointer", color:C.sub }}>←</button>
+               <div style={{ padding:"0 12px", fontSize:12, fontWeight:700, color:C.txt, alignSelf:"center" }}>{monthLabel} {year}</div>
+               <button onClick={() => setPresenceMonth(new Date(year, month + 1))} style={{ padding:"4px 10px", background:"none", border:"none", cursor:"pointer", color:C.sub }}>→</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "1fr 340px", gap:28 }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
+          {isSA && (
+            <div style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 18px", background:C.surf, borderRadius:16, border:`1px solid ${C.bdr}` }}>
+              <span style={{ fontSize:11, fontWeight:800, color:C.sub }}>VIEW FOR:</span>
+              <select value={presenceEmpId} onChange={e => setPresenceEmpId(Number(e.target.value))} style={{ padding:"6px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13, fontWeight:600 }}>
+                {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+              </select>
+            </div>
+          )}
+          <div style={{ background:C.wht, borderRadius:20, padding:24, border:`1px solid ${C.bdr}`, boxShadow:"0 2px 16px rgba(0,0,0,.04)" }}>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(7, 1fr)", gap:8, marginBottom:12 }}>
+              {["SUN","MON","TUE","WED","THU","FRI","SAT"].map(d => <div key={d} style={{ textAlign:"center", fontSize:10, fontWeight:800, color:C.sub }}>{d}</div>)}
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(7, 1fr)", gap:8 }}>
+              {Array.from({ length: firstDay }).map((_, i) => <div key={`e-${i}`} />)}
+              {Array.from({ length: totalDays }).map((_, i) => {
+                const day = i+1, cur = new Date(year, month, day).toISOString().split('T')[0], status = getDayStatus(day), isSelected = selectedADate === cur;
+                return (
+                  <button key={day} onClick={() => setSelectedADate(cur)} style={{ aspectRatio:"1/1", borderRadius:12, border:`1px solid ${isSelected ? C.p : C.bdr}`, background: isSelected ? `${C.p}10` : C.surf, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
+                    <span style={{ fontSize:14, fontWeight:700 }}>{day}</span>
+                    <div style={{ width:6, height:6, borderRadius:"50%", background: status.color, marginTop:4 }} />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          {selectedADate && (() => {
+            const date = new Date(selectedADate), status = getDayStatus(date.getDate()), data = attendanceData[presenceEmpId]?.[selectedADate] || {};
+            return (
+              <div style={{ background:C.wht, borderRadius:20, padding:20, border:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                <div><h3 style={{ margin:0, fontSize:17 }}>{date.toLocaleDateString("en-IN", { weekday:"long", day:"numeric", month:"long" })}</h3><div style={{ display:"flex", alignItems:"center", gap:8, marginTop:4 }}><div style={{ width:8, height:8, borderRadius:"50%", background: status.color }} /><span style={{ fontWeight:700, fontSize:13 }}>{status.status}</span>{status.label && status.label !== status.status && <span>• {status.label}</span>}</div></div>
+                {status.status === 'Present' && attendanceMode === 'HRMS' && (
+                  <div style={{ display:"flex", gap:24 }}>
+                    {[{l:"In",v:data.checkIn||"09:00"},{l:"Out",v:data.checkOut||"18:30"},{l:"Hrs",v:data.hours||"9.5",c:C.p}].map(x=>(
+                      <div key={x.l}><div style={{ fontSize:10, color:C.sub, fontWeight:800 }}>{x.l}</div><div style={{ fontWeight:700, fontSize:15, color:x.c }}>{x.v}{x.l==="Hrs"?"h":""}</div></div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+        </div>
+        <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
+          <div style={{ background:C.dk, borderRadius:20, padding:24, color:"#fff" }}>
+            <h3 style={{ margin:"0 0 16px", fontSize:11, fontWeight:800, color:C.sub }}>{monthLabel.toUpperCase()} SUMMARY</h3>
+            {[{l:"Present",v:stats.present},{l:"Leaves",v:stats.leave},{l:"Absences",v:stats.absent,c:stats.absent>0?"#fca5a5":undefined}].map(x=>(
+              <div key={x.l} style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
+                <span style={{ fontSize:13, color:C.sub }}>{x.l}</span>
+                <span style={{ fontWeight:800, fontSize:18, color:x.c }}>{x.v}</span>
+              </div>
+            ))}
+          </div>
+          {isSA && (
+            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+              <span style={{ fontSize:11, fontWeight:800, color:C.sub }}>ATTENDANCE MODE</span>
+              {[{id:'HRMS',t:'HRMS Clock-in',d:'In-app portal'},{id:'SlackTeams',t:'Slack / Teams',d:'Internal integration'},{id:'Auto',t:'Auto Attendance',d:'Mark present by default'}].map(m => (
+                <button key={m.id} onClick={() => setAttendanceMode(m.id)} style={{ padding:16, textAlign:"left", borderRadius:16, border:`1px solid ${attendanceMode===m.id ? C.p : C.bdr}`, background: attendanceMode===m.id ? `${C.p}08` : C.wht, cursor:"pointer" }}>
+                  <div style={{ fontWeight:700, fontSize:14, color: attendanceMode===m.id ? C.p : C.txt }}>{m.t}</div>
+                  <div style={{ fontSize:11, color:C.sub }}>{m.d}</div>
+                  {attendanceMode===m.id && m.id==='SlackTeams' && <div style={{ display:"flex", gap:6, marginTop:8 }}>{['Slack','Teams'].map(plt=><button key={plt} onClick={(e)=>{e.stopPropagation();setSlackTeamsPlatform(plt);}} style={{ padding:"4px 8px", borderRadius:6, border:`1px solid ${slackTeamsPlatform===plt?C.p:C.bdr}`, background:slackTeamsPlatform===plt?C.p:"none", color:slackTeamsPlatform===plt?"#fff":C.sub, fontSize:10, fontWeight:700 }}>{plt}</button>)}</div>}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [page,       setPage]     = useState("Dashboard");
@@ -2416,6 +2558,15 @@ export default function App() {
   const [genFilledBody, setGenFilledBody] = useState("");
   const [genSentLink, setGenSentLink] = useState(null);
   const resetGen = () => { setGenStep(1); setGenTemplate(null); setGenRecipientType("employee"); setGenEmpId(""); setGenVals({}); setGenCandForm({ name:"",email:"",role:"",salary:"",startDate:"",notes:"" }); setGenSavedCandId(null); setGenExternalEmail(""); setGenFilledBody(""); setGenSentLink(null); };
+
+  // Presence (Attendance) State
+  const [attendanceMode, setAttendanceMode] = useState("Auto"); // "Auto", "HRMS", "SlackTeams"
+  const [slackTeamsPlatform, setSlackTeamsPlatform] = useState("Slack");
+  const [attendanceData, setAttendanceData] = useState({}); // { [empId]: { [dateISO]: { status, in, out, hrs } } }
+  const [isClockedIn, setIsClockedIn] = useState(false);
+  const [presenceEmpId, setPresenceEmpId] = useState(ME_ID);
+  const [presenceMonth, setPresenceMonth] = useState(() => new Date(2026, 2, 1)); // March 2026
+  const [selectedADate, setSelectedADate] = useState(null); // ISO date
 
   // People Chapters
   const [chapterTab, setChapterTab] = useState("Menu");
@@ -3305,8 +3456,7 @@ export default function App() {
             </>
           );
         })()}
-
-        {saCalTooltip && (
+{saCalTooltip && (
           <div
             style={{
               position:"fixed",
@@ -3818,6 +3968,20 @@ export default function App() {
               </div>
             </div>
           </div>
+        )}
+
+        {page==="Presence" && (
+          <PresenceModule 
+            isSA={isSA} employees={employees} leaves={leaves} holidays={holidays} 
+            attendanceMode={attendanceMode} setAttendanceMode={setAttendanceMode} 
+            attendanceData={attendanceData} setAttendanceData={setAttendanceData} 
+            isClockedIn={isClockedIn} setIsClockedIn={setIsClockedIn} 
+            presenceEmpId={presenceEmpId} setPresenceEmpId={setPresenceEmpId} 
+            presenceMonth={presenceMonth} setPresenceMonth={setPresenceMonth} 
+            selectedADate={selectedADate} setSelectedADate={setSelectedADate} 
+            slackTeamsPlatform={slackTeamsPlatform} setSlackTeamsPlatform={setSlackTeamsPlatform} 
+            toast={toast} C={C} ME_ID={ME_ID} narrow={narrow} pad={pad} padBottom={padBottom} heroPadStd={heroPadStd} Btn={Btn} Av={Av} Inp={Inp}
+          />
         )}
 
         {/* ─ EMPLOYEES / MY PROFILE ─ */}
