@@ -2261,7 +2261,7 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
                <span style={{ fontSize:11, fontWeight:800, color:C.sub, letterSpacing:.5 }}>ALREADY DISPATCHED ({releasedList.length})</span>
             </div>
             <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
-              {releasedList.map(r => (
+               {releasedList.map(r => (
                 <div key={r.pId} style={{ fontSize:10, fontWeight:600, color:C.sub, background:C.wht, padding:"4px 10px", borderRadius:8, border:`1px solid ${C.bdr}`, display:"flex", gap:8 }}>
                   <span>{r.emp.name}</span>
                   <span style={{ fontWeight:700, color:C.txt }}>{r.calcNetStr}</span>
@@ -2341,6 +2341,25 @@ const PresenceModule = ({
     }
   };
 
+  const handleModeChange = (id) => {
+    setAttendanceMode(id);
+    toast("Mode updated — past attendance records are unaffected ✓");
+  };
+
+  const [slackConnected, setSlackConnected] = React.useState(false);
+  const [teamsConnected, setTeamsConnected] = React.useState(false);
+  const isCurrentPlatformConnected = slackTeamsPlatform === 'Slack' ? slackConnected : teamsConnected;
+  const setCurrentPlatformConnected = slackTeamsPlatform === 'Slack' ? setSlackConnected : setTeamsConnected;
+
+  const LEGEND = [
+    { color: '#10b981', label: 'Present' },
+    { color: '#ef4444', label: 'Absent' },
+    { color: '#f59e0b', label: 'Leave' },
+    { color: '#6366f1', label: 'Holiday' },
+  ];
+
+  const hasAnyCalendarData = attendanceMode === 'Auto' || attendanceMode === 'SlackTeams' || Object.keys(attendanceData[presenceEmpId] || {}).length > 0;
+
   return (
     <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
       <div style={{ position:"relative", margin:`0 ${-pad}px 28px`, padding: heroPadStd, background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`, borderBottom:`1px solid ${C.bdr}`, overflow:"hidden" }}>
@@ -2363,39 +2382,74 @@ const PresenceModule = ({
         <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
           {isSA && (
             <div style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 18px", background:C.surf, borderRadius:16, border:`1px solid ${C.bdr}` }}>
-              <span style={{ fontSize:11, fontWeight:800, color:C.sub }}>VIEW FOR:</span>
-              <select value={presenceEmpId} onChange={e => setPresenceEmpId(Number(e.target.value))} style={{ padding:"6px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13, fontWeight:600 }}>
+              <span style={{ fontSize:11, fontWeight:800, color:C.sub }}>VIEWING ATTENDANCE FOR:</span>
+              <select value={presenceEmpId} onChange={e => setPresenceEmpId(Number(e.target.value))} style={{ padding:"6px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13, fontWeight:600, cursor:"pointer" }}>
                 {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
               </select>
             </div>
           )}
           <div style={{ background:C.wht, borderRadius:20, padding:24, border:`1px solid ${C.bdr}`, boxShadow:"0 2px 16px rgba(0,0,0,.04)" }}>
+            <div style={{ display:"flex", gap:16, marginBottom:16, flexWrap:"wrap" }}>
+              {LEGEND.map(l => (
+                <div key={l.label} style={{ display:"inline-flex", alignItems:"center", gap:6 }}>
+                  <div style={{ width:8, height:8, borderRadius:"50%", background:l.color, flexShrink:0 }} />
+                  <span style={{ fontSize:11, color:C.sub, fontWeight:600 }}>{l.label}</span>
+                </div>
+              ))}
+            </div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(7, 1fr)", gap:8, marginBottom:12 }}>
               {["SUN","MON","TUE","WED","THU","FRI","SAT"].map(d => <div key={d} style={{ textAlign:"center", fontSize:10, fontWeight:800, color:C.sub }}>{d}</div>)}
             </div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(7, 1fr)", gap:8 }}>
-              {Array.from({ length: firstDay }).map((_, i) => <div key={`e-${i}`} />)}
-              {Array.from({ length: totalDays }).map((_, i) => {
-                const day = i+1, cur = new Date(year, month, day).toISOString().split('T')[0], status = getDayStatus(day), isSelected = selectedADate === cur;
-                return (
-                  <button key={day} onClick={() => setSelectedADate(cur)} style={{ aspectRatio:"1/1", borderRadius:12, border:`1px solid ${isSelected ? C.p : C.bdr}`, background: isSelected ? `${C.p}10` : C.surf, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
-                    <span style={{ fontSize:14, fontWeight:700 }}>{day}</span>
-                    <div style={{ width:6, height:6, borderRadius:"50%", background: status.color, marginTop:4 }} />
-                  </button>
-                );
-              })}
-            </div>
+            {!hasAnyCalendarData ? (
+              <div style={{ textAlign:"center", padding:"40px 0", color:C.sub, fontSize:13 }}>
+                <div style={{ fontSize:28, marginBottom:8 }}>📅</div>
+                No attendance recorded yet
+              </div>
+            ) : (
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(7, 1fr)", gap:8 }}>
+                {Array.from({ length: firstDay }).map((_, i) => <div key={`e-${i}`} />)}
+                {Array.from({ length: totalDays }).map((_, i) => {
+                  const day = i+1, cur = new Date(year, month, day).toISOString().split('T')[0], status = getDayStatus(day), isSelected = selectedADate === cur;
+                  return (
+                    <button key={day} onClick={() => setSelectedADate(cur)} style={{ aspectRatio:"1/1", borderRadius:12, border:`1px solid ${isSelected ? C.p : C.bdr}`, background: isSelected ? `${C.p}10` : C.surf, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
+                      <span style={{ fontSize:14, fontWeight:700 }}>{day}</span>
+                      <div style={{ width:6, height:6, borderRadius:"50%", background: status.color, marginTop:4 }} />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
           {selectedADate && (() => {
             const date = new Date(selectedADate), status = getDayStatus(date.getDate()), data = attendanceData[presenceEmpId]?.[selectedADate] || {};
+            const isAutoCheckout = data.checkOut === '--';
             return (
-              <div style={{ background:C.wht, borderRadius:20, padding:20, border:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                <div><h3 style={{ margin:0, fontSize:17 }}>{date.toLocaleDateString("en-IN", { weekday:"long", day:"numeric", month:"long" })}</h3><div style={{ display:"flex", alignItems:"center", gap:8, marginTop:4 }}><div style={{ width:8, height:8, borderRadius:"50%", background: status.color }} /><span style={{ fontWeight:700, fontSize:13 }}>{status.status}</span>{status.label && status.label !== status.status && <span>• {status.label}</span>}</div></div>
-                {status.status === 'Present' && attendanceMode === 'HRMS' && (
-                  <div style={{ display:"flex", gap:24 }}>
-                    {[{l:"In",v:data.checkIn||"09:00"},{l:"Out",v:data.checkOut||"18:30"},{l:"Hrs",v:data.hours||"9.5",c:C.p}].map(x=>(
-                      <div key={x.l}><div style={{ fontSize:10, color:C.sub, fontWeight:800 }}>{x.l}</div><div style={{ fontWeight:700, fontSize:15, color:x.c }}>{x.v}{x.l==="Hrs"?"h":""}</div></div>
-                    ))}
+              <div style={{ background:C.wht, borderRadius:20, padding:20, border:`1px solid ${C.bdr}` }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:16 }}>
+                  <div>
+                    <h3 style={{ margin:0, fontSize:17, color:C.txt }}>{date.toLocaleDateString("en-IN", { weekday:"long", day:"numeric", month:"long" })}</h3>
+                    <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:6 }}>
+                      <div style={{ width:8, height:8, borderRadius:"50%", background: status.color, flexShrink:0 }} />
+                      <span style={{ fontWeight:700, fontSize:13, color:C.txt }}>{status.status}</span>
+                      {status.label && status.label !== status.status && <span style={{ fontSize:12, color:C.sub }}>• {status.label}</span>}
+                    </div>
+                  </div>
+                  {status.status === 'Present' && attendanceMode === 'HRMS' && (
+                    <div style={{ display:"flex", gap:24 }}>
+                      {[{l:"CHECK IN",v:data.checkIn||"—"},{l:"CHECK OUT",v:data.checkOut||"—"},{l:"TOTAL HRS",v:data.hours&&data.hours!=='--'?`${data.hours}h`:"Ongoing",c:C.p}].map(x=>(
+                        <div key={x.l}><div style={{ fontSize:9, color:C.sub, fontWeight:800, letterSpacing:.8 }}>{x.l}</div><div style={{ fontWeight:700, fontSize:15, color:x.c||C.txt, marginTop:2 }}>{x.v}</div></div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {status.status === 'Present' && attendanceMode === 'HRMS' && isAutoCheckout && (
+                  <div style={{ marginTop:12, padding:"8px 12px", borderRadius:8, background:"#fef9c3", border:"1px solid #fef08a", fontSize:11, color:"#713f12" }}>
+                    Auto check-out will apply after 10 hours if not manually checked out.
+                  </div>
+                )}
+                {status.status === 'Absent' && (
+                  <div style={{ marginTop:12, padding:"8px 12px", borderRadius:8, background:"#fef2f2", border:"1px solid #fecaca", fontSize:11, color:"#991b1b" }}>
+                    No attendance recorded. Expected based on the active <strong>{attendanceMode}</strong> mode.
                   </div>
                 )}
               </div>
@@ -2407,10 +2461,10 @@ const PresenceModule = ({
             <h3 style={{ margin:"0 0 18px", fontSize:11, fontWeight:800, color:"#9ca3af", letterSpacing:1.2 }}>{monthLabel.toUpperCase()} SUMMARY</h3>
             <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
               {[
-                {l:"Present",v:stats.present,c:"#fff"},
+                {l:"Present Days",v:stats.present,c:"#fff"},
                 {l:"Holidays",v:stats.holiday,c:"#fff"},
-                {l:"Leaves",v:stats.leave,c:"#fff"},
-                {l:"Absences",v:stats.absent,c:stats.absent>0?"#fca5a5":"#fff"}
+                {l:"Leave Days",v:stats.leave,c:"#fff"},
+                {l:"Absent Days",v:stats.absent,c:stats.absent>0?"#fca5a5":"#fff"}
               ].map(x=>(
                 <div key={x.l} style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                   <span style={{ fontSize:13, color:"#d1d5db" }}>{x.l}</span>
@@ -2419,8 +2473,7 @@ const PresenceModule = ({
               ))}
             </div>
             <div style={{ marginTop:24, paddingTop:20, borderTop:`1px solid ${C.dk2}`, fontSize:11, color:"#9ca3af", lineHeight:1.5 }}>
-              Attendance is calculated based on the <strong>{attendanceMode}</strong> mode. 
-              Priority: <span style={{ color:"#fff" }}>Holidays → Leave → Logs</span>.
+              Priority: <span style={{ color:"#fff" }}>Holidays → Leave → Logs</span>. Past records are never overwritten when changing mode.
             </div>
           </div>
           {isSA && (
