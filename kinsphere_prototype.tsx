@@ -2356,6 +2356,12 @@ export default function App() {
 
   // People Chapters
   const [chapterTab, setChapterTab] = useState("Menu");
+  
+  // Close notification panel when navigating away from page
+  useEffect(() => {
+    setShowNotifPanel(false);
+  }, [page]);
+
   // ─────────────────────────────────────────────────────────────────────────
 
   const handleProcessPayments = () => {
@@ -3106,6 +3112,7 @@ export default function App() {
 
         {/* ── NOTIFICATION BELL ── */}
         {(() => {
+          if (page !== "Dashboard") return null;
           const visibleNotifs = notifications.filter(n =>
             isSA ? true
             : n.forAll
