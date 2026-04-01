@@ -2318,10 +2318,13 @@ const PresenceModule = ({
     return { status: 'Unknown', color: C.bdr };
   };
 
-  const stats = { present: 0, leave: 0, absent: 0 };
+  const stats = { present: 0, holiday: 0, leave: 0, absent: 0 };
   for (let i = 1; i <= totalDays; i++) {
     const s = getDayStatus(i).status;
-    if (s === 'Present') stats.present++; else if (s === 'On Leave') stats.leave++; else if (s === 'Absent') stats.absent++;
+    if (s === 'Present') stats.present++; 
+    else if (s === 'Holiday') stats.holiday++;
+    else if (s === 'On Leave') stats.leave++; 
+    else if (s === 'Absent') stats.absent++;
   }
 
   const handleClockToggle = () => {
@@ -2400,14 +2403,25 @@ const PresenceModule = ({
           })()}
         </div>
         <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
-          <div style={{ background:C.dk, borderRadius:20, padding:24, color:"#fff" }}>
-            <h3 style={{ margin:"0 0 16px", fontSize:11, fontWeight:800, color:C.sub }}>{monthLabel.toUpperCase()} SUMMARY</h3>
-            {[{l:"Present",v:stats.present},{l:"Leaves",v:stats.leave},{l:"Absences",v:stats.absent,c:stats.absent>0?"#fca5a5":undefined}].map(x=>(
-              <div key={x.l} style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
-                <span style={{ fontSize:13, color:C.sub }}>{x.l}</span>
-                <span style={{ fontWeight:800, fontSize:18, color:x.c }}>{x.v}</span>
-              </div>
-            ))}
+          <div style={{ background:C.dk, borderRadius:20, padding:24, color:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.15)" }}>
+            <h3 style={{ margin:"0 0 18px", fontSize:11, fontWeight:800, color:"#9ca3af", letterSpacing:1.2 }}>{monthLabel.toUpperCase()} SUMMARY</h3>
+            <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+              {[
+                {l:"Present",v:stats.present,c:"#fff"},
+                {l:"Holidays",v:stats.holiday,c:"#fff"},
+                {l:"Leaves",v:stats.leave,c:"#fff"},
+                {l:"Absences",v:stats.absent,c:stats.absent>0?"#fca5a5":"#fff"}
+              ].map(x=>(
+                <div key={x.l} style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <span style={{ fontSize:13, color:"#d1d5db" }}>{x.l}</span>
+                  <span style={{ fontWeight:800, fontSize:18, color:x.c }}>{x.v}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop:24, paddingTop:20, borderTop:`1px solid ${C.dk2}`, fontSize:11, color:"#9ca3af", lineHeight:1.5 }}>
+              Attendance is calculated based on the <strong>{attendanceMode}</strong> mode. 
+              Priority: <span style={{ color:"#fff" }}>Holidays → Leave → Logs</span>.
+            </div>
           </div>
           {isSA && (
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
