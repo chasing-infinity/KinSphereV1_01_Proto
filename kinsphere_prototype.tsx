@@ -96,7 +96,10 @@ body { background: var(--bg); color: var(--txt); transition: background 0.4s cub
 if (typeof document !== "undefined") {
   const style = document.createElement("style");
   style.id = "kinsphere-theme-vars";
-  style.innerHTML = getThemeCss("Original", false);
+  style.innerHTML = getThemeCss("Original", false) + `
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+  `;
   document.head.appendChild(style);
 }
 
@@ -1944,7 +1947,7 @@ const PayrollWizardModal = ({
                         </div>
                      </td>
                      <td style={{ padding:"14px 16px", color:C.sub, fontSize:13 }}>{emp.dept || "—"}</td>
-                     <td style={{ padding:"14px 16px", textAlign:"right", fontWeight:700, color:C.p, fontSize:14 }}>{editedSalaries[p.id] || p.net}</td>
+                     <td style={{ padding:"14px 16px", textAlign:"right", fontWeight:800, color:C.p, fontSize:14, fontFamily:"'JetBrains Mono', 'Roboto Mono', monospace" }}>{editedSalaries[p.id] || p.net}</td>
                   </tr>
                 ))}
                 {validUnpaid.length === 0 && (
@@ -2220,7 +2223,7 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
                        </div>
                     </td>
                     <td style={{ padding:"14px 16px", textAlign:"center" }}>
-                        <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:C.surf, padding:"4px 8px", borderRadius:8, border:`1px solid ${C.bdr}` }}>
+                        <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:C.surf, padding:"5px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, minWidth:70, justifyContent:"center" }}>
                           <input 
                              type="number" 
                              value={daysWorked} 
@@ -2231,12 +2234,18 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
                                if (v < 0) v = 0;
                                setEditedDays(prev => ({...prev, [pId]: v }));
                              }}
-                             style={{ width:32, background:"transparent", border:"none", textAlign:"center", fontSize:13, fontWeight:700, color:C.p, outline:"none" }}
+                             style={{ 
+                               width:28, background:"transparent", border:"none", textAlign:"right", 
+                               fontSize:14, fontWeight:800, color:C.p, outline:"none",
+                               fontFamily:"'JetBrains Mono', 'Roboto Mono', monospace",
+                               appearance: "none", margin: 0
+                             }}
                           />
-                          <span style={{ fontSize:10, fontWeight:700, color:C.sub }}>/ {totalDaysInMonth}</span>
+                          <span style={{ fontSize:14, fontWeight:700, color:C.bdr, margin:"0 2px" }}>/</span>
+                          <span style={{ width:28, fontSize:14, fontWeight:800, color:C.sub, fontFamily:"'JetBrains Mono', 'Roboto Mono', monospace" }}>{totalDaysInMonth}</span>
                         </div>
                     </td>
-                    <td style={{ padding:"14px 16px", textAlign:"right", fontWeight:700, color:C.p, fontSize:14 }}>{calcNetStr}</td>
+                    <td style={{ padding:"14px 16px", textAlign:"right", fontWeight:800, color:C.p, fontSize:14, fontFamily:"'JetBrains Mono', 'Roboto Mono', monospace" }}>{calcNetStr}</td>
                   </tr>
                 ))}
               </tbody>
