@@ -3960,38 +3960,38 @@ export default function App() {
                     {isSA ? "Company payslips, salary configuration, and net pay — credited on the 15th." : "Your payslips for the selected year — download when you need them."}
                   </p>
                 </div>
-                <div style={{ display:"flex", gap:12, alignItems:"flex-end", flexWrap:"wrap" }}>
-                  {isSA && pyTab === "All Payslips" && (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
+                  <div style={{ display:"flex", gap:12, alignItems:"flex-end", flexWrap:"wrap" }}>
+                    {isSA && pyTab === "All Payslips" && (
+                      <div>
+                        <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.6, marginBottom:6 }}>MONTH</div>
+                        <select
+                          value={payMonthFilter === null ? "all" : String(payMonthFilter)}
+                          onChange={e => {
+                            const v = e.target.value;
+                            setPayMonthFilter(v === "all" ? null : Number(v));
+                          }}
+                          style={{ ...payFilterSelectStyle, minWidth: 132 }}
+                        >
+                          <option value="all">All months</option>
+                          {MONTHS_SHORT.map((m, i) => (
+                            <option key={m} value={i}>{m}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                     <div>
-                      <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.6, marginBottom:6 }}>MONTH</div>
+                      <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.6, marginBottom:6 }}>YEAR</div>
                       <select
-                        value={payMonthFilter === null ? "all" : String(payMonthFilter)}
-                        onChange={e => {
-                          const v = e.target.value;
-                          setPayMonthFilter(v === "all" ? null : Number(v));
-                        }}
-                        style={{ ...payFilterSelectStyle, minWidth: 132 }}
+                        value={payYear}
+                        onChange={e => setPayYear(Number(e.target.value))}
+                        style={payFilterSelectStyle}
                       >
-                        <option value="all">All months</option>
-                        {MONTHS_SHORT.map((m, i) => (
-                          <option key={m} value={i}>{m}</option>
-                        ))}
+                        <option value={2026}>2026</option>
+                        <option value={2025}>2025</option>
                       </select>
                     </div>
-                  )}
-                  <div>
-                    <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.6, marginBottom:6 }}>YEAR</div>
-                    <select
-                      value={payYear}
-                      onChange={e => setPayYear(Number(e.target.value))}
-                      style={payFilterSelectStyle}
-                    >
-                      <option value={2026}>2026</option>
-                      <option value={2025}>2025</option>
-                    </select>
-                  </div>
-                  {isSA && pyTab === "All Payslips" && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {isSA && pyTab === "All Payslips" && (
                       <Btn 
                         style={{ padding: "8px 18px", fontSize: 13, background: C.p, color: "#fff", border: "none", boxShadow: "0 4px 12px rgba(var(--p-rgb),.25)" }} 
                         onClick={() => {
@@ -4001,13 +4001,15 @@ export default function App() {
                       >
                         Start Payroll
                       </Btn>
-                      <Btn
-                        style={{ padding: "8px 18px", fontSize: 13, background: "#fff", color: C.p, border: `1px solid ${C.p}`, boxShadow: "0 4px 12px rgba(0,0,0,.05)" }}
-                        onClick={() => setReleaseStep(1)}
-                      >
-                        Release Payslips
-                      </Btn>
-                    </div>
+                    )}
+                  </div>
+                  {isSA && pyTab === "All Payslips" && (
+                    <Btn
+                      style={{ padding: "8px 18px", fontSize: 13, background: "#fff", color: C.p, border: `1px solid ${C.p}`, boxShadow: "0 4px 12px rgba(0,0,0,.05)", width: "100%" }}
+                      onClick={() => setReleaseStep(1)}
+                    >
+                      Release Payslips
+                    </Btn>
                   )}
                 </div>
               </div>
