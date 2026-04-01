@@ -2379,7 +2379,7 @@ const PresenceModule = ({
     { color: '#6366f1', label: 'Holiday' },
   ];
 
-  const hasAnyCalendarData = attendanceMode === 'Auto' || attendanceMode === 'SlackTeams' || Object.keys(attendanceData[presenceEmpId] || {}).length > 0;
+  const hasAnyCalendarData = attendanceMode === 'Auto' || attendanceMode === 'SlackTeams' || attendanceMode === 'HRMS' || Object.keys(attendanceData[presenceEmpId] || {}).length > 0;
 
   return (
     <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
@@ -2478,8 +2478,8 @@ const PresenceModule = ({
           })()}
         </div>
         <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
-          <div style={{ background:C.dk, borderRadius:20, padding:24, color:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.15)" }}>
-            <h3 style={{ margin:"0 0 18px", fontSize:11, fontWeight:800, color:"#9ca3af", letterSpacing:1.2 }}>{monthLabel.toUpperCase()} SUMMARY</h3>
+          <div style={{ background:C.p, borderRadius:20, padding:24, color:"#fff", boxShadow:"0 4px 20px rgba(var(--p-rgb),.2)" }}>
+            <h3 style={{ margin:"0 0 18px", fontSize:11, fontWeight:800, color:"rgba(255,255,255,0.7)", letterSpacing:1.2 }}>{monthLabel.toUpperCase()} SUMMARY</h3>
             <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
               {[
                 {l:"Present Days",v:stats.present,c:"#fff"},
@@ -2493,7 +2493,7 @@ const PresenceModule = ({
                 </div>
               ))}
             </div>
-            <div style={{ marginTop:24, paddingTop:20, borderTop:`1px solid ${C.dk2}`, fontSize:11, color:"#9ca3af", lineHeight:1.5 }}>
+            <div style={{ marginTop:24, paddingTop:20, borderTop:`1px solid rgba(255,255,255,0.1)`, fontSize:11, color:"rgba(255,255,255,0.7)", lineHeight:1.5 }}>
               Priority: <span style={{ color:"#fff" }}>Holidays → Leave → Logs</span>. Past records are never overwritten when changing mode.
             </div>
           </div>
