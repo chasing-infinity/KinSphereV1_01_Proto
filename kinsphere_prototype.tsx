@@ -3991,15 +3991,23 @@ export default function App() {
                     </select>
                   </div>
                   {isSA && pyTab === "All Payslips" && (
-                    <Btn 
-                      style={{ padding: "8px 18px", fontSize: 13, background: C.p, color: "#fff", border: "none", boxShadow: "0 4px 12px rgba(var(--p-rgb),.25)" }} 
-                      onClick={() => {
-                        setPayrollStep(1);
-                        setSelectedPayIds(saPayslipRows.map(p => p.id));
-                      }}
-                    >
-                      Start Payroll
-                    </Btn>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      <Btn 
+                        style={{ padding: "8px 18px", fontSize: 13, background: C.p, color: "#fff", border: "none", boxShadow: "0 4px 12px rgba(var(--p-rgb),.25)" }} 
+                        onClick={() => {
+                          setPayrollStep(1);
+                          setSelectedPayIds(saPayslipRows.map(p => p.id));
+                        }}
+                      >
+                        Start Payroll
+                      </Btn>
+                      <Btn
+                        style={{ padding: "8px 18px", fontSize: 13, background: "#fff", color: C.p, border: `1px solid ${C.p}`, boxShadow: "0 4px 12px rgba(0,0,0,.05)" }}
+                        onClick={() => setReleaseStep(1)}
+                      >
+                        Release Payslips
+                      </Btn>
+                    </div>
                   )}
                 </div>
               </div>
