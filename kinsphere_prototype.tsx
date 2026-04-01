@@ -10,6 +10,7 @@ const THEMES = {
     surf: "#dbead2",
     bdr: "#c1d0b5",
     dk: "#3a4832",
+    sb: "#4d5e41",
     txt: "#2a3326",
     sub: "#5a6e52",
   },
@@ -22,6 +23,7 @@ const THEMES = {
     surf: "#d0d9d6",
     bdr: "#b4c2be",
     dk: "#35403e",
+    sb: "#455653",
     txt: "#1d2624",
     sub: "#495954",
   },
@@ -34,6 +36,7 @@ const THEMES = {
     surf: "#e4ded4",
     bdr: "#d3c9ba",
     dk: "#483a2d",
+    sb: "#5e4b3a",
     txt: "#2c231a",
     sub: "#695646",
   },
@@ -46,8 +49,22 @@ const THEMES = {
     surf: "#f2e1d7",
     bdr: "#e7cec0",
     dk: "#5d3d32",
+    sb: "#7a5245",
     txt: "#3b2620",
     sub: "#8c6455",
+  },
+  Luna: {
+    p: "#26658C",
+    p_rgb: "38, 101, 140",
+    p2: "#A7EBF2",
+    bg: "#f0f7fa",
+    mid: "#c2dfe8",
+    surf: "#daeef4",
+    bdr: "#a7d4e0",
+    dk: "#023859",
+    sb: "#1a4f6e",
+    txt: "#01253a",
+    sub: "#336e8c",
   }
 };
 
@@ -65,6 +82,7 @@ const getThemeCss = (themeName: string, isDark: boolean) => {
   --bdr: #3d4538;
   --dk: #0d100d;
   --dk2: #161814;
+  --sb: #1c2420;
   --dkAcc: ${t.p2};
   --txt: #e8ece6;
   --sub: #a1afa0;
@@ -84,6 +102,7 @@ body { background: var(--bg); color: var(--txt); transition: background 0.4s cub
   --bdr: ${t.bdr};
   --dk: ${t.dk};
   --dk2: #2d3a28;
+  --sb: ${t.sb};
   --dkAcc: ${t.bdr};
   --txt: ${t.txt};
   --sub: ${t.sub};
@@ -114,6 +133,7 @@ const C = {
   bdr:   "var(--bdr)",
   dk:    "var(--dk)",
   dk2:   "var(--dk2)",
+  sb:    "var(--sb)",
   dkAcc: "var(--dkAcc)",
   txt:   "var(--txt)",
   sub:   "var(--sub)",
@@ -3208,7 +3228,7 @@ export default function App() {
       {/* ── SIDEBAR ── */}
       <aside style={{
         width: narrow ? 268 : 214,
-        background:C.dk,
+        background:C.sb,
         display:"flex",
         flexDirection:"column",
         flexShrink:0,
