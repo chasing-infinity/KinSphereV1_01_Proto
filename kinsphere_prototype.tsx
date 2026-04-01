@@ -1033,7 +1033,7 @@ const ActivityTimeline = ({ events }) => {
   );
 };
 
-const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false, onEditBank }) => {
+const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false, onEditBank, onApproveDoc = null, onRejectDoc = null, onPreviewDoc = null }) => {
   const mgr = mgrName(e.managerId, empList);
   const isOffboarded = e.status === "offboarded";
   const body = (
@@ -1097,10 +1097,43 @@ const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false, onE
       <div style={{ marginTop:16 }}>
         <div style={{ color:C.sub, fontWeight:600, fontSize:10, letterSpacing:.5, marginBottom:8 }}>UPLOADED DOCUMENTS</div>
         <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+          {(e.documents||[]).length === 0 && (
+            <div style={{ fontSize:12, color:C.sub, fontStyle:"italic" }}>No documents uploaded.</div>
+          )}
           {(e.documents||[]).map((doc,i) => (
-            <div key={i} style={{ display:"flex", alignItems:"center", fontSize:12, color:C.txt, background:C.surf, padding:"8px 12px", borderRadius:8, border:`1px solid ${C.bdr}` }}>
+            <div
+              key={i}
+              onClick={() => onPreviewDoc && onPreviewDoc(doc, e)}
+              style={{
+                display:"flex", alignItems:"center", fontSize:12, color:C.txt,
+                background:C.surf, padding:"8px 12px", borderRadius:8,
+                border:`1px solid ${doc.v ? C.bdr : "#b45309"}`,
+                cursor: onPreviewDoc ? "pointer" : "default",
+                transition:"box-shadow .15s",
+              }}
+              onMouseEnter={e => { if (onPreviewDoc) e.currentTarget.style.boxShadow = `0 0 0 2px ${C.p}`; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
+            >
+              <span style={{ fontSize:16, marginRight:8 }}>📄</span>
               <span style={{ flex:1 }}>{doc.n}</span>
-              {doc.v ? <Verified /> : <span style={{ fontSize:10, color:C.sub }}>Pending</span>}
+              {onPreviewDoc && <span style={{ fontSize:10, color:C.sub, marginRight:8 }}>View ↗</span>}
+              {doc.v ? (
+                <Verified />
+              ) : onApproveDoc ? (
+                <div style={{ display:"flex", gap:6, alignItems:"center" }} onClick={ev => ev.stopPropagation()}>
+                  <span style={{ fontSize:10, color:"#b45309", fontWeight:600, marginRight:4 }}>Pending</span>
+                  <button
+                    onClick={() => onApproveDoc(i)}
+                    style={{ fontSize:10, fontWeight:700, padding:"3px 9px", borderRadius:6, border:"none", background:"#4a7c59", color:"#fff", cursor:"pointer" }}
+                  >Approve</button>
+                  <button
+                    onClick={() => onRejectDoc(i)}
+                    style={{ fontSize:10, fontWeight:700, padding:"3px 9px", borderRadius:6, border:"none", background:"#dc2626", color:"#fff", cursor:"pointer" }}
+                  >Reject</button>
+                </div>
+              ) : (
+                <span style={{ fontSize:10, color:"#b45309", fontWeight:600 }}>Pending</span>
+              )}
             </div>
           ))}
         </div>
@@ -2238,6 +2271,7 @@ export default function App() {
   const [taglineDraft, setTaglineDraft] = useState("");
   const [payslipPreview, setPayslipPreview] = useState(null);
   const [brandLogoHovered, setBrandLogoHovered] = useState(false);
+  const [docPreviewItem, setDocPreviewItem] = useState<{doc: any, emp: any} | null>(null);
   
   const [showImportCsv, setShowImportCsv] = useState(false);
   const [showHolidays, setShowHolidays] = useState(false);
@@ -3558,7 +3592,14 @@ export default function App() {
             </div>
             {!isSA ? (
               <SettingsPanel label="Profile" title="Your details" accent={C.p}>
-                <ProfileDetail e={me} empList={employees} wrapCard={false} narrow={narrow} onEditBank={() => setBankPick(me.id)} />
+                <ProfileDetail
+                  e={me}
+                  empList={employees}
+                  wrapCard={false}
+                  narrow={narrow}
+                  onEditBank={() => setBankPick(me.id)}
+                  onPreviewDoc={(doc, emp) => setDocPreviewItem({ doc, emp })}
+                />
                 <div style={{ marginTop: 20, paddingTop: 18, borderTop: `1px solid ${C.bdr}` }}>
                   <Btn variant="outline" onClick={() => setShowUploadDoc(true)} style={{ borderColor: "#4a7c59", color: "#4a7c59" }}>+ Upload Document</Btn>
                 </div>
@@ -6202,7 +6243,28 @@ export default function App() {
       {/* ─ EMPLOYEE PROFILE (SA) ─ */}
       {profilePick != null && empById(profilePick, employees) && (
         <Modal title="Employee profile" onClose={()=>setProfilePick(null)} width={640}>
-          <ProfileDetail e={empById(profilePick, employees)} wrapCard={false} empList={employees} narrow={narrow} onEditBank={() => setBankPick(profilePick)} />
+          <ProfileDetail
+            e={empById(profilePick, employees)}
+            wrapCard={false}
+            empList={employees}
+            narrow={narrow}
+            onEditBank={() => setBankPick(profilePick)}
+            onApproveDoc={isSA ? (docIdx) => {
+              setEmployees(emps => emps.map(emp => emp.id !== profilePick ? emp : {
+                ...emp,
+                documents: emp.documents.map((d, i) => i === docIdx ? { ...d, v: true } : d)
+              }));
+              toast("Document approved ✓");
+            } : null}
+            onRejectDoc={isSA ? (docIdx) => {
+              setEmployees(emps => emps.map(emp => emp.id !== profilePick ? emp : {
+                ...emp,
+                documents: emp.documents.filter((_, i) => i !== docIdx)
+              }));
+              toast("Document rejected and removed");
+            } : null}
+            onPreviewDoc={(doc, emp) => setDocPreviewItem({ doc, emp })}
+          />
           
           {isSA && (
             <div style={{ marginTop: 24, paddingTop: 18, borderTop: `1px solid ${C.bdr}`, display: "flex", flexWrap: "wrap", gap: 10 }}>
@@ -6272,6 +6334,153 @@ export default function App() {
           </div>
         </Modal>
       )}
+      {docPreviewItem && (() => {
+        const { doc, emp } = docPreviewItem;
+        const isId = /aadhaar|pan|passport|driving|voter|id/i.test(doc.n);
+        const isVerified = doc.v;
+        return (
+          <div
+            style={{ position:"fixed", inset:0, zIndex:600, background:"rgba(0,0,0,.6)", display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}
+            onClick={() => setDocPreviewItem(null)}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                background:C.bg, borderRadius:20, width:"100%", maxWidth:560, maxHeight:"90vh",
+                overflow:"hidden", display:"flex", flexDirection:"column",
+                boxShadow:"0 32px 80px rgba(0,0,0,.35)", border:`1px solid ${C.bdr}`,
+              }}
+            >
+              {/* Header */}
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 20px", background:C.dk, flexShrink:0 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <div style={{ width:28, height:28, borderRadius:7, background:C.p, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, color:"#fff", fontSize:10 }}>KS</div>
+                  <div>
+                    <div style={{ color:"#fff", fontWeight:700, fontSize:13 }}>{doc.n}</div>
+                    <div style={{ color:C.dkAcc, fontSize:10 }}>{emp.name} · Document Preview</div>
+                  </div>
+                </div>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <span style={{ fontSize:10, fontWeight:700, padding:"3px 10px", borderRadius:20, background: isVerified ? "#4a7c59" : "#b45309", color:"#fff" }}>
+                    {isVerified ? "✓ VERIFIED" : "⏳ PENDING"}
+                  </span>
+                  <button onClick={() => setDocPreviewItem(null)} style={{ background:"rgba(255,255,255,.1)", border:"none", borderRadius:8, color:"#fff", fontSize:16, width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
+                </div>
+              </div>
+
+              {/* Preview body */}
+              <div style={{ flex:1, overflowY:"auto", padding:24, display:"flex", flexDirection:"column", alignItems:"center", gap:16, background:C.bg }}>
+                {/* Prototype notice */}
+                <div style={{ width:"100%", background:`rgba(var(--p-rgb),.08)`, border:`1px solid ${C.bdr}`, borderRadius:10, padding:"8px 14px", fontSize:11, color:C.sub, display:"flex", alignItems:"center", gap:8 }}>
+                  <span>ℹ️</span>
+                  <span>Prototype preview — actual file content will render here in production.</span>
+                </div>
+
+                {isId ? (
+                  /* ── ID Card layout ── */
+                  <div style={{
+                    width:"100%", maxWidth:420, borderRadius:16, overflow:"hidden",
+                    boxShadow:"0 8px 30px rgba(0,0,0,.15)", position:"relative",
+                    background:`linear-gradient(135deg, ${C.dk} 0%, #2d3a28 100%)`,
+                  }}>
+                    {/* Card top strip */}
+                    <div style={{ background:`linear-gradient(90deg, ${C.p} 0%, ${C.p2} 100%)`, height:6 }} />
+                    <div style={{ padding:"22px 24px 24px", position:"relative" }}>
+                      {/* Watermark */}
+                      <div style={{ position:"absolute", right:20, top:20, fontSize:52, opacity:.06, fontWeight:900, color:"#fff", userSelect:"none" }}>ID</div>
+                      <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:20 }}>
+                        <div style={{ width:52, height:52, borderRadius:12, background:C.p, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, fontSize:18, color:"#fff", flexShrink:0, border:"2px solid rgba(255,255,255,.2)" }}>
+                          {emp.ini}
+                        </div>
+                        <div>
+                          <div style={{ color:"#fff", fontWeight:700, fontSize:16, fontFamily:"Georgia,serif" }}>{emp.name}</div>
+                          <div style={{ color:C.dkAcc, fontSize:11, marginTop:3 }}>{emp.designation || emp.dept}</div>
+                          <div style={{ color:C.dkAcc, fontSize:10, marginTop:2 }}>{emp.email}</div>
+                        </div>
+                      </div>
+                      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px 14px" }}>
+                        {[
+                          ["Document", doc.n],
+                          ["Doc. No.", "XXXX-XXXX-XXXX"],
+                          ["Date of Birth", emp.dob || "—"],
+                          ["Issued", new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" })],
+                        ].map(([k, v]) => (
+                          <div key={k}>
+                            <div style={{ fontSize:9, fontWeight:700, color:C.dkAcc, letterSpacing:.8, marginBottom:2 }}>{k.toUpperCase()}</div>
+                            <div style={{ fontSize:12, color:"#fff", fontWeight:600, fontFamily:"monospace" }}>{v}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ marginTop:18, paddingTop:14, borderTop:"1px solid rgba(255,255,255,.12)", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                        <div style={{ fontSize:9, color:C.dkAcc }}>Bipolar Factory · KinSphere HRMS</div>
+                        <div style={{ background: isVerified ? "#4a7c59" : "#b45309", borderRadius:6, padding:"3px 9px", fontSize:9, fontWeight:700, color:"#fff" }}>
+                          {isVerified ? "VERIFIED" : "PENDING VERIFICATION"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* ── Paper document layout ── */
+                  <div style={{
+                    width:"100%", maxWidth:440, background:"#fff", borderRadius:12,
+                    boxShadow:"0 4px 24px rgba(0,0,0,.12)", border:`1px solid ${C.bdr}`,
+                    overflow:"hidden", position:"relative",
+                  }}>
+                    <div style={{ background:`linear-gradient(90deg, ${C.p} 0%, ${C.p2} 100%)`, height:5 }} />
+                    <div style={{ padding:"28px 30px", position:"relative" }}>
+                      {/* Watermark */}
+                      <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", pointerEvents:"none" }}>
+                        <div style={{ fontSize:64, fontWeight:900, opacity:.04, color:C.dk, transform:"rotate(-30deg)", userSelect:"none", whiteSpace:"nowrap" }}>PREVIEW</div>
+                      </div>
+                      {/* Header */}
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:22 }}>
+                        <div>
+                          <div style={{ fontSize:9, fontWeight:700, letterSpacing:1.2, color:C.sub, marginBottom:4 }}>BIPOLAR FACTORY · OFFICIAL DOCUMENT</div>
+                          <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:C.txt }}>{doc.n}</div>
+                        </div>
+                        <div style={{ textAlign:"right" }}>
+                          <div style={{ fontSize:9, color:C.sub }}>Date</div>
+                          <div style={{ fontSize:11, fontWeight:600, color:C.txt }}>{new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" })}</div>
+                        </div>
+                      </div>
+                      <div style={{ marginBottom:18, padding:"10px 14px", background:C.surf, borderRadius:8, border:`1px solid ${C.bdr}` }}>
+                        <div style={{ fontSize:10, color:C.sub, fontWeight:600, marginBottom:4 }}>ISSUED TO</div>
+                        <div style={{ fontSize:13, fontWeight:700, color:C.txt }}>{emp.name}</div>
+                        <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{emp.designation || emp.dept} · {emp.email}</div>
+                      </div>
+                      {/* Simulated body lines */}
+                      {[85, 100, 70, 95, 60, 88, 45].map((w, i) => (
+                        <div key={i} style={{ height:8, borderRadius:4, background:C.surf, marginBottom:8, width:`${w}%` }} />
+                      ))}
+                      <div style={{ marginTop:20 }}>
+                        {[75, 90, 55, 80].map((w, i) => (
+                          <div key={i} style={{ height:8, borderRadius:4, background:C.surf, marginBottom:8, width:`${w}%` }} />
+                        ))}
+                      </div>
+                      {/* Signature area */}
+                      <div style={{ marginTop:28, paddingTop:16, borderTop:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between" }}>
+                        <div>
+                          <div style={{ width:100, height:1, background:C.bdr, marginBottom:4 }} />
+                          <div style={{ fontSize:9, color:C.sub }}>Employee signature</div>
+                        </div>
+                        <div style={{ textAlign:"right" }}>
+                          <div style={{ width:100, height:1, background:C.bdr, marginBottom:4, marginLeft:"auto" }} />
+                          <div style={{ fontSize:9, color:C.sub }}>Authorised signatory</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div style={{ padding:"12px 20px", borderTop:`1px solid ${C.bdr}`, display:"flex", justifyContent:"flex-end", background:C.wht, flexShrink:0 }}>
+                <Btn variant="ghost" onClick={() => setDocPreviewItem(null)}>Close</Btn>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {showUploadDoc && (
         <Modal title="Upload Document" onClose={()=>setShowUploadDoc(false)} width={400}>
