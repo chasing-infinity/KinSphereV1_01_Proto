@@ -52,21 +52,9 @@ const THEMES = {
     sb: "#7a5245",
     txt: "#3b2620",
     sub: "#8c6455",
-  },
-  Luna: {
-    p: "#26658C",
-    p_rgb: "38, 101, 140",
-    p2: "#A7EBF2",
-    bg: "#f0f7fa",
-    mid: "#c2dfe8",
-    surf: "#daeef4",
-    bdr: "#a7d4e0",
-    dk: "#023859",
-    sb: "#1a4f6e",
-    txt: "#01253a",
-    sub: "#336e8c",
   }
 };
+
 
 const getThemeCss = (themeName: string, isDark: boolean) => {
   const t = THEMES[themeName] || THEMES.Original;
