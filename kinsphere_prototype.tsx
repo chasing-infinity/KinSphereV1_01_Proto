@@ -3560,7 +3560,7 @@ export default function App() {
               <SettingsPanel label="Profile" title="Your details" accent={C.p}>
                 <ProfileDetail e={me} empList={employees} wrapCard={false} narrow={narrow} onEditBank={() => setBankPick(me.id)} />
                 <div style={{ marginTop: 20, paddingTop: 18, borderTop: `1px solid ${C.bdr}` }}>
-                  <Btn variant="outline" onClick={() => { setProfilePick(me.id); setShowUploadDoc(true); }} style={{ borderColor: "#4a7c59", color: "#4a7c59" }}>+ Upload Document</Btn>
+                  <Btn variant="outline" onClick={() => setShowUploadDoc(true)} style={{ borderColor: "#4a7c59", color: "#4a7c59" }}>+ Upload Document</Btn>
                 </div>
               </SettingsPanel>
             ) : (
