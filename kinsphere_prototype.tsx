@@ -2479,7 +2479,7 @@ const PresenceModule = ({
         </div>
         <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
           <div style={{ background:C.p, borderRadius:20, padding:24, color:"#fff", boxShadow:"0 4px 20px rgba(var(--p-rgb),.2)" }}>
-            <h3 style={{ margin:"0 0 18px", fontSize:11, fontWeight:800, color:"rgba(255,255,255,0.7)", letterSpacing:1.2 }}>{monthLabel.toUpperCase()} SUMMARY</h3>
+            <h3 style={{ margin:"0 0 18px", fontSize:11, fontWeight:800, color:"#fff", letterSpacing:1.2 }}>{monthLabel.toUpperCase()} SUMMARY</h3>
             <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
               {[
                 {l:"Present Days",v:stats.present,c:"#fff"},
@@ -2488,23 +2488,23 @@ const PresenceModule = ({
                 {l:"Absent Days",v:stats.absent,c:stats.absent>0?"#fca5a5":"#fff"}
               ].map(x=>(
                 <div key={x.l} style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                  <span style={{ fontSize:13, color:"#d1d5db" }}>{x.l}</span>
+                  <span style={{ fontSize:13, color:"#fff" }}>{x.l}</span>
                   <span style={{ fontWeight:800, fontSize:18, color:x.c }}>{x.v}</span>
                 </div>
               ))}
             </div>
-            <div style={{ marginTop:24, paddingTop:20, borderTop:`1px solid rgba(255,255,255,0.1)`, fontSize:11, color:"rgba(255,255,255,0.7)", lineHeight:1.5 }}>
-              Priority: <span style={{ color:"#fff" }}>Holidays → Leave → Logs</span>. Past records are never overwritten when changing mode.
+            <div style={{ marginTop:24, paddingTop:20, borderTop:`1px solid rgba(255,255,255,0.2)`, fontSize:11, color:"#fff", lineHeight:1.5 }}>
+              <strong style={{ opacity: 0.9 }}>Priority:</strong> <span style={{ fontWeight:700 }}>Holidays → Leave → Logs</span>. Past records are never overwritten when changing mode.
             </div>
           </div>
           {isSA && (
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
               <span style={{ fontSize:11, fontWeight:800, color:C.sub }}>ATTENDANCE MODE</span>
               {[{id:'HRMS',t:'HRMS Clock-in',d:'In-app portal'},{id:'SlackTeams',t:'Slack / Teams',d:'Internal integration'},{id:'Auto',t:'Auto Attendance',d:'Mark present by default'}].map(m => (
-                <button key={m.id} onClick={() => setAttendanceMode(m.id)} style={{ padding:16, textAlign:"left", borderRadius:16, border:`1px solid ${attendanceMode===m.id ? C.p : C.bdr}`, background: attendanceMode===m.id ? `${C.p}08` : C.wht, cursor:"pointer" }}>
-                  <div style={{ fontWeight:700, fontSize:14, color: attendanceMode===m.id ? C.p : C.txt }}>{m.t}</div>
-                  <div style={{ fontSize:11, color:C.sub }}>{m.d}</div>
-                  {attendanceMode===m.id && m.id==='SlackTeams' && <div style={{ display:"flex", gap:6, marginTop:8 }}>{['Slack','Teams'].map(plt=><button key={plt} onClick={(e)=>{e.stopPropagation();setSlackTeamsPlatform(plt);}} style={{ padding:"4px 8px", borderRadius:6, border:`1px solid ${slackTeamsPlatform===plt?C.p:C.bdr}`, background:slackTeamsPlatform===plt?C.p:"none", color:slackTeamsPlatform===plt?"#fff":C.sub, fontSize:10, fontWeight:700 }}>{plt}</button>)}</div>}
+                <button key={m.id} onClick={() => setAttendanceMode(m.id)} style={{ padding:16, textAlign:"left", borderRadius:16, border:`1px solid ${attendanceMode===m.id ? C.p : C.bdr}`, background: attendanceMode===m.id ? C.p : C.wht, cursor:"pointer", transition:"all 0.2s" }}>
+                  <div style={{ fontWeight:700, fontSize:14, color: attendanceMode===m.id ? '#fff' : C.txt }}>{m.t}</div>
+                  <div style={{ fontSize:11, color: attendanceMode===m.id ? 'rgba(255,255,255,0.85)' : C.sub }}>{m.d}</div>
+                  {attendanceMode===m.id && m.id==='SlackTeams' && <div style={{ display:"flex", gap:6, marginTop:8 }}>{['Slack','Teams'].map(plt=><button key={plt} onClick={(e)=>{e.stopPropagation();setSlackTeamsPlatform(plt);}} style={{ padding:"4px 8px", borderRadius:6, border:`1px solid ${slackTeamsPlatform===plt?"#fff":'rgba(255,255,255,0.3)'}`, background:slackTeamsPlatform===plt?"#fff":"transparent", color:slackTeamsPlatform===plt?C.p:"#fff", fontSize:10, fontWeight:700, cursor:"pointer" }}>{plt}</button>)}</div>}
                 </button>
               ))}
             </div>
