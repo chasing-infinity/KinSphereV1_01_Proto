@@ -2478,14 +2478,14 @@ const PresenceModule = ({
           })()}
         </div>
         <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
-          <div style={{ background:C.p, borderRadius:20, padding:24, color:"#fff", boxShadow:"0 4px 20px rgba(var(--p-rgb),.2)" }}>
+          <div style={{ background:C.dk, borderRadius:20, padding:24, color:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.15)" }}>
             <h3 style={{ margin:"0 0 18px", fontSize:11, fontWeight:800, color:"#fff", letterSpacing:1.2 }}>{monthLabel.toUpperCase()} SUMMARY</h3>
             <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
               {[
                 {l:"Present Days",v:stats.present,c:"#fff"},
                 {l:"Holidays",v:stats.holiday,c:"#fff"},
                 {l:"Leave Days",v:stats.leave,c:"#fff"},
-                {l:"Absent Days",v:stats.absent,c:stats.absent>0?"#fca5a5":"#fff"}
+                {l:"Absent Days",v:stats.absent,c:stats.absent>0?"#dc2626":"#fff"}
               ].map(x=>(
                 <div key={x.l} style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                   <span style={{ fontSize:13, color:"#fff" }}>{x.l}</span>
@@ -2501,10 +2501,10 @@ const PresenceModule = ({
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
               <span style={{ fontSize:11, fontWeight:800, color:C.sub }}>ATTENDANCE MODE</span>
               {[{id:'HRMS',t:'HRMS Clock-in',d:'In-app portal'},{id:'SlackTeams',t:'Slack / Teams',d:'Internal integration'},{id:'Auto',t:'Auto Attendance',d:'Mark present by default'}].map(m => (
-                <button key={m.id} onClick={() => setAttendanceMode(m.id)} style={{ padding:16, textAlign:"left", borderRadius:16, border:`1px solid ${attendanceMode===m.id ? C.p : C.bdr}`, background: attendanceMode===m.id ? C.p : C.wht, cursor:"pointer", transition:"all 0.2s" }}>
-                  <div style={{ fontWeight:700, fontSize:14, color: attendanceMode===m.id ? '#fff' : C.txt }}>{m.t}</div>
-                  <div style={{ fontSize:11, color: attendanceMode===m.id ? 'rgba(255,255,255,0.85)' : C.sub }}>{m.d}</div>
-                  {attendanceMode===m.id && m.id==='SlackTeams' && <div style={{ display:"flex", gap:6, marginTop:8 }}>{['Slack','Teams'].map(plt=><button key={plt} onClick={(e)=>{e.stopPropagation();setSlackTeamsPlatform(plt);}} style={{ padding:"4px 8px", borderRadius:6, border:`1px solid ${slackTeamsPlatform===plt?"#fff":'rgba(255,255,255,0.3)'}`, background:slackTeamsPlatform===plt?"#fff":"transparent", color:slackTeamsPlatform===plt?C.p:"#fff", fontSize:10, fontWeight:700, cursor:"pointer" }}>{plt}</button>)}</div>}
+                <button key={m.id} onClick={() => setAttendanceMode(m.id)} style={{ padding:16, textAlign:"left", borderRadius:16, border:`1px solid ${attendanceMode===m.id ? C.p : 'transparent'}`, background: C.dk, cursor:"pointer", transition:"all 0.2s", boxShadow: attendanceMode===m.id ? `0 0 0 1px ${C.p}` : 'none' }}>
+                  <div style={{ fontWeight:700, fontSize:14, color: '#fff' }}>{m.t}</div>
+                  <div style={{ fontSize:11, color: attendanceMode===m.id ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.6)' }}>{m.d}</div>
+                  {attendanceMode===m.id && m.id==='SlackTeams' && <div style={{ display:"flex", gap:6, marginTop:8 }}>{['Slack','Teams'].map(plt=><button key={plt} onClick={(e)=>{e.stopPropagation();setSlackTeamsPlatform(plt);}} style={{ padding:"4px 8px", borderRadius:6, border:`1px solid ${slackTeamsPlatform===plt?C.p:'rgba(255,255,255,0.2)'}`, background:slackTeamsPlatform===plt?C.p:"transparent", color:slackTeamsPlatform===plt?"#fff":"rgba(255,255,255,0.8)", fontSize:10, fontWeight:700, cursor:"pointer" }}>{plt}</button>)}</div>}
                 </button>
               ))}
             </div>
