@@ -2597,6 +2597,8 @@ export default function App() {
   
   const [showImportCsv, setShowImportCsv] = useState(false);
   const [showHolidays, setShowHolidays] = useState(false);
+  const [departments, setDepartments] = useState(["Technology", "Design", "Marketing", "Operations", "HR"]);
+  const [newDeptInput, setNewDeptInput] = useState("");
   const [notifications, setNotifications] = useState(INIT_NOTIFICATIONS);
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const addNotif = (n: Omit<typeof INIT_NOTIFICATIONS[0], 'id' | 'time' | 'read'>) => {
@@ -6007,6 +6009,21 @@ export default function App() {
                       <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:6 }}>EMPLOYEES</div>
                       <div style={{ fontSize:22, fontWeight:700, color:C.txt, fontVariantNumeric:"tabular-nums" }}>{employees.length}</div>
                     </div>
+                    <div style={{ gridColumn:"1 / -1", padding:14, borderRadius:12, background:C.bg, border:`1px solid ${C.bdr}` }}>
+                      <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:10 }}>DEPARTMENTS</div>
+                      <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:12 }}>
+                        {departments.map(d => (
+                          <div key={d} style={{ display:"flex", alignItems:"center", gap:6, padding:"4px 10px", borderRadius:20, background:C.surf, border:`1px solid ${C.bdr}`, fontSize:12, color:C.txt }}>
+                            {d}
+                            <button onClick={()=>setDepartments(p=>p.filter(x=>x!==d))} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:10, padding:0, display:"flex" }} title="Remove">✕</button>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ display:"flex", gap:8 }}>
+                        <input value={newDeptInput} onChange={e=>setNewDeptInput(e.target.value)} placeholder="New department (e.g. Sales, Accounting)..." onKeyDown={e=>{if(e.key==="Enter"&&newDeptInput){setDepartments(p=>[...p,newDeptInput]);setNewDeptInput("");}}} style={{ flex:1, padding:"8px 12px", borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:12, outline:"none", color:C.txt }} />
+                        <Btn variant="outline" onClick={()=>{if(!newDeptInput)return;setDepartments(p=>[...p,newDeptInput]);setNewDeptInput("");}} style={{ padding:"8px 16px" }}>Add</Btn>
+                      </div>
+                    </div>
                   </div>
                 </SettingsPanel>
 
@@ -7486,7 +7503,7 @@ export default function App() {
             <Inp label="Employment Type" opts={["Full Time","Part Time","Contract"]} value={empForm.type} onChange={e=>setEmpForm({...empForm, type:e.target.value})} />
             <Inp label="Date of Joining *" value={empForm.doj} onChange={e=>setEmpForm({...empForm, doj:e.target.value})} />
             <Inp label="Designation" value={empForm.designation} onChange={e=>setEmpForm({...empForm, designation:e.target.value})} />
-            <Inp label="Department" opts={["—","Technology","Design","Marketing","Operations","HR"]} value={empForm.dept} onChange={e=>setEmpForm({...empForm, dept:e.target.value})} />
+            <Inp label="Department" opts={["—", ...departments]} value={empForm.dept} onChange={e=>setEmpForm({...empForm, dept:e.target.value})} />
             <Inp label="Manager" opts={["No Manager",...employees.map(e=>e.name)]} value={empForm.manager} onChange={e=>setEmpForm({...empForm, manager:e.target.value})} />
           </div>
           <div style={{ fontSize:10, fontWeight:700, color:C.p, margin:"16px 0 10px", letterSpacing:1 }}>EMERGENCY CONTACT</div>
