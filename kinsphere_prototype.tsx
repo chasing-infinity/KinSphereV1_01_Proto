@@ -6068,6 +6068,7 @@ export default function App() {
                         </div>
                       ))}
                     </div>
+                  )}
                   {accessSelectedEmpId && (() => {
                     const sel = employees.find(e => e.id === Number(accessSelectedEmpId));
                     if (!sel || sel.role === "Super Admin") return null;
