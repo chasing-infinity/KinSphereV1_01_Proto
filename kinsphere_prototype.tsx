@@ -6068,7 +6068,25 @@ export default function App() {
                         </div>
                       ))}
                     </div>
-                  )}
+                  {accessSelectedEmpId && (() => {
+                    const sel = employees.find(e => e.id === Number(accessSelectedEmpId));
+                    if (!sel || sel.role === "Super Admin") return null;
+                    return (
+                      <div style={{ marginTop:24, paddingTop:24, borderTop:`1px solid ${C.bdr}` }}>
+                        <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:10 }}>ROLE ELEVATION</div>
+                        <div style={{ padding:16, border:`1px solid #fed7aa`, background:`#fff7ed`, borderRadius:12, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16, flexWrap:"wrap" }}>
+                          <div style={{ flex:1, minWidth:240 }}>
+                            <div style={{ fontSize:13, fontWeight:700, color:"#9a3412", marginBottom:4 }}>Promote to Super Admin</div>
+                            <div style={{ fontSize:11, color:"#c2410c", lineHeight:1.45 }}>This will grant {sel.name} full system access, including billing, organizational settings, and absolute cross-module visibility.</div>
+                          </div>
+                          <Btn onClick={() => {
+                            setEmployees(prev => prev.map(e => e.id === sel.id ? { ...e, role: "Super Admin" } : e));
+                            toast(`${sel.name} is now a Super Admin ✓`);
+                          }} style={{ background:"#ea580c", color:"#fff", border:"none", padding:"10px 20px" }}>Elevate Status</Btn>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </SettingsPanel>
 
                 <SettingsPanel label="Security" title="Organisation security" accent="#b8860b">
