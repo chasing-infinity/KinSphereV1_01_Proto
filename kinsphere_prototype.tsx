@@ -135,23 +135,23 @@ const EMPS = [
   { id:1, ini:"AM", name:"Arjun Mehta",    email:"admin@bipolarfactory.com",  role:"Super Admin", dept:"Leadership", type:"Full Time", joined:"Jan 2022", salary:"₹25,00,000",
     phone:"+91 98765 43210", designation:"Co-founder & CEO", dob:"15 Aug 1988",
     devices:["MacBook Pro M3","iPhone 15 Pro"], documents:[{ n:"Aadhaar", v:true },{ n:"PAN", v:true },{ n:"Offer letter", v:true }], managerId:null,
-    bankInfo:{ holder:"Arjun Mehta", acc:"1234567890", ifsc:"HDFC0001234" } },
+    bankInfo:{ holder:"Arjun Mehta", acc:"1234567890", ifsc:"HDFC0001234" }, paydaysAccess: true },
   { id:2, ini:"NA", name:"Nihit Agarwal",  email:"nihit@bipolarfactory.com",  role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"Apr 2023", salary:"—",
     phone:"+91 98100 11223", designation:"Head of Engineering", dob:"03 Feb 1992",
     devices:["MacBook Air M2"], documents:[{ n:"Aadhaar", v:true },{ n:"PAN", v:false }], managerId:1,
-    bankInfo:{ holder:"Nihit Agarwal", acc:"9876543210", ifsc:"ICIC0005678" } },
+    bankInfo:{ holder:"Nihit Agarwal", acc:"9876543210", ifsc:"ICIC0005678" }, paydaysAccess: true },
   { id:3, ini:"PS", name:"Priya Sharma",   email:"priya@bipolarfactory.com",  role:"Employee",    dept:"Design",      type:"Full Time", joined:"15 Jun 2023", salary:"₹1,00,000",
     phone:"+91 91234 55667", designation:"Product Designer", dob:"27 Mar 1995",
     devices:["MacBook Pro 14"], documents:[{ n:"Aadhaar", v:true },{ n:"NDA", v:true }], managerId:1,
-    bankInfo:{ holder:"Priya Sharma", acc:"5566778899", ifsc:"SBIN0009988" } },
+    bankInfo:{ holder:"Priya Sharma", acc:"5566778899", ifsc:"SBIN0009988" }, paydaysAccess: false },
   { id:4, ini:"RA", name:"Ridwanul Alam",  email:"ridwan@bipolarfactory.com", role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"29 Mar 2025", salary:"₹1",
     phone:"+91 90000 44112", designation:"Software Engineer", dob:"01 Jan 1999",
     devices:["Dell XPS 15"], documents:[{ n:"PAN", v:true }], managerId:2,
-    bankInfo:null /* Missing for testing */ },
+    bankInfo:null /* Missing for testing */, paydaysAccess: true },
   { id:5, ini:"S",  name:"Sahil .",        email:"sahil@bipolarfactory.com",  role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"10 Oct 2022", salary:"—",
     phone:"+91 98888 77665", designation:"Tech Lead", dob:"30 Mar 1990",
     devices:["ThinkPad P1"], documents:[{ n:"Aadhaar", v:true },{ n:"Contract", v:true }], managerId:1,
-    bankInfo:{ holder:"Sahil", acc:"1122334455", ifsc:"KKBK0004433" } },
+    bankInfo:{ holder:"Sahil", acc:"1122334455", ifsc:"KKBK0004433" }, paydaysAccess: true },
 ];
 
 const VACANCIES = [
@@ -631,9 +631,9 @@ const NAV = [
   { key:"Settings" },
 ];
 
-const navItemsForRole = isSA =>
-  NAV.filter(n => isSA || n.key !== "People Chapters")
-     .map(n => (n.key === "Employees" ? (isSA ? n : { key:"My Profile" }) : n));
+const navItemsForRole = (isSA, isAdmin) =>
+  NAV.filter(n => isAdmin || n.key !== "People Chapters")
+     .map(n => (n.key === "Employees" ? (isAdmin ? n : { key:"My Profile" }) : n));
 
 function daysInMonth(y, m0) {
   return new Date(y, m0 + 1, 0).getDate();
@@ -3032,6 +3032,7 @@ export default function App() {
   const onLeaveTodayCount = leaves.filter(
     l => l.status === "approved" && l.fromISO <= todayISO && l.toISO >= todayISO
   ).length;
+  const navItems = navItemsForRole(isSA, isAdmin);
   const myLeaves = leaves.filter(l => l.empId === ME_ID);
   const saPayslipRows = saPayslips.filter(p =>
     p.year === payYear && (payMonthFilter === null || p.month === payMonthFilter)
@@ -3041,9 +3042,9 @@ export default function App() {
   const onEmpProfilePage = page === "Employees" || page === "My Profile";
 
   useEffect(() => {
-    if (!isSA && page === "Employees") setPage("My Profile");
-    if (isSA && page === "My Profile") setPage("Employees");
-  }, [role, isSA, page]);
+    if (!isAdmin && page === "Employees") setPage("My Profile");
+    if (isAdmin && page === "My Profile") setPage("Employees");
+  }, [role, isAdmin, page]);
 
   useEffect(() => {
     setNavOpen(false);
@@ -3597,7 +3598,7 @@ export default function App() {
                 <h1 style={{
                   fontFamily:"Georgia,serif", fontSize:"clamp(28px, 4vw, 34px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.15,
                   letterSpacing:"-.02em",
-                }}>{greet}, Arjun</h1>
+                }}>{greet}, {me.name.split(" ")[0]}</h1>
                 <p style={{
                   color:C.sub, margin:"10px 0 0", fontSize:13, maxWidth:480, lineHeight:1.5,
                 }}>
@@ -3613,14 +3614,14 @@ export default function App() {
               display:"grid",
               gridTemplateColumns: narrow
                 ? "1fr"
-                : `repeat(${2 + (isSA && pendingApprovalsForDashboard.length > 0 ? 1 : 0)}, minmax(0, 1fr))`,
+                : `repeat(${2 + (isAdmin && pendingApprovalsForDashboard.length > 0 ? 1 : 0)}, minmax(0, 1fr))`,
               gap:16,
               marginBottom:20,
             }}>
               {[
                 { lbl:"Total employees", val:String(employees.length), sub:"Active directory", icon:ICONS.Users,
                   accent:C.p, iconBg:C.surf },
-                ...(isSA && pendingApprovalsForDashboard.length > 0
+                ...(isAdmin && pendingApprovalsForDashboard.length > 0
                   ? [{ lbl:"Pending leave approvals", val:String(pendingApprovalsForDashboard.length), sub:"All pending requests", icon:ICONS.ClipboardList,
                     accent:C.p2, iconBg:C.surf }]
                   : []),
@@ -3664,7 +3665,7 @@ export default function App() {
               gap:16,
               marginBottom:16,
             }}>
-              {isSA ? (
+              {isAdmin ? (
               <div style={{
                 background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
                 padding:"22px 24px 20px",
@@ -3878,7 +3879,7 @@ export default function App() {
                       <span style={{ flex:1 }}>Apply for leave</span>
                       <span style={{ fontSize:16, color:C.bdr }}>→</span>
                     </button>
-                    {isSA && (
+                    {isAdmin && (
                       <button
                         type="button"
                         onClick={()=>setShowEmp(true)}
@@ -4526,7 +4527,7 @@ export default function App() {
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
                   }}>Paydays</h1>
                   <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55, maxWidth:480 }}>
-                    {isSA ? "Company payslips, salary configuration, and net pay — credited on the 15th." : "Your payslips for the selected year — download when you need them."}
+                    {(isSA || (role === "Admin" && me.paydaysAccess)) ? "Company payslips, salary configuration, and net pay — credited on the 15th." : "Your payslips for the selected year — download when you need them."}
                   </p>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
@@ -4560,7 +4561,7 @@ export default function App() {
                         <option value={2025}>2025</option>
                       </select>
                     </div>
-                    {isSA && pyTab === "All Payslips" && (
+                    {(isSA || (role === "Admin" && me.paydaysAccess)) && pyTab === "All Payslips" && (
                       <Btn 
                         style={{ padding: "8px 18px", fontSize: 13, background: C.p, color: "#fff", border: "none", boxShadow: "0 4px 12px rgba(var(--p-rgb),.25)" }} 
                         onClick={() => {
@@ -4572,7 +4573,7 @@ export default function App() {
                       </Btn>
                     )}
                   </div>
-                  {isSA && pyTab === "All Payslips" && (
+                  {(isSA || (role === "Admin" && me.paydaysAccess)) && pyTab === "All Payslips" && (
                     <Btn
                       style={{ padding: "8px 18px", fontSize: 13, background: "#fff", color: C.p, border: `1px solid ${C.p}`, boxShadow: "0 4px 12px rgba(0,0,0,.05)", width: "100%" }}
                       onClick={() => setReleaseStep(1)}
@@ -4588,14 +4589,14 @@ export default function App() {
             <div style={{ display:"flex", justifyContent:"flex-start", width:"100%", marginBottom:18 }}>
               <TabBar
                 inline
-                tabs={isSA ? ["All Payslips", "Salary Configuration"] : ["My Payslips"]}
+                tabs={(isSA || (role === "Admin" && me.paydaysAccess)) ? ["All Payslips", "Salary Configuration"] : ["My Payslips"]}
                 active={pyTab}
                 setActive={setPyTab}
                 style={{ marginBottom:0 }}
               />
             </div>
             {(pyTab==="All Payslips"||pyTab==="My Payslips") ? (
-              isSA ? (
+              (isSA || (role === "Admin" && me.paydaysAccess)) ? (
                 <>
                   <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, overflow:"hidden", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset" }}>
                   <div style={{ overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
@@ -5987,7 +5988,7 @@ export default function App() {
             </SettingsPanel>
 
 
-            {isSA && (
+            {isAdmin && (
               <>
                 <SettingsPanel label="Organisation" title="Workspace & directory" accent={C.p}>
                   <p style={{ margin:"0 0 14px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
@@ -6036,7 +6037,8 @@ export default function App() {
                   </div>
                 </SettingsPanel>
 
-                <SettingsPanel label="Access Control" title="Manage module access" accent={C.p}>
+                {isSA && (
+                  <SettingsPanel label="Access Control" title="Manage module access" accent={C.p}>
                   <p style={{ margin:"0 0 16px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
                     Grant specific permissions to Admins or Employees to view or manage individual modules.
                   </p>
@@ -6072,23 +6074,76 @@ export default function App() {
                   {accessSelectedEmpId && (() => {
                     const sel = employees.find(e => e.id === Number(accessSelectedEmpId));
                     if (!sel || sel.role === "Super Admin") return null;
+                    
                     return (
                       <div style={{ marginTop:24, paddingTop:24, borderTop:`1px solid ${C.bdr}` }}>
-                        <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:10 }}>ROLE ELEVATION</div>
-                        <div style={{ padding:16, border:`1px solid #fed7aa`, background:`#fff7ed`, borderRadius:12, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16, flexWrap:"wrap" }}>
-                          <div style={{ flex:1, minWidth:240 }}>
-                            <div style={{ fontSize:13, fontWeight:700, color:"#9a3412", marginBottom:4 }}>Promote to Super Admin</div>
-                            <div style={{ fontSize:11, color:"#c2410c", lineHeight:1.45 }}>This will grant {sel.name} full system access, including billing, organizational settings, and absolute cross-module visibility.</div>
+                        <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:16 }}>ROLE & PERMISSIONS MANAGEMENT</div>
+                        
+                        <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+                          {/* Role Elevation Card */}
+                          <div style={{ 
+                            padding:16, 
+                            border: sel.role === "Admin" ? `1px solid ${C.bdr}` : `1px solid #fed7aa`, 
+                            background: sel.role === "Admin" ? C.surf : `#fff7ed`, 
+                            borderRadius:12, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16, flexWrap:"wrap" 
+                          }}>
+                            <div style={{ flex:1, minWidth:240 }}>
+                              <div style={{ fontSize:13, fontWeight:700, color: sel.role === "Admin" ? C.txt : "#9a3412", marginBottom:4 }}>
+                                {sel.role === "Admin" ? "Promote to Super Admin" : "Elevate to Admin"}
+                              </div>
+                              <div style={{ fontSize:11, color: sel.role === "Admin" ? C.sub : "#c2410c", lineHeight:1.45 }}>
+                                {sel.role === "Admin" 
+                                  ? `This will grant ${sel.name} full system access, including billing, organizational settings, and absolute cross-module visibility.`
+                                  : `This will allow ${sel.name} to see all modules. By default, they will only see their own payslips unless Paydays access is granted.`}
+                              </div>
+                            </div>
+                            <Btn onClick={() => {
+                              const newRole = sel.role === "Admin" ? "Super Admin" : "Admin";
+                              setEmployees(prev => prev.map(e => e.id === sel.id ? { ...e, role: newRole, paydaysAccess: newRole === "Super Admin" } : e));
+                              toast(`${sel.name} is now a ${newRole} ✓`);
+                            }} style={{ background: sel.role === "Admin" ? "#ea580c" : C.p, color:"#fff", border:"none", padding:"10px 20px" }}>
+                              {sel.role === "Admin" ? "Promote to SA" : "Elevate to Admin"}
+                            </Btn>
                           </div>
-                          <Btn onClick={() => {
-                            setEmployees(prev => prev.map(e => e.id === sel.id ? { ...e, role: "Super Admin" } : e));
-                            toast(`${sel.name} is now a Super Admin ✓`);
-                          }} style={{ background:"#ea580c", color:"#fff", border:"none", padding:"10px 20px" }}>Elevate Status</Btn>
+
+                          {/* Paydays Access Card (Only for Admins) */}
+                          {sel.role === "Admin" && (
+                            <div style={{ 
+                              padding:16, 
+                              border: `1px solid ${sel.paydaysAccess ? '#dcfce7' : C.bdr}`, 
+                              background: sel.paydaysAccess ? '#f0fdf4' : C.bg, 
+                              borderRadius:12, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16, flexWrap:"wrap" 
+                            }}>
+                              <div style={{ flex:1, minWidth:240 }}>
+                                <div style={{ fontSize:13, fontWeight:700, color: sel.paydaysAccess ? "#166534" : C.txt, marginBottom:4 }}>Complete Paydays Access</div>
+                                <div style={{ fontSize:11, color: sel.paydaysAccess ? "#15803d" : C.sub, lineHeight:1.45 }}>
+                                  Currently: <strong style={{ textTransform: "uppercase" }}>{sel.paydaysAccess ? "Full Access" : "Restricted (Own Payslips Only)"}</strong>.
+                                  Manual authorization required for viewing org-wide payroll and salary configurations.
+                                </div>
+                              </div>
+                              <Btn 
+                                onClick={() => {
+                                  const newVal = !sel.paydaysAccess;
+                                  setEmployees(prev => prev.map(e => e.id === sel.id ? { ...e, paydaysAccess: newVal } : e));
+                                  toast(`Paydays access ${newVal ? "granted" : "revoked"} for ${sel.name} ✓`);
+                                }} 
+                                variant={sel.paydaysAccess ? "outline" : "primary"}
+                                style={{ 
+                                  padding:"10px 20px",
+                                  borderColor: sel.paydaysAccess ? "#166534" : "transparent",
+                                  color: sel.paydaysAccess ? "#166534" : "#fff"
+                                }}
+                              >
+                                {sel.paydaysAccess ? "Revoke Access" : "Grant Access"}
+                              </Btn>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
                   })()}
-                </SettingsPanel>
+                  </SettingsPanel>
+                )}
 
                 <SettingsPanel label="Security" title="Organisation security" accent="#b8860b">
                   <p style={{ margin:"0 0 14px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
@@ -6213,19 +6268,7 @@ export default function App() {
               </>
             )}
 
-            {isAdmin && !isSA && (
-              <>
-                <SettingsPanel label="Administrator" title="Your workspace scope" accent="#b8860b">
-                  <p style={{ margin:"0 0 12px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
-                    As an admin you can review leave and time-away data for people you support, and help keep calendars accurate. You do not manage the full employee directory or org-wide payroll configuration.
-                  </p>
-                  <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-                    <Btn variant="outline" onClick={()=>setPage("Time Away")}>Open Time Away</Btn>
-                    <Btn variant="ghost" onClick={()=>setPage("Paydays")}>Paydays</Btn>
-                  </div>
-                </SettingsPanel>
-              </>
-            )}
+
 
             {role === "Employee" && (
               <SettingsPanel label="You" title="Profile & visibility" accent={C.p2}>
@@ -6259,7 +6302,7 @@ export default function App() {
               </SettingsPanel>
             )}
 
-            {isSA && (
+            {isAdmin && (
               <SettingsPanel label="Notifications" title="Your alerts" accent={C.p}>
                 <p style={{ margin:"0 0 14px", fontSize:12, color:C.sub, lineHeight:1.55 }}>
                   Super Admins receive org-wide signals: pending leave, payroll anomalies, and directory changes.
