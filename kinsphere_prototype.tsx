@@ -615,6 +615,8 @@ const ICONS = {
   Users: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   ClipboardList: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><line x1="12" y1="11" x2="16" y2="11"/><line x1="12" y1="16" x2="16" y2="16"/><line x1="8" y1="11" x2="8.01" y2="11"/><line x1="8" y1="16" x2="8.01" y2="16"/></svg>,
   Presence: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  "Vibe Check": <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M9 14h6"/></svg>,
+};
 };
 
 const NAV = [
@@ -628,6 +630,7 @@ const NAV = [
   { key:"Recognition" },
   { key:"Org Chart" },
   { key:"Listening Room" },
+  { key:"Vibe Check" },
   { key:"Settings" },
 ];
 
@@ -2515,6 +2518,197 @@ const PresenceModule = ({
   );
 };
 
+const VibeCheckModule = ({ 
+  isSA, isAdmin, me, employees, vibeFeedback, setVibeFeedback, toast, C, narrow, pad, padBottom, heroPadStd, Btn, Av, Inp 
+}) => {
+  const [vForm, setVForm] = useState({ type: "Suggestion", module: "Dashboard", msg: "", isAnon: false, file: null });
+  const [filterType, setFilterType] = useState("All");
+  const [filterMod, setFilterMod] = useState("All");
+  const [filterStatus, setFilterStatus] = useState("All");
+
+  const types = ["Suggestion", "Bug", "Issue", "General Feedback"];
+  const mods = ["Dashboard", "Employees", "Time Away", "Paydays", "Presence", "Paperwork Hub", "Overall Experience"];
+
+  const handleSubmit = () => {
+    if (!vForm.msg.trim()) return toast("Please enter a message");
+    const newFeedback = {
+      id: Date.now(),
+      empId: me.id,
+      empName: vForm.isAnon ? "Anonymous" : me.name,
+      empIni: vForm.isAnon ? "?" : me.ini,
+      type: vForm.type,
+      module: vForm.module,
+      message: vForm.msg,
+      isAnonymous: vForm.isAnon,
+      status: "Open",
+      timestamp: new Date().toLocaleString("en-IN", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit" }),
+      fileName: vForm.file ? vForm.file.name : null
+    };
+    setVibeFeedback(prev => [newFeedback, ...prev]);
+    setVForm({ type: "Suggestion", module: "Dashboard", msg: "", isAnon: false, file: null });
+    toast("Feedback sent! Thank you for the vibe check ✨");
+  };
+
+  const updateStatus = (id, status) => {
+    setVibeFeedback(prev => prev.map(f => f.id === id ? { ...f, status } : f));
+    toast(`Status updated to ${status} ✓`);
+  };
+
+  const visibleFeedback = vibeFeedback.filter(f => {
+    const roleOk = isSA ? true : f.empId === me.id;
+    const typeOk = filterType === "All" || f.type === filterType;
+    const modOk = filterMod === "All" || f.module === filterMod;
+    const statusOk = filterStatus === "All" || f.status === filterStatus;
+    return roleOk && typeOk && modOk && statusOk;
+  });
+
+  return (
+    <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"1200px", margin:"0 auto", boxSizing:"border-box" }}>
+      {/* Hero */}
+      <div style={{
+        position:"relative", margin:`0 ${-pad}px 28px`, padding: heroPadStd,
+        background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
+        borderBottom:`1px solid ${C.bdr}`, overflow:"hidden",
+      }}>
+        <div style={{ position:"relative", zIndex:1 }}>
+          <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.p, textTransform:"uppercase" }}>✨ Vibe Check</div>
+          <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700 }}>Help us make this better.</h1>
+          <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.5 }}>Share your thoughts, report bugs, or suggest new features to help us improve KinSphere.</p>
+        </div>
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "380px 1fr", gap:32, alignItems:"start" }}>
+        {/* Form Column */}
+        <div style={{ background:C.wht, borderRadius:20, padding:24, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 20px rgba(0,0,0,.04)" }}>
+          <h2 style={{ margin:"0 0 20px", fontSize:16, fontWeight:700, color:C.txt }}>Submit Feedback</h2>
+          <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+            <div>
+              <label style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, display:"block", marginBottom:8 }}>FEEDBACK TYPE</label>
+              <select value={vForm.type} onChange={e=>setVForm({...vForm, type:e.target.value})} style={{ width:"100%", padding:"10px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.bg, fontSize:13, color:C.txt, outline:"none" }}>
+                {types.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, display:"block", marginBottom:8 }}>WHICH MODULE?</label>
+              <select value={vForm.module} onChange={e=>setVForm({...vForm, module:e.target.value})} style={{ width:"100%", padding:"10px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.bg, fontSize:13, color:C.txt, outline:"none" }}>
+                {mods.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, display:"block", marginBottom:8 }}>YOUR MESSAGE</label>
+              <textarea 
+                value={vForm.msg} 
+                onChange={e => setVForm({...vForm, msg: e.target.value})}
+                placeholder="What's on your mind?"
+                style={{ width:"100%", minHeight:120, padding:"12px", borderRadius:12, border:`1px solid ${C.bdr}`, background:C.bg, fontSize:13, color:C.txt, outline:"none", resize:"vertical", fontFamily:"inherit" }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5, display:"block", marginBottom:8 }}>ATTACHMENT (OPTIONAL)</label>
+              <div onClick={() => toast("Mock file selector opened")} style={{ width:"100%", padding:"12px", borderRadius:12, border:`1px dashed ${C.bdr}`, background:C.bg, fontSize:12, color:C.sub, textAlign:"center", cursor:"pointer" }}>
+                {vForm.file ? vForm.file.name : "Click to upload screenshot/log"}
+              </div>
+            </div>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 0" }}>
+              <div>
+                <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>Submit anonymously</div>
+                <div style={{ fontSize:11, color:C.sub }}>Hide your identity from others</div>
+              </div>
+              <button 
+                onClick={() => setVForm({...vForm, isAnon: !vForm.isAnon})}
+                style={{ width:40, height:20, borderRadius:20, background: vForm.isAnon ? C.p : C.bdr, border:"none", position:"relative", cursor:"pointer", transition:".2s" }}
+              >
+                <div style={{ position:"absolute", top:2, left: vForm.isAnon ? 22 : 2, width:16, height:16, borderRadius:"50%", background:"#fff", transition:".2s" }} />
+              </button>
+            </div>
+            <Btn onClick={handleSubmit} style={{ width:"100%", padding:"12px" }}>Send Feedback</Btn>
+          </div>
+        </div>
+
+        {/* List Column */}
+        <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
+          {isSA && (
+            <div style={{ display:"flex", flexWrap:"wrap", gap:12, background:C.surf, padding:"14px 18px", borderRadius:16, border:`1px solid ${C.bdr}` }}>
+              <select value={filterType} onChange={e=>setFilterType(e.target.value)} style={{ padding:"6px 10px", borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:11 }}>
+                <option value="All">All Types</option>
+                {types.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+              <select value={filterMod} onChange={e=>setFilterMod(e.target.value)} style={{ padding:"6px 10px", borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:11 }}>
+                <option value="All">All Modules</option>
+                {mods.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+              <select value={filterStatus} onChange={e=>setFilterStatus(e.target.value)} style={{ padding:"6px 10px", borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:11 }}>
+                <option value="All">All Status</option>
+                <option>Open</option>
+                <option>In Review</option>
+                <option>Resolved</option>
+              </select>
+            </div>
+          )}
+
+          <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.sub, letterSpacing:1 }}>
+              {isSA ? `ALL SUBMISSIONS (${visibleFeedback.length})` : `YOUR FEEDBACK (${visibleFeedback.length})`}
+            </div>
+            {visibleFeedback.length === 0 ? (
+              <div style={{ textAlign:"center", padding:60, background:C.bg, borderRadius:20, border:`1px dashed ${C.bdr}`, color:C.sub }}>
+                No feedback items found.
+              </div>
+            ) : (
+              visibleFeedback.map(f => (
+                <div key={f.id} style={{ background:C.wht, borderRadius:20, padding:20, border:`1px solid ${C.bdr}`, boxShadow:"0 2px 12px rgba(0,0,0,.03)" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:14 }}>
+                    <div style={{ display:"flex", gap:12, alignItems:"center" }}>
+                      <div style={{ 
+                        padding: "4px 10px", borderRadius:6, fontSize:10, fontWeight:700, 
+                        background: f.type==="Bug" ? "#fee2e2" : f.type==="Suggestion" ? "#e0f2fe" : "#f3f4f6", 
+                        color: f.type==="Bug" ? "#991b1b" : f.type==="Suggestion" ? "#0369a1" : C.sub 
+                      }}>
+                        {f.type.toUpperCase()}
+                      </div>
+                      <div style={{ fontSize:12, fontWeight:700, color:C.txt }}>{f.module}</div>
+                    </div>
+                    <div style={{ 
+                      padding: "4px 10px", borderRadius:20, fontSize:10, fontWeight:700, 
+                      background: f.status==="Resolved" ? "#dcfce7" : f.status==="In Review" ? "#fef9c3" : C.bg, 
+                      color: f.status==="Resolved" ? "#166534" : f.status==="In Review" ? "#854d0e" : C.sub,
+                      border: `1px solid ${C.bdr}`
+                    }}>
+                      {f.status}
+                    </div>
+                  </div>
+                  <p style={{ margin:0, fontSize:13, color:C.txt, lineHeight:1.55 }}>{f.message}</p>
+                  <div style={{ marginTop:14, paddingTop:14, borderTop:`1px solid ${C.surf}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                      <Av ini={f.empIni} sz={20} />
+                      <span style={{ fontSize:11, fontWeight:600, color:C.sub }}>{f.empName} <span style={{ fontWeight:400, opacity:0.6 }}>• {f.timestamp}</span></span>
+                    </div>
+                    {isSA && (
+                      <div style={{ display:"flex", gap:6 }}>
+                        {["In Review", "Resolved"].map(s => (
+                          f.status !== s && (
+                            <button 
+                              key={s} 
+                              onClick={() => updateStatus(f.id, s)}
+                              style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:6, padding:"4px 8px", fontSize:10, fontWeight:700, cursor:"pointer", color:C.p }}
+                            >
+                              Move to {s}
+                            </button>
+                          )
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [page,       setPage]     = useState("Dashboard");
@@ -2668,6 +2862,12 @@ export default function App() {
   const [presenceEmpId, setPresenceEmpId] = useState(ME_ID);
   const [presenceMonth, setPresenceMonth] = useState(() => new Date(2026, 2, 1)); // March 2026
   const [selectedADate, setSelectedADate] = useState(null); // ISO date
+
+  // Vibe Check
+  const [vibeFeedback, setVibeFeedback] = useState([
+    { id: 1, empId: 2, empName: "Rohit Sharma", empIni: "RS", type: "Suggestion", module: "Dashboard", message: "Can we have a dark mode toggle more prominently?", isAnonymous: false, status: "Open", timestamp: "Today, 10:45 AM" },
+    { id: 2, empId: 3, empName: "Anonymous", empIni: "?", type: "Bug", module: "Paydays", message: "Salary calculation for February had a small rounding error.", isAnonymous: true, status: "In Review", timestamp: "Yesterday, 04:20 PM" },
+  ]);
 
   // People Chapters
   const [chapterTab, setChapterTab] = useState("Menu");
@@ -4059,6 +4259,14 @@ export default function App() {
               </div>
             </div>
           </div>
+        )}
+
+        {page==="Vibe Check" && (
+          <VibeCheckModule 
+            isSA={isSA} isAdmin={isAdmin} me={me} employees={employees}
+            vibeFeedback={vibeFeedback} setVibeFeedback={setVibeFeedback}
+            toast={toast} C={C} narrow={narrow} pad={pad} padBottom={padBottom} heroPadStd={heroPadStd} Btn={Btn} Av={Av} Inp={Inp}
+          />
         )}
 
         {page==="Presence" && (
