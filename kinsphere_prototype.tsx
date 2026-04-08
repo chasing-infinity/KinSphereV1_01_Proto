@@ -6147,6 +6147,39 @@ export default function App() {
                               </Btn>
                             </div>
                           )}
+
+                          {/* Demote Card (Only for Admins) */}
+                          {sel.role === "Admin" && (
+                            <div style={{ 
+                              padding:16, 
+                              border: `1px solid #fee2e2`, 
+                              background: `#fef2f2`, 
+                              borderRadius:12, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16, flexWrap:"wrap" 
+                            }}>
+                              <div style={{ flex:1, minWidth:240 }}>
+                                <div style={{ fontSize:13, fontWeight:700, color: "#991b1b", marginBottom:4 }}>Revoke Administrative Access</div>
+                                <div style={{ fontSize:11, color: "#b91c1c", lineHeight:1.45 }}>
+                                  This will demote {sel.name} to a standard <strong>Employee</strong> role. 
+                                  They will lose access to the Org Chart configuration, Presence management, and all administrative notifications.
+                                </div>
+                              </div>
+                              <Btn 
+                                onClick={() => {
+                                  setEmployees(prev => prev.map(e => e.id === sel.id ? { ...e, role: "Employee", paydaysAccess: false } : e));
+                                  toast(`${sel.name} has been demoted to Employee ✓`);
+                                  setAccessSelectedEmpId(""); // Clear selection
+                                }} 
+                                style={{ 
+                                  padding:"10px 20px",
+                                  background: "#dc2626",
+                                  color: "#fff",
+                                  border: "none"
+                                }}
+                              >
+                                Demote to Employee
+                              </Btn>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
