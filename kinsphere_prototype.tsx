@@ -869,7 +869,7 @@ const TabBar = ({ tabs, active, setActive, style: tabStyle = {}, inline = false 
   </div>
 );
 
-const OrgPreviewCard = ({ node, isEmp, onReassign, isSA, employees, onClose }) => {
+const OrgPreviewCard = ({ node, isEmp, onReassign, isAdmin, employees, onClose }) => {
   if (!node) return null;
   const managerName = isEmp ? employees.find(x => x.id === node.managerId)?.name : employees.find(x => x.id === node.managerId)?.name;
 
@@ -902,7 +902,7 @@ const OrgPreviewCard = ({ node, isEmp, onReassign, isSA, employees, onClose }) =
         </div>
       </div>
 
-      {isSA && isEmp && (
+      {isAdmin && isEmp && (
         <div style={{ borderTop:`1px solid ${C.bdr}`, paddingTop:14 }}>
           <div style={{ fontSize:10, fontWeight:700, color:C.p, marginBottom:8, letterSpacing:0.5 }}>REASSIGN MANAGER</div>
           <select 
@@ -2386,7 +2386,7 @@ const PresenceModule = ({
       <div style={{ position:"relative", margin:`0 ${-pad}px 28px`, padding: heroPadStd, background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`, borderBottom:`1px solid ${C.bdr}`, overflow:"hidden" }}>
         <div style={{ position:"absolute", right:-40, top:-30, width:220, height:220, borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`, pointerEvents:"none" }} />
         <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:20, flexWrap:"wrap" }}>
-          <div><div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>◉ Attendance</div><h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12 }}>Presence</h1><p style={{ color:C.sub, fontSize:13, margin:"10px 0 0" }}>{isSA ? "Monitoring org-wide engagement." : "Your personal activity feed."}</p></div>
+          <div><div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>◉ Attendance</div><h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12 }}>Presence</h1><p style={{ color:C.sub, fontSize:13, margin:"10px 0 0" }}>{isAdmin ? "Monitoring org-wide engagement." : "Your personal activity feed."}</p></div>
           <div style={{ display:"flex", gap:12, alignItems:"center" }}>
             {attendanceMode === 'HRMS' && presenceEmpId === ME_ID && (
               <Btn onClick={handleClockToggle} style={{ padding:"10px 24px", background: isClockedIn ? "none" : C.p, color: isClockedIn ? C.p : "#fff", border: isClockedIn ? `1px solid ${C.p}` : "none" }}>{isClockedIn ? "Clock Out" : "Clock In Now"}</Btn>
@@ -2401,7 +2401,7 @@ const PresenceModule = ({
       </div>
       <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "1fr 340px", gap:28 }}>
         <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
-          {isSA && (
+          {isAdmin && (
             <div style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 18px", background:C.surf, borderRadius:16, border:`1px solid ${C.bdr}` }}>
               <span style={{ fontSize:11, fontWeight:800, color:C.sub }}>VIEWING ATTENDANCE FOR:</span>
               <select value={presenceEmpId} onChange={e => setPresenceEmpId(Number(e.target.value))} style={{ padding:"6px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13, fontWeight:600, cursor:"pointer" }}>
@@ -2497,7 +2497,7 @@ const PresenceModule = ({
               <strong style={{ opacity: 0.9 }}>Priority:</strong> <span style={{ fontWeight:700 }}>Holidays → Leave → Logs</span>. Past records are never overwritten when changing mode.
             </div>
           </div>
-          {isSA && (
+          {isAdmin && (
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
               <span style={{ fontSize:11, fontWeight:800, color:C.sub }}>ATTENDANCE MODE</span>
               {[{id:'HRMS',t:'HRMS Clock-in',d:'In-app portal'},{id:'SlackTeams',t:'Slack / Teams',d:'Internal integration'},{id:'Auto',t:'Auto Attendance',d:'Mark present by default'}].map(m => (
@@ -2950,7 +2950,7 @@ export default function App() {
     return "Original";
   });
 
-  const navItems = navItemsForRole(isSA);
+
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -3419,7 +3419,7 @@ export default function App() {
         {(() => {
           if (page !== "Dashboard") return null;
           const visibleNotifs = notifications.filter(n =>
-            isSA ? true
+            isAdmin ? true
             : n.forAll
             || n.forEmpIds.includes(ME_ID)
           );
@@ -4098,16 +4098,16 @@ export default function App() {
                     padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                     fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                   }}>
-                    {isSA ? "◉ Directory" : "◉ You"}
+                    {isAdmin ? "◉ Directory" : "◉ You"}
                   </div>
                   <h1 style={{
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
-                  }}>{isSA ? "Employees" : "My Profile"}</h1>
+                  }}>{isAdmin ? "Employees" : "My Profile"}</h1>
                   <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55, maxWidth:520 }}>
-                    {isSA ? `${employees.length} people at Bipolar Factory — open a row for the full profile.` : "Your details stay private; only you can see this page."}
+                    {isAdmin ? `${employees.length} people at Bipolar Factory — open a row for the full profile.` : "Your details stay private; only you can see this page."}
                   </p>
                 </div>
-            {isSA && (
+            {isAdmin && (
                 <div style={{ display:"flex", flexWrap:"wrap", gap:8, justifyContent:"flex-end" }}>
                     <Btn variant="outline" onClick={() => { const csv = employeesToCSV(employees); downloadTextFile(`kinsphere-employees-${new Date().toISOString().slice(0,10)}.csv`, csv); toast("CSV exported ✓"); }}>Export CSV</Btn>
                     <Btn variant="outline" onClick={() => setShowImportCsv(true)}>Import CSV</Btn>
@@ -4116,7 +4116,7 @@ export default function App() {
             )}
               </div>
             </div>
-            {!isSA ? (
+            {!isAdmin ? (
               <SettingsPanel label="Profile" title="Your details" accent={C.p}>
                 <ProfileDetail
                   e={me}
@@ -4132,7 +4132,7 @@ export default function App() {
               </SettingsPanel>
             ) : (
               <SettingsPanel label="Directory" title="Team members" accent={C.p}>
-                {isSA && (
+                {isAdmin && (
                   <div style={{ marginBottom:16 }}>
                     <TabBar inline tabs={["Active","Offboarded"]} active={empListTab} setActive={setEmpListTab} style={{ marginBottom:0 }} />
                   </div>
@@ -4169,7 +4169,7 @@ export default function App() {
                               <div>
                                 <div style={{ fontWeight:600, color:C.txt, display:"flex", alignItems:"center", gap:4 }}>
                                   {e.name}
-                                  {isSA && <span style={{ color:C.sub, fontSize:12 }}>↗</span>}
+                                  {isAdmin && <span style={{ color:C.sub, fontSize:12 }}>↗</span>}
                                 </div>
                                 <div style={{ fontSize:10, color:C.sub }}>{e.email}</div>
                               </div>
@@ -4218,24 +4218,24 @@ export default function App() {
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
                   }}>Time Away</h1>
                   <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55 }}>
-                    {isSA ? "Team calendar and approvals — hover a coloured date to see who’s out." : "Your leave in calendar and list views — apply when you need time off."}
+                    {isAdmin ? "Team calendar and approvals — hover a coloured date to see who’s out." : "Your leave in calendar and list views — apply when you need time off."}
                   </p>
                 </div>
                 <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-                  {isSA && (
+                  {isAdmin && (
                     <div style={{ display:"flex", gap:10 }}>
                       <Btn variant="outline" onClick={()=>{ setPolicyDraft(JSON.parse(JSON.stringify(leavePolicy))); setShowLeavePolicy(true); }} style={{ padding:"10px 18px", color:C.sub, borderColor:C.bdr }}>Leave Policy</Btn>
                       <Btn variant="outline" onClick={()=>setShowLeaveBal(true)} style={{ padding:"10px 18px", color:C.sub, borderColor:C.bdr }}>Leave balance</Btn>
                     </div>
                   )}
                   <Btn variant="outline" onClick={()=>setShowHolidays(true)} style={{ padding:"10px 18px", color:C.p, borderColor:C.p }}>
-                    {isSA ? "+ Add/View Holidays" : "View Holidays"}
+                    {isAdmin ? "+ Add/View Holidays" : "View Holidays"}
                   </Btn>
                   <Btn onClick={()=>setShowLeave(true)} style={{ padding:"10px 18px" }}>+ Apply Leave</Btn>
                 </div>
               </div>
             </div>
-            {isSA ? (
+            {isAdmin ? (
               <>
                 <div style={{ background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`, padding:"14px 18px", marginBottom:18, boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.05)" }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12 }}>
@@ -4527,12 +4527,19 @@ export default function App() {
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
                   }}>Paydays</h1>
                   <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55, maxWidth:480 }}>
-                    {(isSA || (role === "Admin" && me.paydaysAccess)) ? "Company payslips, salary configuration, and net pay — credited on the 15th." : "Your payslips for the selected year — download when you need them."}
+                    {(isSA || (role === "Admin" && me.paydaysAccess)) ? (
+                      <>
+                        Company payslips, salary configuration, and net pay — credited on the 15th.
+                        {role === "Admin" && me.paydaysAccess && <span style={{ marginLeft:8, fontSize:10, fontWeight:700, color:C.p, background:`rgba(var(--p-rgb),.1)`, padding:"2px 6px", borderRadius:4, textTransform:"uppercase", verticalAlign:"middle" }}>Full Access</span>}
+                      </>
+                    ) : (
+                      "Your payslips for the selected year — download when you need them."
+                    )}
                   </p>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
                   <div style={{ display:"flex", gap:12, alignItems:"flex-end", flexWrap:"wrap" }}>
-                    {isSA && pyTab === "All Payslips" && (
+                    {(isSA || (role === "Admin" && me.paydaysAccess)) && pyTab === "All Payslips" && (
                       <div>
                         <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.6, marginBottom:6 }}>MONTH</div>
                         <select
@@ -5596,7 +5603,7 @@ export default function App() {
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
                   }}>Org Chart</h1>
                   <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55 }}>
-                    Interactive hierarchy. Click nodes for quick view. {isSA ? "Super Admins can reassign reporting lines." : ""}
+                    Interactive hierarchy. Click nodes for quick view. {isAdmin ? "Administrators can reassign reporting lines." : ""}
                   </p>
                 </div>
                 <div style={{ display:"flex", gap:12, alignItems:"center" }}>
@@ -5614,7 +5621,7 @@ export default function App() {
                     <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", fontSize:14, opacity:0.5 }}>🔍</span>
                     {orgSearch && <button onClick={()=>setOrgSearch("")} style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:14 }}>×</button>}
                   </div>
-                  {isSA && <Btn variant="outline" onClick={()=>setShowOrgEdit(true)} style={{ padding:"10px 18px" }}>Configure</Btn>}
+                  {isAdmin && <Btn variant="outline" onClick={()=>setShowOrgEdit(true)} style={{ padding:"10px 18px" }}>Configure</Btn>}
                 </div>
               </div>
             </div>
@@ -5645,7 +5652,7 @@ export default function App() {
                   const roots = employees.filter(e => orgManagers[e.id] == null);
                   if (roots.length === 0) return (
                     <div style={{ textAlign:"center", color:C.sub, padding:"60px 20px", fontSize:13, borderRadius:12, background:C.bg, border:`1px dashed ${C.bdr}` }}>
-                      No top-level role defined. {isSA ? <>Use <strong style={{ color:C.txt }}>Configure</strong> to set a “Top level” manager.</> : <>Contact Admin to set hierarchy.</>}
+                      No top-level role defined. {isAdmin ? <>Use <strong style={{ color:C.txt }}>Configure</strong> to set a “Top level” manager.</> : <>Contact Admin to set hierarchy.</>}
                     </div>
                   );
                   return roots.map(root => (
@@ -5672,7 +5679,7 @@ export default function App() {
                 }
                 isEmp={typeof orgPreviewId !== 'string'}
                 onReassign={handleReassignManager}
-                isSA={isSA}
+                isAdmin={isAdmin}
                 employees={employees}
                 onClose={() => setOrgPreviewId(null)}
               />
@@ -6028,14 +6035,16 @@ export default function App() {
                   </div>
                 </SettingsPanel>
 
-                <SettingsPanel label="Branding" title="Logo" accent="#6b7d5e">
-                  <div style={{ display:"flex", alignItems:"center", gap:20 }}>
-                    <div style={{ width:60, height:60, borderRadius:12, border:`1px solid ${C.bdr}`, background:C.surf, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" }}>
-                      {companyLogoUrl ? <img src={companyLogoUrl} style={{ width:"100%", height:"100%", objectFit:"contain" }} /> : <span style={{ fontSize:20 }}>🏢</span>}
+                {isAdmin && (
+                  <SettingsPanel label="Branding" title="Logo" accent="#6b7d5e">
+                    <div style={{ display:"flex", alignItems:"center", gap:20 }}>
+                      <div style={{ width:60, height:60, borderRadius:12, border:`1px solid ${C.bdr}`, background:C.surf, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" }}>
+                        {companyLogoUrl ? <img src={companyLogoUrl} style={{ width:"100%", height:"100%", objectFit:"contain" }} /> : <span style={{ fontSize:20 }}>🏢</span>}
+                      </div>
+                      <Btn variant="outline" onClick={() => logoInputRef.current?.click()}>Upload Logo</Btn>
                     </div>
-                    <Btn variant="outline" onClick={() => logoInputRef.current?.click()}>Upload Logo</Btn>
-                  </div>
-                </SettingsPanel>
+                  </SettingsPanel>
+                )}
 
                 {isSA && (
                   <SettingsPanel label="Access Control" title="Manage module access" accent={C.p}>
