@@ -2298,7 +2298,7 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
 
 // ─── Presence (Attendance) Module ──────────────────────────────────────────
 const PresenceModule = ({ 
-  isSA, isClockedIn, setIsClockedIn, attendanceMode, setAttendanceMode, 
+  isSA, isAdmin, isClockedIn, setIsClockedIn, attendanceMode, setAttendanceMode, 
   attendanceData, setAttendanceData, presenceEmpId, setPresenceEmpId, 
   presenceMonth, setPresenceMonth, selectedADate, setSelectedADate, 
   slackTeamsPlatform, setSlackTeamsPlatform, employees, leaves, holidays, 
@@ -4270,7 +4270,7 @@ export default function App() {
 
         {page==="Presence" && (
           <PresenceModule 
-            isSA={isSA} employees={employees} leaves={leaves} holidays={holidays} 
+            isSA={isSA} isAdmin={isAdmin} employees={employees} leaves={leaves} holidays={holidays} 
             attendanceMode={attendanceMode} setAttendanceMode={setAttendanceMode} 
             attendanceData={attendanceData} setAttendanceData={setAttendanceData} 
             isClockedIn={isClockedIn} setIsClockedIn={setIsClockedIn} 
