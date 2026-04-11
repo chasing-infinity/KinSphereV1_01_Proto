@@ -2848,6 +2848,30 @@ export default function App() {
   const [genVals, setGenVals] = useState({});          // { field: value }
   const [genCandForm, setGenCandForm] = useState({ name:"",email:"",role:"",salary:"",startDate:"",notes:"" });
   const [genSavedCandId, setGenSavedCandId] = useState(null); // newly saved candidate id
+
+  // Step 5: Off-boarding
+  const [offboardingItems, setOffboardingItems] = useState([
+    { id: 1, empId: 2, name: "Rohit Sharma", status: "In Progress", progress: 65, lastAction: "IT Clearance Pending", 
+      checklist: [
+        { name: "Resignation Letter", status: "Completed", date: "01 Apr" },
+        { name: "IT Clearance", status: "In Progress", date: "-" },
+        { name: "Finance Clearance", status: "Completed", date: "03 Apr" },
+        { name: "Exit Interview", status: "Pending", date: "-" },
+        { name: "F&F Settlement", status: "Pending", date: "-" }
+      ]
+    },
+    { id: 2, empId: 4, name: "Suresh Raina", status: "Completed", progress: 100, lastAction: "Full & Final Settled",
+      checklist: [
+        { name: "Resignation Letter", status: "Completed", date: "15 Mar" },
+        { name: "IT Clearance", status: "Completed", date: "20 Mar" },
+        { name: "Finance Clearance", status: "Completed", date: "22 Mar" },
+        { name: "Exit Interview", status: "Completed", date: "24 Mar" },
+        { name: "F&F Settlement", status: "Completed", date: "28 Mar" }
+      ]
+    },
+  ]);
+  const [showOffboardInitiate, setShowOffboardInitiate] = useState(false);
+  const [offboardForm, setOffboardForm] = useState({ empId:"", reason:"", lastDate:"" });
   const [genExternalEmail, setGenExternalEmail] = useState("");
   const [genFilledBody, setGenFilledBody] = useState("");
   const [genSentLink, setGenSentLink] = useState(null);
@@ -4978,6 +5002,31 @@ export default function App() {
           const visiblePapers = canSeeAll ? papers : papers.filter(d => d.empId === ME_ID);
           const filteredPapers = paperFilter === "All" ? visiblePapers : visiblePapers.filter(d => d.type === paperFilter);
 
+          const toggleOffboardTask = (itemId, taskIndex) => {
+            setOffboardingItems(prev => prev.map(item => {
+              if (item.id !== itemId) return item;
+              const nextChecklist = [...item.checklist];
+              const cur = nextChecklist[taskIndex].status;
+              const nextStatus = cur === "Pending" ? "In Progress" : cur === "In Progress" ? "Completed" : "Pending";
+              nextChecklist[taskIndex] = { 
+                ...nextChecklist[taskIndex], 
+                status: nextStatus,
+                date: nextStatus === "Completed" ? new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short" }) : (nextStatus === "Pending" ? "-" : "Today")
+              };
+              
+              const completed = nextChecklist.filter(c => c.status === "Completed").length;
+              const newProgress = Math.round((completed / nextChecklist.length) * 100);
+              
+              return { 
+                ...item, 
+                checklist: nextChecklist, 
+                progress: newProgress,
+                status: newProgress === 100 ? "Completed" : "In Progress",
+                lastAction: `Checklist updated: ${nextChecklist[taskIndex].name} → ${nextStatus}`
+              };
+            }));
+          };
+
           return (
             <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
               {/* ── Hero ── */}
@@ -5003,11 +5052,104 @@ export default function App() {
                       <div style={{ display:"flex", background:C.wht, borderRadius:12, padding:4, border:`1px solid ${C.bdr}`, boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
                         <button onClick={()=>setPaperTab("Documents")} style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Documents"?700:500, background: paperTab==="Documents"?C.p:"transparent", color: paperTab==="Documents"?"#fff":C.sub, transition:"all .2s" }}>Documents</button>
                         <button onClick={()=>setPaperTab("Generate")}  style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Generate"?700:500,  background: paperTab==="Generate"?C.p:"transparent",  color: paperTab==="Generate"?"#fff":C.sub,  transition:"all .2s" }}>Generate</button>
+                        <button onClick={()=>setPaperTab("Off-boarding")}  style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Off-boarding"?700:500,  background: paperTab==="Off-boarding"?C.p:"transparent",  color: paperTab==="Off-boarding"?"#fff":C.sub,  transition:"all .2s" }}>Off-boarding Hub</button>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
+
+              {/* ── Tab Content: Off-boarding ── */}
+              {paperTab === "Off-boarding" && (
+                <div style={{ padding:`40px ${pad}px` }}>
+                  <div style={{ maxWidth:1000, margin:"0 auto" }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32, flexWrap:"wrap", gap:20 }}>
+                      <div>
+                        <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:24, fontWeight:700, color:C.txt }}>Employee Off-boarding</h2>
+                        <p style={{ margin:"6px 0 0", fontSize:13, color:C.sub }}>Manage resignations, clearances, and exit formalities.</p>
+                      </div>
+                      {isAdmin && (
+                        <Btn onClick={() => setShowOffboardInitiate(true)} style={{ padding:"12px 24px" }}>
+                          <span style={{ marginRight:8 }}>+</span> Initiate New Exit
+                        </Btn>
+                      )}
+                    </div>
+
+                    <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "repeat(auto-fill, minmax(460px, 1fr))", gap:24 }}>
+                      {offboardingItems.map(item => (
+                        <Card key={item.id} style={{ padding:28, border:`1px solid ${C.bdr}` }}>
+                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:20 }}>
+                            <div style={{ display:"flex", gap:16, alignItems:"center" }}>
+                              <Av ini={item.name.split(" ").map(s=>s[0]).join("")} sz={48} bg={item.status==="Completed" ? "#22c55e" : C.mid} />
+                              <div>
+                                <div style={{ fontSize:17, fontWeight:800, color:C.txt }}>{item.name}</div>
+                                <div style={{ fontSize:12, color:C.sub, display:"flex", alignItems:"center", gap:6, marginTop:2 }}>
+                                  <span>EMP#{item.empId}</span>
+                                  <span>•</span>
+                                  <span style={{ 
+                                    padding:"2px 8px", borderRadius:6, fontSize:10, fontWeight:700,
+                                    background: item.status==="Completed" ? "#dcfce7" : "#fef3c7",
+                                    color: item.status==="Completed" ? "#166534" : "#92400e"
+                                  }}>{item.status.toUpperCase()}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{ textAlign:"right" }}>
+                              <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>PROGRESS</div>
+                              <div style={{ fontSize:22, fontWeight:900, color:C.txt }}>{item.progress}%</div>
+                            </div>
+                          </div>
+
+                          <div style={{ height:8, background:C.surf, borderRadius:10, marginBottom:28, overflow:"hidden" }}>
+                            <div style={{ height:"100%", width:`${item.progress}%`, background: item.progress === 100 ? "#22c55e" : C.p, transition:"width .8s ease" }} />
+                          </div>
+
+                          <div style={{ background:C.surf, borderRadius:16, padding:20, marginBottom:24, border:`1px solid ${C.bdr}` }}>
+                            <div style={{ fontSize:10, fontWeight:800, color:C.sub, letterSpacing:1, marginBottom:14 }}>EXIT CHECKLIST</div>
+                            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+                              {item.checklist.map((c, i) => (
+                                <div 
+                                  key={i} 
+                                  onClick={() => isAdmin && toggleOffboardTask(item.id, i)}
+                                  style={{ 
+                                    display:"flex", justifyContent:"space-between", alignItems:"center", 
+                                    cursor: isAdmin ? "pointer" : "default",
+                                    padding:"4px 8px", margin:"0 -8px", borderRadius:8,
+                                    transition:"background 0.2s"
+                                  }}
+                                  onMouseEnter={e => isAdmin && (e.currentTarget.style.background = "rgba(0,0,0,0.03)")}
+                                  onMouseLeave={e => isAdmin && (e.currentTarget.style.background = "transparent")}
+                                >
+                                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                                    <div style={{ 
+                                      width:20, height:20, borderRadius:"50%", 
+                                      background: c.status==="Completed" ? "#22c55e" : c.status==="In Progress" ? "#f59e0b" : "transparent",
+                                      border: c.status==="Pending" ? `1.5px solid ${C.bdr}` : "none",
+                                      display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:11
+                                    }}>
+                                      {c.status==="Completed" ? "✓" : c.status==="In Progress" ? "⋯" : ""}
+                                    </div>
+                                    <span style={{ fontSize:13, color: c.status==="Pending" ? C.sub : C.txt, fontWeight: c.status==="Completed" ? 500 : 700 }}>{c.name}</span>
+                                  </div>
+                                  <span style={{ fontSize:11, color:C.bdr, fontWeight:600 }}>{c.date}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:20, borderTop:`1px solid ${C.surf}` }}>
+                            <div style={{ minWidth:0 }}>
+                              <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>LATEST ACTIVITY</div>
+                              <div style={{ fontSize:12, color:C.txt, fontWeight:600, marginTop:2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{item.lastAction}</div>
+                            </div>
+                            <Btn variant="ghost" style={{ fontSize:12, padding:"8px 14px", fontWeight:700 }}>View Details →</Btn>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* ── Tab Content: Documents ── */}
               {paperTab === "Documents" && (
@@ -5515,10 +5657,105 @@ export default function App() {
                   </div>
                 </Modal>
               )}
+              {/* ─ OFF-BOARDING INITIATION MODAL ─ */}
+              {showOffboardInitiate && (
+                <Modal title="Initiate Employee Exit" onClose={() => setShowOffboardInitiate(false)} width={480}>
+                  <div style={{ marginBottom:20 }}>
+                    <p style={{ fontSize:13, color:C.sub, lineHeight:1.55 }}>Selecting an employee will generate an official resignation/termination docket and alert relevant departments (IT, Finance, Admin) for clearance.</p>
+                  </div>
+                  
+                  <div style={{ marginBottom:16 }}>
+                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>SELECT EMPLOYEE</label>
+                    <select 
+                      value={offboardForm.empId} 
+                      onChange={e => setOffboardForm({...offboardForm, empId: e.target.value})}
+                      style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}
+                    >
+                      <option value="">Choose employee...</option>
+                      {employees.map(e => <option key={e.id} value={e.id}>{e.name} — {e.designation}</option>)}
+                    </select>
+                  </div>
+
+                  <div style={{ marginBottom:16 }}>
+                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>REASON FOR EXIT</label>
+                    <select 
+                      value={offboardForm.reason} 
+                      onChange={e => setOffboardForm({...offboardForm, reason: e.target.value})}
+                      style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}
+                    >
+                      <option value="">Select reason...</option>
+                      <option>Resignation</option>
+                      <option>Termination</option>
+                      <option>Contract End</option>
+                      <option>Retirement</option>
+                    </select>
+                  </div>
+
+                  <div style={{ marginBottom:24 }}>
+                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>LAST WORKING DAY</label>
+                    <input 
+                      type="date"
+                      value={offboardForm.lastDate}
+                      onChange={e => setOffboardForm({...offboardForm, lastDate: e.target.value})}
+                      style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13, fontFamily:"inherit" }}
+                    />
+                  </div>
+
+                  <div style={{ display:"flex", gap:12, justifyContent:"flex-end", paddingTop:20, borderTop:`1px solid ${C.surf}` }}>
+                    <Btn variant="ghost" onClick={() => setShowOffboardInitiate(false)}>Cancel</Btn>
+                    <Btn onClick={() => {
+                      if (!offboardForm.empId || !offboardForm.reason || !offboardForm.lastDate) return toast("Please fill all fields");
+                      const emp = employees.find(e => e.id === Number(offboardForm.empId));
+                      const newItem = {
+                        id: Date.now(),
+                        empId: Number(offboardForm.empId),
+                        name: emp?.name || "Unknown",
+                        status: "In Progress",
+                        progress: 20,
+                        lastAction: `Exit initiated. LWD: ${offboardForm.lastDate}`,
+                        checklist: [
+                          { name: "Resignation/Exit Notice", status: "In Progress", date: "Today" },
+                          { name: "IT Clearance", status: "Pending", date: "-" },
+                          { name: "Finance Clearance", status: "Pending", date: "-" },
+                          { name: "Exit Interview", status: "Pending", date: "-" },
+                          { name: "F&F Settlement", status: "Pending", date: "-" }
+                        ]
+                      };
+                      setOffboardingItems([newItem, ...offboardingItems]);
+
+                      // AUTO-GENERATE DOCUMENT Simulation
+                      const docName = `${offboardForm.reason} Docket - ${emp?.name}`;
+                      const newDoc = {
+                        id: Date.now() + 1,
+                        name: docName,
+                        empId: Number(offboardForm.empId),
+                        type: "Other",
+                        status: "Generated",
+                        date: new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }),
+                        url: "#"
+                      };
+                      setPapers([newDoc, ...papers]);
+
+                      setShowOffboardInitiate(false);
+                      setOffboardForm({ empId:"", reason:"", lastDate:"" });
+                      toast(`Off-boarding workflow started & Official ${offboardForm.reason} Docket generated ✓`);
+                      addNotif({ 
+                        title: "New Exit Initiated", 
+                        body: `${emp?.name} off-boarding has been started. Official docket created in Documents.`, 
+                        icon: "🚪", 
+                        forAll: false, 
+                        forRole: "Super Admin",
+                        forEmpIds: [] 
+                      });
+                    }}>Start Off-boarding</Btn>
+                  </div>
+                </Modal>
+              )}
             </div>
           );
         })()}
 
+      <div style={{ display:"none" }}>{paperTemplatePreview}</div>
 
         {/* ─ RECOGNITION ─ */}
         {page==="Recognition" && (
