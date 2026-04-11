@@ -1812,6 +1812,124 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
   );
 };
 
+const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmin, setPage, employees }) => {
+  const [activeId, setActiveId] = useState(null);
+
+  const toggleOffboardTask = (itemId, taskIndex) => {
+    setOffboardingItems(prev => prev.map(item => {
+      if (item.id !== itemId) return item;
+      const nextChecklist = [...item.checklist];
+      const cur = nextChecklist[taskIndex].status;
+      const nextStatus = cur === "Pending" ? "In Progress" : cur === "In Progress" ? "Completed" : "Pending";
+      nextChecklist[taskIndex] = { 
+        ...nextChecklist[taskIndex], 
+        status: nextStatus,
+        date: nextStatus === "Completed" ? new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short" }) : (nextStatus === "Pending" ? "-" : "Today")
+      };
+      const completed = nextChecklist.filter(c => c.status === "Completed").length;
+      const newProgress = Math.round((completed / nextChecklist.length) * 100);
+      return { 
+        ...item, 
+        checklist: nextChecklist, 
+        progress: newProgress,
+        status: newProgress === 100 ? "Completed" : "In Progress",
+        lastAction: `Checklist updated: ${nextChecklist[taskIndex].name} → ${nextStatus}`
+      };
+    }));
+  };
+
+  if (activeId) {
+    const item = offboardingItems.find(o => o.id === activeId);
+    if (!item) return null;
+    return (
+      <div style={{ animation:"fadeIn 0.3s" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
+          <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:20 }}>←</button>
+          <div style={{ flex:1 }}>
+            <h2 style={{ fontSize:22, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{item.name}</h2>
+            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>Exit Formalities · Joining the alumni network</div>
+          </div>
+          <div style={{ textAlign:"right" }}>
+            <div style={{ fontSize:14, fontWeight:700, color:item.progress===100?"#22c55e":C.p }}>{item.progress}% Complete</div>
+            <div style={{ fontSize:11, color:C.sub, marginTop:4, fontWeight:600 }}>{item.status.toUpperCase()}</div>
+          </div>
+        </div>
+        <div style={{ height:8, background:C.surf, borderRadius:4, overflow:"hidden", marginBottom:32 }}>
+          <div style={{ height:"100%", background:item.progress===100?"#22c55e":C.p, width:`${item.progress}%`, transition:"width 0.4s" }} />
+        </div>
+        <div style={{ display:"grid", gap:20 }}>
+          <Card style={{ padding:28 }}>
+            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 20px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>Departure Checklist</h3>
+            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              {item.checklist.map((c, i) => (
+                <div key={i} onClick={() => isAdmin && toggleOffboardTask(item.id, i)} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 18px", borderRadius:12, border:`1px solid ${c.status==="Completed"?C.p:(c.status==="In Progress"?"#f59e0b":C.bdr)}`, background:c.status==="Completed"?"rgba(var(--p-rgb),0.02)":C.surf, cursor: isAdmin ? "pointer" : "default", transition:"all 0.2s" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                    <div style={{ width:20, height:20, borderRadius:"50%", background: c.status==="Completed"?"#22c55e":c.status==="In Progress"?"#f59e0b":"transparent", border:c.status==="Pending"?`1.5px solid ${C.bdr}`:"none", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:11 }}>
+                      {c.status==="Completed"?"✓":c.status==="In Progress"?"⋯":""}
+                    </div>
+                    <span style={{ fontSize:14, fontWeight:600, color:C.txt }}>{c.name}</span>
+                  </div>
+                  <span style={{ fontSize:11, color:C.sub, fontWeight:600 }}>{c.date}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+          
+          <Card style={{ padding:24, background:`linear-gradient(145deg, ${C.wht} 0%, ${C.surf} 100%)`, border:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+             <div>
+               <div style={{ fontSize:11, fontWeight:700, color:C.sub, letterSpacing:1, marginBottom:4 }}>OFFICIAL DOCUMENTS</div>
+               <div style={{ fontSize:14, fontWeight:600, color:C.txt }}>Exit Docket & Relieving Letter</div>
+             </div>
+             <Btn variant="outline" onClick={() => setPage("Paperwork Hub")} style={{ fontSize:11 }}>Paperwork Hub</Btn>
+          </Card>
+        </div>
+        <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ animation:"fadeIn 0.3s" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
+        <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:13, fontWeight:600 }}>← Back to Menu</button>
+        <Btn onClick={() => setPage("Paperwork Hub")} style={{ padding:"10px 18px", fontSize:12 }}>+ New Exit Request</Btn>
+      </div>
+      <h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Offboarding Journeys</h2>
+      <p style={{ color:C.sub, fontSize:15, margin:"0 0 32px" }}>Track and manage the workflow for departing employees.</p>
+      
+      {offboardingItems.length === 0 ? (
+        <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
+          <div style={{ fontSize:40, marginBottom:16 }}>📦</div>
+          <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>No active offboardings</h3>
+          <p style={{ color:C.sub, fontSize:14 }}>Initiate an exit request from the Paperwork Hub to see it here.</p>
+        </div>
+      ) : (
+        <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+          {offboardingItems.map(o => (
+            <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:"24px", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>{e.currentTarget.style.borderColor="#f472b6"; e.currentTarget.style.transform="translateY(-2px)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr; e.currentTarget.style.transform="none";}}>
+              <div style={{ width:48, height:48, borderRadius:"50%", background:`#fdf2f8`, border:`1px solid #fbcfe8`, display:"flex", alignItems:"center", justifyContent:"center", color:"#be185d", fontSize:18, fontWeight:700 }}>
+                {o.name.charAt(0)}
+              </div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:16, fontWeight:700, color:C.txt, marginBottom:4 }}>{o.name}</div>
+                <div style={{ fontSize:13, color:C.sub }}>Status: {o.status} · Progress: {o.progress}%</div>
+              </div>
+              <div style={{ width:160 }}>
+                <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden", boxShadow:`inset 0 1px 2px rgba(var(--shadow-rgb),.05)` }}>
+                  <div style={{ height:"100%", background: o.progress === 100 ? "#22c55e" : "#ec4899", width:`${o.progress}%`, transition:"width 0.3s" }} />
+                </div>
+              </div>
+              <div style={{ color:C.sub, fontSize:20, opacity:0.5 }}>→</div>
+            </Card>
+          ))}
+        </div>
+      )}
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+    </div>
+  );
+};
+
+
 const PayrollWizardModal = ({ 
   onClose, saPayslips, setSaPayslips, employees, processedPayments, setProcessedPayments, 
   editedSalaries, setPaymentLogs, toast, parseInr, C, MONTHS_SHORT 
@@ -6315,16 +6433,18 @@ export default function App() {
                      </div>
                    </Card>
                  </div>
-               ) : chapterTab === "Onboarding" ? (
-                 <OnboardingFlow setPage={setPage} onBack={() => setChapterTab("Menu")} employees={employees} />
-               ) : (
-                 <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
-                   <div style={{ fontSize:40, marginBottom:16 }}>{chapterTab === "Onboarding" ? "🎢" : "📦"}</div>
-                   <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 12px" }}>{chapterTab} flows coming soon</h2>
-                   <p style={{ fontSize:14, color:C.sub, margin:"0 0 24px", maxWidth:400, marginLeft:"auto", marginRight:"auto" }}>The detailed workflows and automations for {chapterTab.toLowerCase()} are currently under construction.</p>
-                   <Btn variant="outline" onClick={() => setChapterTab("Menu")}>← Back to Chapters</Btn>
-                 </div>
-               )}
+                ) : chapterTab === "Onboarding" ? (
+                  <OnboardingFlow setPage={setPage} onBack={() => setChapterTab("Menu")} employees={employees} />
+                ) : chapterTab === "Offboarding" ? (
+                  <OffboardingFlow onBack={() => setChapterTab("Menu")} offboardingItems={offboardingItems} setOffboardingItems={setOffboardingItems} isAdmin={isAdmin} setPage={setPage} employees={employees} />
+                ) : (
+                  <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
+                    <div style={{ fontSize:40, marginBottom:16 }}>🎢</div>
+                    <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 12px" }}>{chapterTab} flows coming soon</h2>
+                    <p style={{ fontSize:14, color:C.sub, margin:"0 0 24px", maxWidth:400, marginLeft:"auto", marginRight:"auto" }}>The detailed workflows and automations for {chapterTab.toLowerCase()} are currently under construction.</p>
+                    <Btn variant="outline" onClick={() => setChapterTab("Menu")}>← Back to Chapters</Btn>
+                  </div>
+                )}
              </div>
         )}
 
