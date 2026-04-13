@@ -1946,7 +1946,7 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
     setShowInitiate(false);
     setForm({ empId:"", reason:"Resignation", lastDate:"" });
     toast(`Exit journey started for ${emp?.name}`);
-    if (addNotif) addNotif({ title:"Exit Journey Started", body:`${emp?.name}'s offboarding has been initiated.`, icon:"🚪" });
+    if (addNotif) addNotif({ title:"Exit Journey Started", body:`${emp?.name}'s offboarding has been initiated.`, icon:"→" });
   };
 
   if (activeId) {
@@ -6394,7 +6394,7 @@ export default function App() {
              <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"800px", margin:"0 auto" }}>
                {/* Hero */}
                <div style={{ padding:"40px 0", textAlign:"center" }}>
-                 <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:16, padding:"6px 14px", borderRadius:999, background:C.surf, border:`1px solid ${C.bdr}`, fontSize:11, fontWeight:700, letterSpacing:1, color:C.p, textTransform:"uppercase" }}>🧭 Employee Journeys</div>
+                 <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:16, padding:"6px 14px", borderRadius:999, background:C.surf, border:`1px solid ${C.bdr}`, fontSize:11, fontWeight:700, letterSpacing:1, color:C.p, textTransform:"uppercase" }}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> Employee Journeys</div>
                  <h1 style={{ fontFamily:"Georgia,serif", fontSize:32, color:C.txt, margin:"0 0 16px", fontWeight:700 }}>People Chapters</h1>
                  <p style={{ color:C.sub, fontSize:15, lineHeight:1.6, maxWidth:500, margin:"0 auto" }}>Manage the critical transitions of your workforce, from their first day to their final handover.</p>
                </div>
@@ -6434,7 +6434,7 @@ export default function App() {
                   />
                 ) : (
                   <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
-                    <div style={{ fontSize:40, marginBottom:16 }}>🎢</div>
+                    <div style={{ width:56, height:56, borderRadius:14, background:`rgba(var(--p-rgb),0.07)`, color:C.p, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 16px" }}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
                     <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 12px" }}>{chapterTab} flows coming soon</h2>
                     <p style={{ fontSize:14, color:C.sub, margin:"0 0 24px", maxWidth:400, marginLeft:"auto", marginRight:"auto" }}>The detailed workflows and automations for {chapterTab.toLowerCase()} are currently under construction.</p>
                     <Btn variant="outline" onClick={() => setChapterTab("Menu")}>← Back to Chapters</Btn>
