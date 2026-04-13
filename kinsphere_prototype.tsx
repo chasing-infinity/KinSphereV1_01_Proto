@@ -1599,10 +1599,11 @@ let GLOBAL_ONBOARDINGS = [
     email: "aman@bipolarfactory.com",
     doj: "2026-05-15",
     state: {
-      offerSent: true, offerSigned: true, docsCollected: true,
-      inviteSent: false, empVisible: false, basicSetup: false,
-      roleAssigned: false, addedOrg: false, salarySet: false, bankSet: false,
-      apptSent: false, policyShared: false, policyAck: false, sessionsDone: false
+      offerSent: true, offerSigned: true, docsCollected: true, idVerified: true,
+      inviteSent: false, emailCreated: false, slackJoined: false, jiraAccess: false,
+      laptopAssigned: false, monitorProvided: false, securityKey: false, badgeIssued: false,
+      managerAssign: false, buddyAssign: false, addedOrg: false, trainingPlan: false,
+      salarySet: false, bankSet: false, policySigned: false, apptLetterSent: false
     }
   }
 ];
@@ -1632,10 +1633,16 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
     const ob = {
       id: "ob"+Date.now(), hireType, name, email, role, doj,
       state: {
-        offerSent: false, offerSigned: false, docsCollected: false,
-        inviteSent: false, empVisible: false, basicSetup: false,
-        roleAssigned: false, addedOrg: false, salarySet: false, bankSet: false,
-        apptSent: false, policyShared: false, policyAck: false, sessionsDone: false
+        // Phase 1: Pre-Joining
+        offerSent: false, offerSigned: false, docsCollected: false, idVerified: false, 
+        // Phase 2: System Access
+        inviteSent: false, emailCreated: false, slackJoined: false, jiraAccess: false,
+        // Phase 3: Hardware & IT
+        laptopAssigned: false, monitorProvided: false, securityKey: false, badgeIssued: false,
+        // Phase 4: Role & Org
+        managerAssign: false, buddyAssign: false, addedOrg: false, trainingPlan: false,
+        // Phase 5: Finance & Legal
+        salarySet: false, bankSet: false, policySigned: false, apptLetterSent: false
       }
     };
     setObs([ob, ...obs]);
@@ -1658,7 +1665,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
 
   if (showNew) {
     return (
-      <div style={{ maxWidth:600, margin:"0 auto", width:"100%" }}>
+      <div style={{ maxWidth:600, margin:"0 auto", width:"100%", animation:"fadeIn 0.3s" }}>
         <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
           <button onClick={() => setShowNew(false)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:20 }}>←</button>
           <h2 style={{ fontSize:20, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>Start New Onboarding</h2>
@@ -1667,30 +1674,36 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
           <div style={{ display:"flex", gap:16, marginBottom:24, flexWrap:"wrap" }}>
             <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:`2px solid ${hireType === "New" ? C.p : C.surf}`, background:hireType === "New" ? `rgba(var(--p-rgb),0.03)` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
               <input type="radio" checked={hireType === "New"} onChange={() => setHireType("New")} style={{ transform:"scale(1.2)", accentColor:C.p }} />
-              <span style={{ fontWeight:600, fontSize:15, color:C.txt }}>New Hire</span>
+              <div style={{ display:"flex", flexDirection:"column" }}>
+                <span style={{ fontWeight:700, fontSize:15, color:C.txt }}>New Hire</span>
+                <span style={{ fontSize:11, color:C.sub }}>Candidate outside the system</span>
+              </div>
             </label>
             <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:`2px solid ${hireType === "Existing" ? C.p : C.surf}`, background:hireType === "Existing" ? `rgba(var(--p-rgb),0.03)` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
               <input type="radio" checked={hireType === "Existing"} onChange={() => setHireType("Existing")} style={{ transform:"scale(1.2)", accentColor:C.p }} />
-              <span style={{ fontWeight:600, fontSize:15, color:C.txt }}>Existing Employee</span>
+              <div style={{ display:"flex", flexDirection:"column" }}>
+                <span style={{ fontWeight:700, fontSize:15, color:C.txt }}>Internal Invite</span>
+                <span style={{ fontSize:11, color:C.sub }}>Convert candidate to employee</span>
+              </div>
             </label>
           </div>
           
           {hireType === "New" ? (
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px 20px" }}>
-              <Inp label="Full Name" value={newHire.name} onChange={e=>setNewHire({...newHire, name:e.target.value})} />
-              <Inp label="Email" type="email" value={newHire.email} onChange={e=>setNewHire({...newHire, email:e.target.value})} />
-              <Inp label="Role" value={newHire.role} onChange={e=>setNewHire({...newHire, role:e.target.value})} />
+              <Inp label="Full Name" value={newHire.name} onChange={e=>setNewHire({...newHire, name:e.target.value})} placeholder="e.g. Rahul Dravid" />
+              <Inp label="Email" type="email" value={newHire.email} onChange={e=>setNewHire({...newHire, email:e.target.value})} placeholder="rahul@example.com" />
+              <Inp label="Role" value={newHire.role} onChange={e=>setNewHire({...newHire, role:e.target.value})} placeholder="e.g. Design Lead" />
               <Inp label="Date of Joining" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
             </div>
           ) : (
             <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:16 }}>
-              <Inp label="Select Employee" value={existingId} onChange={e=>setExistingId(e.target.value)} opts={["Select...", ...employees.map(e=>e.name)]} />
-              <Inp label="Date of Joining (if missing)" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
+              <Inp label="Select Employee" value={existingId} onChange={e=>setExistingId(e.target.value)} opts={["Select teammate...", ...employees.map(e=>e.name)]} />
+              <Inp label="Proposed DOJ" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
             </div>
           )}
           
           <div style={{ display:"flex", justifyContent:"flex-end", marginTop:32 }}>
-            <Btn onClick={handleCreate} disabled={!(doj && (hireType==="New" ? newHire.name : (existingId && existingId!=="Select...")))} style={{ padding:"12px 24px" }}>Start Onboarding</Btn>
+            <Btn onClick={handleCreate} disabled={!(doj && (hireType==="New" ? (newHire.name && newHire.email) : (existingId && existingId!=="Select teammate...")))} style={{ padding:"12px 24px" }}>Launch Journey 🚀</Btn>
           </div>
         </Card>
       </div>
@@ -1703,7 +1716,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
     const s = ob.state;
     const setS = (k, v) => setObs(obs.map(o => o.id === activeId ? { ...o, state:{ ...o.state, [k]: v } } : o));
 
-    const total = 14;
+    const total = 20;
     const done = Object.values(s).filter(Boolean).length;
     const progress = Math.round((done / total) * 100);
 
@@ -1713,48 +1726,58 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
           <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:20 }}>←</button>
           <div style={{ flex:1 }}>
             <h2 style={{ fontSize:22, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{ob.name}</h2>
-            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>{ob.role} · Joining: {ob.doj}</div>
+            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>Onboarding: {ob.role} · Target: {ob.doj}</div>
           </div>
           <div style={{ textAlign:"right" }}>
             <div style={{ fontSize:14, fontWeight:700, color:progress===100?"#22c55e":C.p }}>{progress}% Complete</div>
-            <div style={{ fontSize:11, color:C.sub, marginTop:4, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5 }}>{done} of {total} tasks</div>
+            <div style={{ fontSize:11, color:C.sub, marginTop:4, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5 }}>{done} of {total} milestones</div>
           </div>
         </div>
         
-        <div style={{ height:8, background:C.surf, borderRadius:4, overflow:"hidden", marginBottom:32 }}>
-          <div style={{ height:"100%", background:progress===100?"#22c55e":C.p, width:`${progress}%`, transition:"width 0.4s cubic-bezier(0.4, 0, 0.2, 1)" }} />
+        <div style={{ height:10, background:C.surf, borderRadius:5, overflow:"hidden", marginBottom:32, border:`1px solid ${C.bdr}` }}>
+          <div style={{ height:"100%", background:progress===100?"#22c55e":`linear-gradient(90deg, ${C.p} 0%, #ec4899 100%)`, width:`${progress}%`, transition:"width 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }} />
         </div>
 
-        <div style={{ display:"grid", gap:20 }}>
-          <Card style={{ padding:"24px 28px" }}>
-            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 16px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>1. Pre-Joining & Paperwork</h3>
+        <div style={{ display:"grid", gap:24 }}>
+          <section>
+            <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 1: Pre-Joining & Paperwork</h3>
             <CheckboxRow label="Offer Letter Sent" checked={s.offerSent} onChange={v=>setS("offerSent",v)} cta="Paperwork Hub" onCtaClick={()=>setPage("Paperwork Hub")} />
             <CheckboxRow label="Offer Letter Signed" checked={s.offerSigned} onChange={v=>setS("offerSigned",v)} />
-            <CheckboxRow label="Documents Collected (ID, Bank, etc.)" checked={s.docsCollected} onChange={v=>setS("docsCollected",v)} />
-          </Card>
+            <CheckboxRow label="Verification Documents Collected" checked={s.docsCollected} onChange={v=>setS("docsCollected",v)} />
+            <CheckboxRow label="Background Verification Complete" checked={s.idVerified} onChange={v=>setS("idVerified",v)} />
+          </section>
 
-          <Card style={{ padding:"24px 28px" }}>
-            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 16px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>2. Access & Security</h3>
-            <CheckboxRow label="HRMS Invite Sent" checked={s.inviteSent} onChange={v=>setS("inviteSent",v)} cta="Employees" onCtaClick={()=>setPage("Employees")} />
-            <CheckboxRow label="Employee Visible in System" checked={s.empVisible} onChange={v=>setS("empVisible",v)} />
-            <CheckboxRow label="Basic System Setup Complete" checked={s.basicSetup} onChange={v=>setS("basicSetup",v)} />
-          </Card>
+          <section>
+            <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 2: Digital Identity</h3>
+            <CheckboxRow label="Company Email Created" checked={s.emailCreated} onChange={v=>setS("emailCreated",v)} />
+            <CheckboxRow label="Slack / Teams Set up" checked={s.slackJoined} onChange={v=>setS("slackJoined",v)} />
+            <CheckboxRow label="Jira / Key Tools Provisioned" checked={s.jiraAccess} onChange={v=>setS("jiraAccess",v)} />
+            <CheckboxRow label="HRMS Invite Sent" checked={s.inviteSent} onChange={v=>setS("inviteSent",v)} cta="Directory" onCtaClick={()=>setPage("Employees")} />
+          </section>
 
-          <Card style={{ padding:"24px 28px" }}>
-            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 16px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>3. Role & Payroll</h3>
-            <CheckboxRow label="Manager Assigned" checked={s.roleAssigned} onChange={v=>setS("roleAssigned",v)} cta="Org Chart" onCtaClick={()=>setPage("Org Chart")} />
-            <CheckboxRow label="Added to Org Chart" checked={s.addedOrg} onChange={v=>setS("addedOrg",v)} cta="Org Chart" onCtaClick={()=>setPage("Org Chart")} />
-            <CheckboxRow label="Salary Structure Added" checked={s.salarySet} onChange={v=>setS("salarySet",v)} cta="Paydays" onCtaClick={()=>setPage("Paydays")} />
-            <CheckboxRow label="Bank Details Added" checked={s.bankSet} onChange={v=>setS("bankSet",v)} />
-          </Card>
+          <section>
+            <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 3: IT Hardware & Access</h3>
+            <CheckboxRow label="Main Laptop / Desktop Assigned" checked={s.laptopAssigned} onChange={v=>setS("laptopAssigned",v)} />
+            <CheckboxRow label="Peripherals (Monitor, Keyb) Provided" checked={s.monitorProvided} onChange={v=>setS("monitorProvided",v)} />
+            <CheckboxRow label="Security Keys / VPN Configured" checked={s.securityKey} onChange={v=>setS("securityKey",v)} />
+            <CheckboxRow label="Physical Office ID Badge Issued" checked={s.badgeIssued} onChange={v=>setS("badgeIssued",v)} />
+          </section>
 
-          <Card style={{ padding:"24px 28px" }}>
-            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 16px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>4. Compliance & Day 1</h3>
-            <CheckboxRow label="Appointment Letter Sent" checked={s.apptSent} onChange={v=>setS("apptSent",v)} cta="Paperwork Hub" onCtaClick={()=>setPage("Paperwork Hub")} />
-            <CheckboxRow label="Shared Company Policies" checked={s.policyShared} onChange={v=>setS("policyShared",v)} />
-            <CheckboxRow label="Got Policy Acknowledgment" checked={s.policyAck} onChange={v=>setS("policyAck",v)} />
-            <CheckboxRow label="Onboarding Sessions / Training Completed" checked={s.sessionsDone} onChange={v=>setS("sessionsDone",v)} />
-          </Card>
+          <section>
+            <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 4: Cultural Integration</h3>
+            <CheckboxRow label="Manager One-on-One Booked" checked={s.managerAssign} onChange={v=>setS("managerAssign",v)} />
+            <CheckboxRow label="Onboarding Buddy Assigned" checked={s.buddyAssign} onChange={v=>setS("buddyAssign",v)} />
+            <CheckboxRow label="Added to Org Chart & Groups" checked={s.addedOrg} onChange={v=>setS("addedOrg",v)} />
+            <CheckboxRow label="30-60-90 Day Training Plan Shared" checked={s.trainingPlan} onChange={v=>setS("trainingPlan",v)} />
+          </section>
+
+          <section>
+             <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 5: Compliance & Finance</h3>
+             <CheckboxRow label="Salary Structure & Tax Setup" checked={s.salarySet} onChange={v=>setS("salarySet",v)} cta="Setup Pay" onCtaClick={()=>setPage("Paydays")} />
+             <CheckboxRow label="Bank Account Details Verified" checked={s.bankSet} onChange={v=>setS("bankSet",v)} />
+             <CheckboxRow label="Policy Manual Acknowledged" checked={s.policySigned} onChange={v=>setS("policySigned",v)} />
+             <CheckboxRow label="Final Appointment Letter Issued" checked={s.apptLetterSent} onChange={v=>setS("apptLetterSent",v)} />
+          </section>
         </div>
         <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
       </div>
@@ -1766,23 +1789,22 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
         <div>
           <h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Active Onboardings</h2>
-          <p style={{ color:C.sub, fontSize:15, margin:0 }}>Track employee onboarding progress globally.</p>
+          <p style={{ color:C.sub, fontSize:15, margin:0 }}>Guided journey for new and transitioning teammates.</p>
         </div>
         <Btn onClick={() => setShowNew(true)} style={{ padding:"12px 20px" }}>+ New Onboarding</Btn>
       </div>
 
       {obs.length === 0 ? (
         <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
-          <div style={{ fontSize:40, marginBottom:16 }}>🚀</div>
-          <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>No active onboardings</h3>
-          <p style={{ color:C.sub, fontSize:14 }}>Click "New Onboarding" to start the process for a new or existing employee.</p>
+          <div style={{ fontSize:40, marginBottom:16 }}>🐣</div>
+          <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Empty Nest</h3>
+          <p style={{ color:C.sub, fontSize:14 }}>No one is being onboarded right now. Click "New" to start a journey.</p>
         </div>
       ) : (
         <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
           {obs.map(o => {
-            const total = 14;
             const done = Object.values(o.state).filter(Boolean).length;
-            const progress = Math.round((done / total) * 100);
+            const progress = Math.round((done / 20) * 100);
             return (
               <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:"24px", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.p; e.currentTarget.style.transform="translateY(-2px)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr; e.currentTarget.style.transform="none";}}>
                 <div style={{ width:48, height:48, borderRadius:"50%", background:`rgba(var(--p-rgb),0.1)`, border:`1px solid rgba(var(--p-rgb), 0.2)`, display:"flex", alignItems:"center", justifyContent:"center", color:C.p, fontSize:18, fontWeight:700 }}>
@@ -1790,18 +1812,18 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
                 </div>
                 <div style={{ flex:1 }}>
                   <div style={{ fontSize:16, fontWeight:700, color:C.txt, marginBottom:4 }}>{o.name}</div>
-                  <div style={{ fontSize:13, color:C.sub }}>{o.role} · Joining: {o.doj}</div>
+                  <div style={{ fontSize:13, color:C.sub }}>{o.role} · Target: {o.doj}</div>
                 </div>
-                <div style={{ width:160 }}>
+                <div style={{ width:180 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, color:C.sub, marginBottom:6, fontWeight:600 }}>
-                    <span style={{ textTransform:"uppercase", letterSpacing:0.5 }}>{done} / {total} tasks</span>
+                    <span style={{ textTransform:"uppercase", letterSpacing:0.5 }}>{done}/20 Tasks</span>
                     <span>{progress}%</span>
                   </div>
-                  <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden", boxShadow:`inset 0 1px 2px rgba(var(--shadow-rgb),0.05)` }}>
+                  <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden" }}>
                     <div style={{ height:"100%", background: progress === 100 ? "#22c55e" : C.p, width:`${progress}%`, transition:"width 0.3s" }} />
                   </div>
                 </div>
-                <div style={{ color:C.sub, fontSize:20, opacity:0.5 }}>→</div>
+                <div style={{ color:C.sub, fontSize:20, opacity:0.3 }}>→</div>
               </Card>
             );
           })}
@@ -1812,8 +1834,10 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
   );
 };
 
-const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmin, setPage, employees }) => {
+const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmin, setPage, employees, papers, setPapers, addNotif, toast }) => {
   const [activeId, setActiveId] = useState(null);
+  const [showInitiate, setShowInitiate] = useState(false);
+  const [form, setForm] = useState({ empId:"", reason:"Resignation", lastDate:"" });
 
   const toggleOffboardTask = (itemId, taskIndex) => {
     setOffboardingItems(prev => prev.map(item => {
@@ -1833,9 +1857,49 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
         checklist: nextChecklist, 
         progress: newProgress,
         status: newProgress === 100 ? "Completed" : "In Progress",
-        lastAction: `Checklist updated: ${nextChecklist[taskIndex].name} → ${nextStatus}`
+        lastAction: `Checklist update: ${nextChecklist[taskIndex].name} → ${nextStatus}`
       };
     }));
+  };
+
+  const handleStart = () => {
+    if (!form.empId || !form.lastDate) return toast("Missing required fields");
+    const emp = employees.find(e => e.id === Number(form.empId));
+    const newItem = {
+      id: Date.now(),
+      empId: Number(form.empId),
+      name: emp?.name || "Unknown",
+      status: "In Progress",
+      progress: 20,
+      lastAction: `Exit initiated (${form.reason}). LWD: ${form.lastDate}`,
+      checklist: [
+        { name: "Resignation / Exit Notice", status: "Completed", date: "Today" },
+        { name: "Manager handover / KT", status: "In Progress", date: "-" },
+        { name: "IT Hardware / Badge Return", status: "Pending", date: "-" },
+        { name: "Software License Revocation", status: "Pending", date: "-" },
+        { name: "Finance Clearance (Loans/Petty)", status: "Pending", date: "-" },
+        { name: "Exit Interview (HR)", status: "Pending", date: "-" },
+        { name: "F&F Settlement & Relieving", status: "Pending", date: "-" }
+      ]
+    };
+    setOffboardingItems([newItem, ...offboardingItems]);
+
+    // Auto-generate doc
+    const newDoc = {
+      id: Date.now() + 1,
+      name: `${form.reason} Docket - ${emp?.name}`,
+      empId: Number(form.empId),
+      type: "Other",
+      status: "Generated",
+      date: new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }),
+      url: "#"
+    };
+    setPapers([newDoc, ...papers]);
+
+    setShowInitiate(false);
+    setForm({ empId:"", reason:"Resignation", lastDate:"" });
+    toast(`Off-boarding Journey and Official Docket created for ${emp?.name} ✓`);
+    addNotif({ title:"Exit Journey Started", body:`${emp?.name} is leaving. View journey for checklist.`, icon:"🚪" });
   };
 
   if (activeId) {
@@ -1847,42 +1911,47 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
           <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:20 }}>←</button>
           <div style={{ flex:1 }}>
             <h2 style={{ fontSize:22, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{item.name}</h2>
-            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>Exit Formalities · Joining the alumni network</div>
+            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>Exit Lifecycle · Last Working Day: {item.lastAction.split("LWD: ")[1] || "TBD"}</div>
           </div>
           <div style={{ textAlign:"right" }}>
-            <div style={{ fontSize:14, fontWeight:700, color:item.progress===100?"#22c55e":C.p }}>{item.progress}% Complete</div>
+            <div style={{ fontSize:14, fontWeight:700, color:item.progress===100?"#22c55e":C.p }}>{item.progress}% Milestone Progress</div>
             <div style={{ fontSize:11, color:C.sub, marginTop:4, fontWeight:600 }}>{item.status.toUpperCase()}</div>
           </div>
         </div>
-        <div style={{ height:8, background:C.surf, borderRadius:4, overflow:"hidden", marginBottom:32 }}>
-          <div style={{ height:"100%", background:item.progress===100?"#22c55e":C.p, width:`${item.progress}%`, transition:"width 0.4s" }} />
+        <div style={{ height:10, background:C.surf, borderRadius:5, overflow:"hidden", marginBottom:32, border:`1px solid ${C.bdr}` }}>
+          <div style={{ height:"100%", background:item.progress===100?"#22c55e":"#ec4899", width:`${item.progress}%`, transition:"width 0.4s" }} />
         </div>
-        <div style={{ display:"grid", gap:20 }}>
+        
+        <section style={{ display:"grid", gap:20 }}>
           <Card style={{ padding:28 }}>
-            <h3 style={{ fontSize:13, fontWeight:700, margin:"0 0 20px", color:C.p, textTransform:"uppercase", letterSpacing:1 }}>Departure Checklist</h3>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
+               <h3 style={{ fontSize:12, fontWeight:700, margin:0, color:C.p, textTransform:"uppercase", letterSpacing:1 }}>Separation Checklist</h3>
+               <span style={{ fontSize:11, color:C.sub }}>Click task to update status</span>
+            </div>
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               {item.checklist.map((c, i) => (
                 <div key={i} onClick={() => isAdmin && toggleOffboardTask(item.id, i)} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 18px", borderRadius:12, border:`1px solid ${c.status==="Completed"?C.p:(c.status==="In Progress"?"#f59e0b":C.bdr)}`, background:c.status==="Completed"?"rgba(var(--p-rgb),0.02)":C.surf, cursor: isAdmin ? "pointer" : "default", transition:"all 0.2s" }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                    <div style={{ width:20, height:20, borderRadius:"50%", background: c.status==="Completed"?"#22c55e":c.status==="In Progress"?"#f59e0b":"transparent", border:c.status==="Pending"?`1.5px solid ${C.bdr}`:"none", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:11 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                    <div style={{ width:22, height:22, borderRadius:"50%", background: c.status==="Completed"?"#22c55e":c.status==="In Progress"?"#f59e0b":"transparent", border:c.status==="Pending"?`1.5px solid ${C.bdr}`:"none", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:11 }}>
                       {c.status==="Completed"?"✓":c.status==="In Progress"?"⋯":""}
                     </div>
                     <span style={{ fontSize:14, fontWeight:600, color:C.txt }}>{c.name}</span>
                   </div>
-                  <span style={{ fontSize:11, color:C.sub, fontWeight:600 }}>{c.date}</span>
+                  <span style={{ fontSize:11, color:C.sub, fontWeight:700 }}>{c.date}</span>
                 </div>
               ))}
             </div>
           </Card>
           
-          <Card style={{ padding:24, background:`linear-gradient(145deg, ${C.wht} 0%, ${C.surf} 100%)`, border:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+          <Card style={{ padding:24, background:`linear-gradient(145deg, rgba(var(--p-rgb),0.03) 0%, ${C.surf} 100%)`, border:`1px dashed ${C.p}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
              <div>
-               <div style={{ fontSize:11, fontWeight:700, color:C.sub, letterSpacing:1, marginBottom:4 }}>OFFICIAL DOCUMENTS</div>
-               <div style={{ fontSize:14, fontWeight:600, color:C.txt }}>Exit Docket & Relieving Letter</div>
+               <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:4 }}>RELIEVING DOCUMENTS</div>
+               <div style={{ fontSize:14, fontWeight:600, color:C.txt }}>Exit Docket & F&F Statement</div>
+               <div style={{ fontSize:11, color:C.sub, marginTop:4 }}>Auto-generated in Document Centre</div>
              </div>
-             <Btn variant="outline" onClick={() => setPage("Paperwork Hub")} style={{ fontSize:11 }}>Paperwork Hub</Btn>
+             <Btn variant="outline" onClick={() => setPage("Paperwork Hub")} style={{ fontSize:11 }}>Go to Paperwork Hub</Btn>
           </Card>
-        </div>
+        </section>
         <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
       </div>
     );
@@ -1892,38 +1961,56 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
     <div style={{ animation:"fadeIn 0.3s" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
         <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:13, fontWeight:600 }}>← Back to Menu</button>
-        <Btn onClick={() => setPage("Paperwork Hub")} style={{ padding:"10px 18px", fontSize:12 }}>+ New Exit Request</Btn>
+        <Btn onClick={() => setShowInitiate(true)} style={{ padding:"12px 24px", fontSize:12 }}>+ Initiate Transition</Btn>
       </div>
-      <h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Offboarding Journeys</h2>
-      <p style={{ color:C.sub, fontSize:15, margin:"0 0 32px" }}>Track and manage the workflow for departing employees.</p>
+      <h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Active Offboardings</h2>
+      <p style={{ color:C.sub, fontSize:15, margin:"0 0 32px" }}>Managing the lifecycle for teammates moving to their next chapter.</p>
       
       {offboardingItems.length === 0 ? (
         <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
           <div style={{ fontSize:40, marginBottom:16 }}>📦</div>
-          <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>No active offboardings</h3>
-          <p style={{ color:C.sub, fontSize:14 }}>Initiate an exit request from the Paperwork Hub to see it here.</p>
+          <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Cloudless Sky</h3>
+          <p style={{ color:C.sub, fontSize:14 }}>No departures currently in the workflow. Good vibes!</p>
         </div>
       ) : (
         <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
           {offboardingItems.map(o => (
-            <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:"24px", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>{e.currentTarget.style.borderColor="#f472b6"; e.currentTarget.style.transform="translateY(-2px)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr; e.currentTarget.style.transform="none";}}>
+            <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:"24px", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>{e.currentTarget.style.borderColor="#ec4899"; e.currentTarget.style.transform="translateY(-2px)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr; e.currentTarget.style.transform="none";}}>
               <div style={{ width:48, height:48, borderRadius:"50%", background:`#fdf2f8`, border:`1px solid #fbcfe8`, display:"flex", alignItems:"center", justifyContent:"center", color:"#be185d", fontSize:18, fontWeight:700 }}>
                 {o.name.charAt(0)}
               </div>
               <div style={{ flex:1 }}>
                 <div style={{ fontSize:16, fontWeight:700, color:C.txt, marginBottom:4 }}>{o.name}</div>
-                <div style={{ fontSize:13, color:C.sub }}>Status: {o.status} · Progress: {o.progress}%</div>
+                <div style={{ fontSize:12, color:C.sub }}>Status: {o.status} · Progress: {o.progress}%</div>
               </div>
-              <div style={{ width:160 }}>
-                <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden", boxShadow:`inset 0 1px 2px rgba(var(--shadow-rgb),.05)` }}>
+              <div style={{ width:180 }}>
+                <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden", boxShadow:`inset 0 1px 2px rgba(var(--shadow-rgb),0.05)` }}>
                   <div style={{ height:"100%", background: o.progress === 100 ? "#22c55e" : "#ec4899", width:`${o.progress}%`, transition:"width 0.3s" }} />
                 </div>
               </div>
-              <div style={{ color:C.sub, fontSize:20, opacity:0.5 }}>→</div>
+              <div style={{ color:C.sub, fontSize:20, opacity:0.3 }}>→</div>
             </Card>
           ))}
         </div>
       )}
+
+      {showInitiate && (
+        <Modal title="Initiate Transition" onClose={() => setShowInitiate(false)} width={450}>
+           <div style={{ marginBottom:20 }}>
+             <p style={{ fontSize:13, color:C.sub, lineHeight:1.55 }}>Launching an exit journey will notify IT, Finance, and Legal. It also generates an official exit docket in the Document Hub.</p>
+           </div>
+           <div style={{ display:"grid", gap:16 }}>
+             <Inp label="Teammate" value={form.empId} onChange={e=>setForm({...form, empId:e.target.value})} opts={["Pick person...", ...employees.map(e=>({label:e.name, value:String(e.id)}))]} />
+             <Inp label="Separation Reason" value={form.reason} onChange={e=>setForm({...form, reason:e.target.value})} opts={["Resignation", "Termination", "Contract End", "Retirement"]} />
+             <Inp label="Last Working Date" type="date" value={form.lastDate} onChange={e=>setForm({...form, lastDate:e.target.value})} />
+           </div>
+           <div style={{ display:"flex", justifyContent:"flex-end", gap:12, marginTop:32, paddingTop:24, borderTop:`1px solid ${C.surf}` }}>
+             <Btn variant="ghost" onClick={() => setShowInitiate(false)}>Discard</Btn>
+             <Btn onClick={handleStart} style={{ padding:"10px 24px" }}>Start Journey 🚪</Btn>
+           </div>
+        </Modal>
+      )}
+
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
@@ -2430,7 +2517,8 @@ const PresenceModule = ({
 
   const getDayStatus = (d) => {
     const date = new Date(year, month, d);
-    const iso = date.toISOString().split('T')[0];
+    // Use local-friendly date key
+    const iso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     const dayOfWeek = date.getDay();
 
     // Priority 1: Calendar holidays
@@ -5170,104 +5258,12 @@ export default function App() {
                       <div style={{ display:"flex", background:C.wht, borderRadius:12, padding:4, border:`1px solid ${C.bdr}`, boxShadow:"0 2px 8px rgba(0,0,0,.04)" }}>
                         <button onClick={()=>setPaperTab("Documents")} style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Documents"?700:500, background: paperTab==="Documents"?C.p:"transparent", color: paperTab==="Documents"?"#fff":C.sub, transition:"all .2s" }}>Documents</button>
                         <button onClick={()=>setPaperTab("Generate")}  style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Generate"?700:500,  background: paperTab==="Generate"?C.p:"transparent",  color: paperTab==="Generate"?"#fff":C.sub,  transition:"all .2s" }}>Generate</button>
-                        <button onClick={()=>setPaperTab("Off-boarding")}  style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: paperTab==="Off-boarding"?700:500,  background: paperTab==="Off-boarding"?C.p:"transparent",  color: paperTab==="Off-boarding"?"#fff":C.sub,  transition:"all .2s" }}>Off-boarding Hub</button>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* ── Tab Content: Off-boarding ── */}
-              {paperTab === "Off-boarding" && (
-                <div style={{ padding:`40px ${pad}px` }}>
-                  <div style={{ maxWidth:1000, margin:"0 auto" }}>
-                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32, flexWrap:"wrap", gap:20 }}>
-                      <div>
-                        <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:24, fontWeight:700, color:C.txt }}>Employee Off-boarding</h2>
-                        <p style={{ margin:"6px 0 0", fontSize:13, color:C.sub }}>Manage resignations, clearances, and exit formalities.</p>
-                      </div>
-                      {isAdmin && (
-                        <Btn onClick={() => setShowOffboardInitiate(true)} style={{ padding:"12px 24px" }}>
-                          <span style={{ marginRight:8 }}>+</span> Initiate New Exit
-                        </Btn>
-                      )}
-                    </div>
-
-                    <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "repeat(auto-fill, minmax(460px, 1fr))", gap:24 }}>
-                      {offboardingItems.map(item => (
-                        <Card key={item.id} style={{ padding:28, border:`1px solid ${C.bdr}` }}>
-                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:20 }}>
-                            <div style={{ display:"flex", gap:16, alignItems:"center" }}>
-                              <Av ini={item.name.split(" ").map(s=>s[0]).join("")} sz={48} bg={item.status==="Completed" ? "#22c55e" : C.mid} />
-                              <div>
-                                <div style={{ fontSize:17, fontWeight:800, color:C.txt }}>{item.name}</div>
-                                <div style={{ fontSize:12, color:C.sub, display:"flex", alignItems:"center", gap:6, marginTop:2 }}>
-                                  <span>EMP#{item.empId}</span>
-                                  <span>•</span>
-                                  <span style={{ 
-                                    padding:"2px 8px", borderRadius:6, fontSize:10, fontWeight:700,
-                                    background: item.status==="Completed" ? "#dcfce7" : "#fef3c7",
-                                    color: item.status==="Completed" ? "#166534" : "#92400e"
-                                  }}>{item.status.toUpperCase()}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div style={{ textAlign:"right" }}>
-                              <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>PROGRESS</div>
-                              <div style={{ fontSize:22, fontWeight:900, color:C.txt }}>{item.progress}%</div>
-                            </div>
-                          </div>
-
-                          <div style={{ height:8, background:C.surf, borderRadius:10, marginBottom:28, overflow:"hidden" }}>
-                            <div style={{ height:"100%", width:`${item.progress}%`, background: item.progress === 100 ? "#22c55e" : C.p, transition:"width .8s ease" }} />
-                          </div>
-
-                          <div style={{ background:C.surf, borderRadius:16, padding:20, marginBottom:24, border:`1px solid ${C.bdr}` }}>
-                            <div style={{ fontSize:10, fontWeight:800, color:C.sub, letterSpacing:1, marginBottom:14 }}>EXIT CHECKLIST</div>
-                            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-                              {item.checklist.map((c, i) => (
-                                <div 
-                                  key={i} 
-                                  onClick={() => isAdmin && toggleOffboardTask(item.id, i)}
-                                  style={{ 
-                                    display:"flex", justifyContent:"space-between", alignItems:"center", 
-                                    cursor: isAdmin ? "pointer" : "default",
-                                    padding:"4px 8px", margin:"0 -8px", borderRadius:8,
-                                    transition:"background 0.2s"
-                                  }}
-                                  onMouseEnter={e => isAdmin && (e.currentTarget.style.background = "rgba(0,0,0,0.03)")}
-                                  onMouseLeave={e => isAdmin && (e.currentTarget.style.background = "transparent")}
-                                >
-                                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                                    <div style={{ 
-                                      width:20, height:20, borderRadius:"50%", 
-                                      background: c.status==="Completed" ? "#22c55e" : c.status==="In Progress" ? "#f59e0b" : "transparent",
-                                      border: c.status==="Pending" ? `1.5px solid ${C.bdr}` : "none",
-                                      display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:11
-                                    }}>
-                                      {c.status==="Completed" ? "✓" : c.status==="In Progress" ? "⋯" : ""}
-                                    </div>
-                                    <span style={{ fontSize:13, color: c.status==="Pending" ? C.sub : C.txt, fontWeight: c.status==="Completed" ? 500 : 700 }}>{c.name}</span>
-                                  </div>
-                                  <span style={{ fontSize:11, color:C.bdr, fontWeight:600 }}>{c.date}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:20, borderTop:`1px solid ${C.surf}` }}>
-                            <div style={{ minWidth:0 }}>
-                              <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>LATEST ACTIVITY</div>
-                              <div style={{ fontSize:12, color:C.txt, fontWeight:600, marginTop:2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{item.lastAction}</div>
-                            </div>
-                            <Btn variant="ghost" style={{ fontSize:12, padding:"8px 14px", fontWeight:700 }}>View Details →</Btn>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {/* ── Tab Content: Documents ── */}
               {paperTab === "Documents" && (
@@ -5772,100 +5768,6 @@ export default function App() {
                 <Modal title="Original Document" onClose={() => setTplViewPdf(null)} width={800}>
                   <div style={{ height:600, background:"#f0f0f0", borderRadius:10, overflow:"hidden", border:`1px solid ${C.bdr}` }}>
                     <iframe src={tplViewPdf} style={{ width:"100%", height:"100%", border:"none" }} title="Original PDF"></iframe>
-                  </div>
-                </Modal>
-              )}
-              {/* ─ OFF-BOARDING INITIATION MODAL ─ */}
-              {showOffboardInitiate && (
-                <Modal title="Initiate Employee Exit" onClose={() => setShowOffboardInitiate(false)} width={480}>
-                  <div style={{ marginBottom:20 }}>
-                    <p style={{ fontSize:13, color:C.sub, lineHeight:1.55 }}>Selecting an employee will generate an official resignation/termination docket and alert relevant departments (IT, Finance, Admin) for clearance.</p>
-                  </div>
-                  
-                  <div style={{ marginBottom:16 }}>
-                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>SELECT EMPLOYEE</label>
-                    <select 
-                      value={offboardForm.empId} 
-                      onChange={e => setOffboardForm({...offboardForm, empId: e.target.value})}
-                      style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}
-                    >
-                      <option value="">Choose employee...</option>
-                      {employees.map(e => <option key={e.id} value={e.id}>{e.name} — {e.designation}</option>)}
-                    </select>
-                  </div>
-
-                  <div style={{ marginBottom:16 }}>
-                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>REASON FOR EXIT</label>
-                    <select 
-                      value={offboardForm.reason} 
-                      onChange={e => setOffboardForm({...offboardForm, reason: e.target.value})}
-                      style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}
-                    >
-                      <option value="">Select reason...</option>
-                      <option>Resignation</option>
-                      <option>Termination</option>
-                      <option>Contract End</option>
-                      <option>Retirement</option>
-                    </select>
-                  </div>
-
-                  <div style={{ marginBottom:24 }}>
-                    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>LAST WORKING DAY</label>
-                    <input 
-                      type="date"
-                      value={offboardForm.lastDate}
-                      onChange={e => setOffboardForm({...offboardForm, lastDate: e.target.value})}
-                      style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13, fontFamily:"inherit" }}
-                    />
-                  </div>
-
-                  <div style={{ display:"flex", gap:12, justifyContent:"flex-end", paddingTop:20, borderTop:`1px solid ${C.surf}` }}>
-                    <Btn variant="ghost" onClick={() => setShowOffboardInitiate(false)}>Cancel</Btn>
-                    <Btn onClick={() => {
-                      if (!offboardForm.empId || !offboardForm.reason || !offboardForm.lastDate) return toast("Please fill all fields");
-                      const emp = employees.find(e => e.id === Number(offboardForm.empId));
-                      const newItem = {
-                        id: Date.now(),
-                        empId: Number(offboardForm.empId),
-                        name: emp?.name || "Unknown",
-                        status: "In Progress",
-                        progress: 20,
-                        lastAction: `Exit initiated. LWD: ${offboardForm.lastDate}`,
-                        checklist: [
-                          { name: "Resignation/Exit Notice", status: "In Progress", date: "Today" },
-                          { name: "IT Clearance", status: "Pending", date: "-" },
-                          { name: "Finance Clearance", status: "Pending", date: "-" },
-                          { name: "Exit Interview", status: "Pending", date: "-" },
-                          { name: "F&F Settlement", status: "Pending", date: "-" }
-                        ]
-                      };
-                      setOffboardingItems([newItem, ...offboardingItems]);
-
-                      // AUTO-GENERATE DOCUMENT Simulation
-                      const docName = `${offboardForm.reason} Docket - ${emp?.name}`;
-                      const newDoc = {
-                        id: Date.now() + 1,
-                        name: docName,
-                        empId: Number(offboardForm.empId),
-                        type: "Other",
-                        status: "Generated",
-                        date: new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }),
-                        url: "#"
-                      };
-                      setPapers([newDoc, ...papers]);
-
-                      setShowOffboardInitiate(false);
-                      setOffboardForm({ empId:"", reason:"", lastDate:"" });
-                      toast(`Off-boarding workflow started & Official ${offboardForm.reason} Docket generated ✓`);
-                      addNotif({ 
-                        title: "New Exit Initiated", 
-                        body: `${emp?.name} off-boarding has been started. Official docket created in Documents.`, 
-                        icon: "🚪", 
-                        forAll: false, 
-                        forRole: "Super Admin",
-                        forEmpIds: [] 
-                      });
-                    }}>Start Off-boarding</Btn>
                   </div>
                 </Modal>
               )}
@@ -6436,7 +6338,18 @@ export default function App() {
                 ) : chapterTab === "Onboarding" ? (
                   <OnboardingFlow setPage={setPage} onBack={() => setChapterTab("Menu")} employees={employees} />
                 ) : chapterTab === "Offboarding" ? (
-                  <OffboardingFlow onBack={() => setChapterTab("Menu")} offboardingItems={offboardingItems} setOffboardingItems={setOffboardingItems} isAdmin={isAdmin} setPage={setPage} employees={employees} />
+                  <OffboardingFlow 
+                    onBack={() => setChapterTab("Menu")} 
+                    offboardingItems={offboardingItems} 
+                    setOffboardingItems={setOffboardingItems} 
+                    isAdmin={isAdmin} 
+                    setPage={setPage} 
+                    employees={employees} 
+                    papers={papers}
+                    setPapers={setPapers}
+                    addNotif={addNotif}
+                    toast={toast}
+                  />
                 ) : (
                   <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
                     <div style={{ fontSize:40, marginBottom:16 }}>🎢</div>
@@ -6646,7 +6559,7 @@ export default function App() {
                   )}
                   {accessSelectedEmpId && (() => {
                     const sel = employees.find(e => e.id === Number(accessSelectedEmpId));
-                    if (!sel || sel.role === "Super Admin") return null;
+                    if (!sel) return null;
                     
                     return (
                       <div style={{ marginTop:24, paddingTop:24, borderTop:`1px solid ${C.bdr}` }}>
@@ -6656,15 +6569,15 @@ export default function App() {
                           {/* Role Elevation Card */}
                           <div style={{ 
                             padding:16, 
-                            border: sel.role === "Admin" ? `1px solid ${C.bdr}` : `1px solid #fed7aa`, 
-                            background: sel.role === "Admin" ? C.surf : `#fff7ed`, 
+                            border: sel.role === "Employee" ? `1px solid #fed7aa` : `1px solid ${C.bdr}`, 
+                            background: sel.role === "Employee" ? `#fff7ed` : C.surf, 
                             borderRadius:12, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16, flexWrap:"wrap" 
                           }}>
                             <div style={{ flex:1, minWidth:240 }}>
-                              <div style={{ fontSize:13, fontWeight:700, color: sel.role === "Admin" ? C.txt : "#9a3412", marginBottom:4 }}>
-                                {sel.role === "Admin" ? "Promote to Super Admin" : "Elevate to Admin"}
+                              <div style={{ fontSize:13, fontWeight:700, color: sel.role === "Employee" ? "#9a3412" : C.txt, marginBottom:4 }}>
+                                {sel.role === "Employee" ? "Elevate to Admin" : (sel.role === "Admin" ? "Promote to Super Admin" : "Manage Role")}
                               </div>
-                              <div style={{ fontSize:11, color: sel.role === "Admin" ? C.sub : "#c2410c", lineHeight:1.45 }}>
+                              <div style={{ fontSize:11, color: sel.role === "Employee" ? "#c2410c" : C.sub, lineHeight:1.45 }}>
                                 {sel.role === "Admin" 
                                   ? `This will grant ${sel.name} full system access, including billing, organizational settings, and absolute cross-module visibility.`
                                   : `This will allow ${sel.name} to see all modules. By default, they will only see their own payslips unless Paydays access is granted.`}
@@ -6712,8 +6625,8 @@ export default function App() {
                             </div>
                           )}
 
-                          {/* Demote Card (Only for Admins) */}
-                          {sel.role === "Admin" && (
+                          {/* Demote Card (For Admins and SAs) */}
+                          {sel.role !== "Employee" && (
                             <div style={{ 
                               padding:16, 
                               border: `1px solid #fee2e2`, 
