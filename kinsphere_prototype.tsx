@@ -132,23 +132,23 @@ const C = {
 const ME_ID = 1;
 
 const EMPS = [
-  { id:1, ini:"AM", name:"Arjun Mehta",    email:"admin@bipolarfactory.com",  role:"Super Admin", dept:"Leadership", type:"Full Time", joined:"Jan 2022", salary:"â‚¹25,00,000",
+  { id:1, ini:"AM", name:"Arjun Mehta",    email:"admin@bipolarfactory.com",  role:"Super Admin", dept:"Leadership", type:"Full Time", joined:"Jan 2022", salary:"Ã¢â€šÂ¹25,00,000",
     phone:"+91 98765 43210", designation:"Co-founder & CEO", dob:"15 Aug 1988",
     devices:["MacBook Pro M3","iPhone 15 Pro"], documents:[{ n:"Aadhaar", v:true },{ n:"PAN", v:true },{ n:"Offer letter", v:true }], managerId:null,
     bankInfo:{ holder:"Arjun Mehta", acc:"1234567890", ifsc:"HDFC0001234" }, paydaysAccess: true },
-  { id:2, ini:"NA", name:"Nihit Agarwal",  email:"nihit@bipolarfactory.com",  role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"Apr 2023", salary:"â€”",
+  { id:2, ini:"NA", name:"Nihit Agarwal",  email:"nihit@bipolarfactory.com",  role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"Apr 2023", salary:"Ã¢â‚¬â€",
     phone:"+91 98100 11223", designation:"Head of Engineering", dob:"03 Feb 1992",
     devices:["MacBook Air M2"], documents:[{ n:"Aadhaar", v:true },{ n:"PAN", v:false }], managerId:1,
     bankInfo:{ holder:"Nihit Agarwal", acc:"9876543210", ifsc:"ICIC0005678" }, paydaysAccess: true },
-  { id:3, ini:"PS", name:"Priya Sharma",   email:"priya@bipolarfactory.com",  role:"Employee",    dept:"Design",      type:"Full Time", joined:"15 Jun 2023", salary:"â‚¹1,00,000",
+  { id:3, ini:"PS", name:"Priya Sharma",   email:"priya@bipolarfactory.com",  role:"Employee",    dept:"Design",      type:"Full Time", joined:"15 Jun 2023", salary:"Ã¢â€šÂ¹1,00,000",
     phone:"+91 91234 55667", designation:"Product Designer", dob:"27 Mar 1995",
     devices:["MacBook Pro 14"], documents:[{ n:"Aadhaar", v:true },{ n:"NDA", v:true }], managerId:1,
     bankInfo:{ holder:"Priya Sharma", acc:"5566778899", ifsc:"SBIN0009988" }, paydaysAccess: false },
-  { id:4, ini:"RA", name:"Ridwanul Alam",  email:"ridwan@bipolarfactory.com", role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"29 Mar 2025", salary:"â‚¹1",
+  { id:4, ini:"RA", name:"Ridwanul Alam",  email:"ridwan@bipolarfactory.com", role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"29 Mar 2025", salary:"Ã¢â€šÂ¹1",
     phone:"+91 90000 44112", designation:"Software Engineer", dob:"01 Jan 1999",
     devices:["Dell XPS 15"], documents:[{ n:"PAN", v:true }], managerId:2,
     bankInfo:null /* Missing for testing */, paydaysAccess: true },
-  { id:5, ini:"S",  name:"Sahil .",        email:"sahil@bipolarfactory.com",  role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"10 Oct 2022", salary:"â€”",
+  { id:5, ini:"S",  name:"Sahil .",        email:"sahil@bipolarfactory.com",  role:"Super Admin", dept:"Technology",  type:"Full Time", joined:"10 Oct 2022", salary:"Ã¢â‚¬â€",
     phone:"+91 98888 77665", designation:"Tech Lead", dob:"30 Mar 1990",
     devices:["ThinkPad P1"], documents:[{ n:"Aadhaar", v:true },{ n:"Contract", v:true }], managerId:1,
     bankInfo:{ holder:"Sahil", acc:"1122334455", ifsc:"KKBK0004433" }, paydaysAccess: true },
@@ -167,11 +167,11 @@ const INIT_LEAVES = [
 ];
 
 const PAYROLL = [
-  { ini:"PS", name:"Priya Sharma",  dept:"",           ctc:"â‚¹1,00,000", basic:"50%", hra:"20%", other:"30%", net:"â‚¹8,333", set:true  },
-  { ini:"S",  name:"Sahil .",       dept:"Technology", ctc:"Not set",   basic:"â€”",   hra:"â€”",   other:"â€”",   net:"â€”",      set:false },
-  { ini:"NA", name:"Nihit Agarwal", dept:"Technology", ctc:"Not set",   basic:"â€”",   hra:"â€”",   other:"â€”",   net:"â€”",      set:false },
-  { ini:"RA", name:"Ridwanul Alam", dept:"Technology", ctc:"Not set",   basic:"â€”",   hra:"â€”",   other:"â€”",   net:"â€”",      set:false },
-  { ini:"AM", name:"Arjun Mehta",   dept:"",           ctc:"Not set",   basic:"â€”",   hra:"â€”",   other:"â€”",   net:"â€”",      set:false },
+  { ini:"PS", name:"Priya Sharma",  dept:"",           ctc:"Ã¢â€šÂ¹1,00,000", basic:"50%", hra:"20%", other:"30%", net:"Ã¢â€šÂ¹8,333", set:true  },
+  { ini:"S",  name:"Sahil .",       dept:"Technology", ctc:"Not set",   basic:"Ã¢â‚¬â€",   hra:"Ã¢â‚¬â€",   other:"Ã¢â‚¬â€",   net:"Ã¢â‚¬â€",      set:false },
+  { ini:"NA", name:"Nihit Agarwal", dept:"Technology", ctc:"Not set",   basic:"Ã¢â‚¬â€",   hra:"Ã¢â‚¬â€",   other:"Ã¢â‚¬â€",   net:"Ã¢â‚¬â€",      set:false },
+  { ini:"RA", name:"Ridwanul Alam", dept:"Technology", ctc:"Not set",   basic:"Ã¢â‚¬â€",   hra:"Ã¢â‚¬â€",   other:"Ã¢â‚¬â€",   net:"Ã¢â‚¬â€",      set:false },
+  { ini:"AM", name:"Arjun Mehta",   dept:"",           ctc:"Not set",   basic:"Ã¢â‚¬â€",   hra:"Ã¢â‚¬â€",   other:"Ã¢â‚¬â€",   net:"Ã¢â‚¬â€",      set:false },
 ];
 
 const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -199,8 +199,8 @@ function buildDemoPayslips() {
           month: m,
           monthLabel: `${MONTHS_SHORT[m]} ${y}`,
           credited: `15 ${MONTHS_SHORT[m]} ${y}`,
-          gross: `â‚¹${gross.toLocaleString("en-IN")}`,
-          net: `â‚¹${net.toLocaleString("en-IN")}`,
+          gross: `Ã¢â€šÂ¹${gross.toLocaleString("en-IN")}`,
+          net: `Ã¢â€šÂ¹${net.toLocaleString("en-IN")}`,
           status: "Unpaid",
         });
       });
@@ -222,16 +222,16 @@ const INIT_HOLIDAYS = [
  *  forAll: true means every role sees it.
  */
 const INIT_NOTIFICATIONS = [
-  { id:1,  icon:"ðŸ—“", title:"Leave request pending",       body:"Arjun Mehta applied for Sick Leave Â· 25 Mar",             time:"2h ago",  read:false, forSA:true,  forAll:false, forEmpIds:[] },
-  { id:2,  icon:"ðŸ—“", title:"Leave request pending",       body:"Priya Sharma applied for Casual Leave Â· 28 Mar",           time:"3h ago",  read:false, forSA:true,  forAll:false, forEmpIds:[] },
-  { id:3,  icon:"âœ…", title:"Your leave was approved",     body:"Sick Leave 10â€“11 Mar has been approved",                   time:"1d ago",  read:false, forSA:false, forAll:false, forEmpIds:[3] },
-  { id:4,  icon:"ðŸ“„", title:"Document needs verification", body:"Nihit Agarwal Â· PAN Card uploaded Â· pending review",       time:"4h ago",  read:false, forSA:true,  forAll:false, forEmpIds:[] },
-  { id:5,  icon:"ðŸ’°", title:"Payslip released",            body:"Your Mar 2026 payslip is now available in Paydays",        time:"2d ago",  read:true,  forSA:false, forAll:true,  forEmpIds:[] },
-  { id:6,  icon:"ðŸŽ‰", title:"You received a shout-out!",   body:"Arjun Mehta recognised you for Teamwork ðŸ™Œ",              time:"5h ago",  read:false, forSA:false, forAll:false, forEmpIds:[3] },
-  { id:7,  icon:"ðŸ‘¤", title:"New employee onboarded",      body:"Ridwanul Alam joined Technology Â· Software Engineer",     time:"1w ago",  read:true,  forSA:true,  forAll:false, forEmpIds:[] },
-  { id:8,  icon:"ðŸ’³", title:"Payroll run completed",       body:"Mar 2026 payroll processed Â· 5 employees paid",           time:"2d ago",  read:true,  forSA:true,  forAll:false, forEmpIds:[] },
-  { id:9,  icon:"ðŸ“‹", title:"Onboarding task pending",     body:"3 employees have incomplete onboarding tasks",            time:"3d ago",  read:true,  forSA:true,  forAll:false, forEmpIds:[] },
-  { id:10, icon:"ðŸ—“", title:"Leave balance low",           body:"Your Earned Leave balance is below 3 days",               time:"3d ago",  read:true,  forSA:false, forAll:false, forEmpIds:[1] },
+  { id:1,  icon:"Ã°Å¸â€”â€œ", title:"Leave request pending",       body:"Arjun Mehta applied for Sick Leave Ã‚Â· 25 Mar",             time:"2h ago",  read:false, forSA:true,  forAll:false, forEmpIds:[] },
+  { id:2,  icon:"Ã°Å¸â€”â€œ", title:"Leave request pending",       body:"Priya Sharma applied for Casual Leave Ã‚Â· 28 Mar",           time:"3h ago",  read:false, forSA:true,  forAll:false, forEmpIds:[] },
+  { id:3,  icon:"Ã¢Å“â€¦", title:"Your leave was approved",     body:"Sick Leave 10Ã¢â‚¬â€œ11 Mar has been approved",                   time:"1d ago",  read:false, forSA:false, forAll:false, forEmpIds:[3] },
+  { id:4,  icon:"Ã°Å¸â€œâ€ž", title:"Document needs verification", body:"Nihit Agarwal Ã‚Â· PAN Card uploaded Ã‚Â· pending review",       time:"4h ago",  read:false, forSA:true,  forAll:false, forEmpIds:[] },
+  { id:5,  icon:"Ã°Å¸â€™Â°", title:"Payslip released",            body:"Your Mar 2026 payslip is now available in Paydays",        time:"2d ago",  read:true,  forSA:false, forAll:true,  forEmpIds:[] },
+  { id:6,  icon:"Ã°Å¸Å½â€°", title:"You received a shout-out!",   body:"Arjun Mehta recognised you for Teamwork Ã°Å¸â„¢Å’",              time:"5h ago",  read:false, forSA:false, forAll:false, forEmpIds:[3] },
+  { id:7,  icon:"Ã°Å¸â€˜Â¤", title:"New employee onboarded",      body:"Ridwanul Alam joined Technology Ã‚Â· Software Engineer",     time:"1w ago",  read:true,  forSA:true,  forAll:false, forEmpIds:[] },
+  { id:8,  icon:"Ã°Å¸â€™Â³", title:"Payroll run completed",       body:"Mar 2026 payroll processed Ã‚Â· 5 employees paid",           time:"2d ago",  read:true,  forSA:true,  forAll:false, forEmpIds:[] },
+  { id:9,  icon:"Ã°Å¸â€œâ€¹", title:"Onboarding task pending",     body:"3 employees have incomplete onboarding tasks",            time:"3d ago",  read:true,  forSA:true,  forAll:false, forEmpIds:[] },
+  { id:10, icon:"Ã°Å¸â€”â€œ", title:"Leave balance low",           body:"Your Earned Leave balance is below 3 days",               time:"3d ago",  read:true,  forSA:false, forAll:false, forEmpIds:[1] },
 ];
 
 /** Templates with {{placeholder}} support for Step 2 dynamic fill. */
@@ -305,13 +305,13 @@ const INIT_PAPERS = [
 ];
 
 const INIT_CANDIDATES = [
-  { id:"cand-1", name:"Riya Nair",      email:"riya.nair@gmail.com",    role:"Product Manager",    salary:"â‚¹18,00,000", startDate:"01 May 2026", notes:"Strong PM background" },
-  { id:"cand-2", name:"Aman Verma",     email:"aman.v@outlook.com",     role:"Backend Engineer",   salary:"â‚¹14,00,000", startDate:"15 May 2026", notes:"3 yrs Go experience" },
+  { id:"cand-1", name:"Riya Nair",      email:"riya.nair@gmail.com",    role:"Product Manager",    salary:"Ã¢â€šÂ¹18,00,000", startDate:"01 May 2026", notes:"Strong PM background" },
+  { id:"cand-2", name:"Aman Verma",     email:"aman.v@outlook.com",     role:"Backend Engineer",   salary:"Ã¢â€šÂ¹14,00,000", startDate:"15 May 2026", notes:"3 yrs Go experience" },
 ];
 
 const PAY_SELECT_ARROW = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a6e52' d='M2.5 4L6 7.5 9.5 4'/%3E%3C/svg%3E\")";
 
-const parseInr = (s) => (s && typeof s === "string") ? Number(s.replace(/[â‚¹,]/g, "")) : 0;
+const parseInr = (s) => (s && typeof s === "string") ? Number(s.replace(/[Ã¢â€šÂ¹,]/g, "")) : 0;
 
 const payFilterSelectStyle = {
   appearance: "none",
@@ -343,11 +343,11 @@ const DEFAULT_SALARY_CFG = () => ({
 });
 
 function parseInrStr(s) {
-  if (!s || s === "â€”") return 0;
-  return Number(String(s).replace(/[â‚¹,\s]/g, "")) || 0;
+  if (!s || s === "Ã¢â‚¬â€") return 0;
+  return Number(String(s).replace(/[Ã¢â€šÂ¹,\s]/g, "")) || 0;
 }
 function formatInrNum(n) {
-  return `â‚¹${Math.round(n).toLocaleString("en-IN")}`;
+  return `Ã¢â€šÂ¹${Math.round(n).toLocaleString("en-IN")}`;
 }
 
 /** Monthly breakdown for payslip from salary config + demo row. */
@@ -390,7 +390,7 @@ function getPayslipBreakdown(ini, salaryConfigs, payslipRow) {
 
 /** Calculate days until next birthday/anniversary (ignoring year). Includes 0, 1, 2, 3 only. */
 function getEventDays(dateStr) {
-  if (!dateStr || dateStr === "â€”") return null;
+  if (!dateStr || dateStr === "Ã¢â‚¬â€") return null;
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   
@@ -425,7 +425,7 @@ function getEventDays(dateStr) {
 }
 
 const empById = (id, list = EMPS) => list.find(e => e.id === id);
-const mgrName = (id, list = EMPS) => (id == null ? "â€”" : (empById(id, list)?.name ?? "â€”"));
+const mgrName = (id, list = EMPS) => (id == null ? "Ã¢â‚¬â€" : (empById(id, list)?.name ?? "Ã¢â‚¬â€"));
 
 /** Only Admin & Employee leave requests use tagged approvers (not Super Admin self-serve queue). */
 const LEAVE_TAGGED_APPROVAL_ROLES = new Set(["Admin", "Employee"]);
@@ -456,7 +456,7 @@ function leaveRowFromApplyForm(leaves, employeesList, form, submitterEmpId, isSA
   if (!e) return { error: "Choose an employee." };
   if (!form.from || !form.to) return { error: "Choose from and to dates." };
   if (form.from > form.to) return { error: "End date must be on or after start date." };
-  const approverName = form.approver && form.approver !== "Select approverâ€¦" ? form.approver.trim() : "";
+  const approverName = form.approver && form.approver !== "Select approverÃ¢â‚¬Â¦" ? form.approver.trim() : "";
   if (!approverName) return { error: "Tag an approver." };
   const maxId = Math.max(0, ...leaves.map(l => l.id));
   const fromD = new Date(form.from + "T12:00:00");
@@ -476,14 +476,14 @@ function leaveRowFromApplyForm(leaves, employeesList, form, submitterEmpId, isSA
       fromISO: form.from,
       toISO: form.to,
       days: daysLabel,
-      reason: form.reason.trim() || "â€”",
+      reason: form.reason.trim() || "Ã¢â‚¬â€",
       approver: approverName,
       status: "pending",
     },
   };
 }
 
-/** CSV column order â€” matches import requirements. */
+/** CSV column order Ã¢â‚¬â€ matches import requirements. */
 const EMP_CSV_HEADERS = [
   "name", "email", "phone", "designation", "department", "role", "employment_type",
   "date_of_joining", "salary", "dob", "ini", "avatar_color", "manager_email",
@@ -580,13 +580,13 @@ function parseEmployeesFromCSV(text, existing) {
       name,
       email,
       role: get(row, "role") || "Employee",
-      dept: get(row, "department") || "â€”",
+      dept: get(row, "department") || "Ã¢â‚¬â€",
       type: get(row, "employment_type") || "Full Time",
-      joined: get(row, "date_of_joining") || "â€”",
-      salary: get(row, "salary") || "â€”",
-      phone: get(row, "phone") || "â€”",
-      designation: get(row, "designation") || "â€”",
-      dob: get(row, "dob") || "â€”",
+      joined: get(row, "date_of_joining") || "Ã¢â‚¬â€",
+      salary: get(row, "salary") || "Ã¢â‚¬â€",
+      phone: get(row, "phone") || "Ã¢â‚¬â€",
+      designation: get(row, "designation") || "Ã¢â‚¬â€",
+      dob: get(row, "dob") || "Ã¢â‚¬â€",
       avatarC: get(row, "avatar_color") || "#99a98f",
       mgrEmail: get(row, "manager_email").toLowerCase(),
     });
@@ -649,7 +649,7 @@ function dateInRange(d, fromISO, toISO) {
   return t >= parseISODate(fromISO).getTime() && t <= parseISODate(toISO).getTime();
 }
 
-/** Monâ€“Sat are working days; only Sunday is marked as weekly off in calendars. */
+/** MonÃ¢â‚¬â€œSat are working days; only Sunday is marked as weekly off in calendars. */
 function isWeeklyOff(d) {
   return d.getDay() === 0;
 }
@@ -826,7 +826,7 @@ const Inp = ({ label, type="text", opts, ...rest }) => (
   </div>
 );
 
-/** Label + input with fixed â‚¹ or % on the edge (salary modals). */
+/** Label + input with fixed Ã¢â€šÂ¹ or % on the edge (salary modals). */
 const AffixField = ({ label, hint, prefix, suffix, type = "text", value, onChange, style: wrapStyle = {} }) => (
   <div style={{ marginBottom:0, ...wrapStyle }}>
     <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:6, letterSpacing:.5 }}>{label.toUpperCase()}</label>
@@ -870,7 +870,7 @@ const Modal = ({ title, onClose, children, width=480 }) => (
     <div onClick={e=>e.stopPropagation()} style={{ background:C.wht, borderRadius:18, padding:"clamp(18px, 5vw, 30px)", width, maxWidth:"min(92vw, 100%)", maxHeight:"88vh", overflowY:"auto", boxSizing:"border-box" }}>
       <div style={{ display:"flex", justifyContent: title ? "space-between" : "flex-end", alignItems:"center", marginBottom: title ? 22 : 4 }}>
         {title ? <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:19, color:C.txt }}>{title}</h2> : null}
-        <button type="button" onClick={onClose} style={{ background:"none", border:"none", fontSize:18, color:C.sub, cursor:"pointer", padding:4, lineHeight:1 }}>âœ•</button>
+        <button type="button" onClick={onClose} style={{ background:"none", border:"none", fontSize:18, color:C.sub, cursor:"pointer", padding:4, lineHeight:1 }}>Ã¢Å“â€¢</button>
       </div>
       {children}
     </div>
@@ -926,7 +926,7 @@ const OrgPreviewCard = ({ node, isEmp, onReassign, isAdmin, employees, onClose }
             <div style={{ fontSize:12, color:C.sub }}>{isEmp ? node.designation : node.role}</div>
           </div>
         </div>
-        <button onClick={onClose} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:18 }}>Ã—</button>
+        <button onClick={onClose} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:18 }}>Ãƒâ€”</button>
       </div>
 
       <div style={{ display:"grid", gap:10, marginBottom:16 }}>
@@ -962,7 +962,7 @@ const OrgPreviewCard = ({ node, isEmp, onReassign, isAdmin, employees, onClose }
 
 const Verified = () => (
 
-  <span title="Verified" style={{ display:"inline-flex", alignItems:"center", justifyContent:"center", width:16, height:16, borderRadius:"50%", background:"#22c55e", color:"#fff", fontSize:10, fontWeight:800, marginLeft:6 }}>âœ“</span>
+  <span title="Verified" style={{ display:"inline-flex", alignItems:"center", justifyContent:"center", width:16, height:16, borderRadius:"50%", background:"#22c55e", color:"#fff", fontSize:10, fontWeight:800, marginLeft:6 }}>Ã¢Å“â€œ</span>
 );
 
 const OrgTreeNode = ({ 
@@ -1024,7 +1024,7 @@ const OrgTreeNode = ({
               cursor:"pointer", boxShadow:"0 2px 4px rgba(0,0,0,.1)", color:C.p, zIndex:5,
             }}
           >
-            {isCollapsed ? "+" : "âˆ’"}
+            {isCollapsed ? "+" : "Ã¢Ë†â€™"}
           </button>
         )}
       </div>
@@ -1061,14 +1061,14 @@ function fmtTimestamp(ts) {
 }
 
 const TIMELINE_ICONS = {
-  joined:       { icon: "â­", color: "#afc0a5" },
-  role_change:  { icon: "ðŸ’¼", color: "#6fa8c4" },
-  dept_change:  { icon: "ðŸ¢", color: "#a09060" },
-  salary_update:{ icon: "ðŸ’°", color: "#7da890" },
-  doc_upload:   { icon: "ðŸ“„", color: "#9a8fc0" },
-  asset_assign: { icon: "ðŸ’»", color: "#c09060" },
-  asset_return: { icon: "â†©ï¸",  color: "#9a9a9a" },
-  offboarded:   { icon: "ðŸ›Žï¸", color: "#d08080" },
+  joined:       { icon: "Ã¢Â­Â", color: "#afc0a5" },
+  role_change:  { icon: "Ã°Å¸â€™Â¼", color: "#6fa8c4" },
+  dept_change:  { icon: "Ã°Å¸ÂÂ¢", color: "#a09060" },
+  salary_update:{ icon: "Ã°Å¸â€™Â°", color: "#7da890" },
+  doc_upload:   { icon: "Ã°Å¸â€œâ€ž", color: "#9a8fc0" },
+  asset_assign: { icon: "Ã°Å¸â€™Â»", color: "#c09060" },
+  asset_return: { icon: "Ã¢â€ Â©Ã¯Â¸Â",  color: "#9a9a9a" },
+  offboarded:   { icon: "Ã°Å¸â€ºÅ½Ã¯Â¸Â", color: "#d08080" },
 };
 
 const ActivityTimeline = ({ events }) => {
@@ -1080,7 +1080,7 @@ const ActivityTimeline = ({ events }) => {
     <div style={{ position:"relative", paddingLeft:28 }}>
       <div style={{ position:"absolute", left:10, top:4, bottom:4, width:2, background:C.bdr, borderRadius:2 }} />
       {sorted.map((ev, i) => {
-        const meta = TIMELINE_ICONS[ev.type] ?? { icon:"ðŸ“Œ", color:C.sub };
+        const meta = TIMELINE_ICONS[ev.type] ?? { icon:"Ã°Å¸â€œÅ’", color:C.sub };
         return (
           <div key={i} style={{ display:"flex", gap:10, marginBottom:16, position:"relative" }}>
             <div style={{
@@ -1143,11 +1143,11 @@ const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false, onE
           <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "160px 1fr", gap:"12px 20px", fontSize:12 }}>
             <div style={{ display:"contents" }}>
               <div style={{ color:C.sub, fontWeight:600, fontSize:10, letterSpacing:.5 }}>ACCOUNT NUMBER</div>
-              <div style={{ color:C.txt, fontFamily:"monospace" }}>{e.bankInfo.accountNumber || "â€”"}</div>
+              <div style={{ color:C.txt, fontFamily:"monospace" }}>{e.bankInfo.accountNumber || "Ã¢â‚¬â€"}</div>
             </div>
             <div style={{ display:"contents" }}>
               <div style={{ color:C.sub, fontWeight:600, fontSize:10, letterSpacing:.5 }}>IFSC CODE</div>
-              <div style={{ color:C.txt, fontFamily:"monospace" }}>{e.bankInfo.ifsc || "â€”"}</div>
+              <div style={{ color:C.txt, fontFamily:"monospace" }}>{e.bankInfo.ifsc || "Ã¢â‚¬â€"}</div>
             </div>
           </div>
         ) : (
@@ -1180,9 +1180,9 @@ const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false, onE
               onMouseEnter={e => { if (onPreviewDoc) e.currentTarget.style.boxShadow = `0 0 0 2px ${C.p}`; }}
               onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
             >
-              <span style={{ fontSize:16, marginRight:8 }}>ðŸ“„</span>
+              <span style={{ fontSize:16, marginRight:8 }}>Ã°Å¸â€œâ€ž</span>
               <span style={{ flex:1 }}>{doc.n}</span>
-              {onPreviewDoc && <span style={{ fontSize:10, color:C.sub, marginRight:8 }}>View â†—</span>}
+              {onPreviewDoc && <span style={{ fontSize:10, color:C.sub, marginRight:8 }}>View Ã¢â€ â€”</span>}
               {doc.v ? (
                 <Verified />
               ) : onApproveDoc ? (
@@ -1207,7 +1207,7 @@ const ProfileDetail = ({ e, wrapCard = true, empList = EMPS, narrow = false, onE
       {e.emergencyContact?.name && (
         <div style={{ marginTop:16, paddingTop:14, borderTop:`1px solid ${C.bdr}` }}>
           <div style={{ color:C.sub, fontWeight:600, fontSize:10, letterSpacing:.5, marginBottom:8 }}>EMERGENCY CONTACT</div>
-          <div style={{ fontSize:12, color:C.txt }}>{e.emergencyContact.name} Â· {e.emergencyContact.phone} Â· {e.emergencyContact.rel}</div>
+          <div style={{ fontSize:12, color:C.txt }}>{e.emergencyContact.name} Ã‚Â· {e.emergencyContact.phone} Ã‚Â· {e.emergencyContact.rel}</div>
         </div>
       )}
       {(e.customFields||[]).length > 0 && (
@@ -1267,7 +1267,7 @@ const PayslipSheet = ({ logoUrl, companyTagline, emp, payslip, breakdown, approv
         <div style={{ textAlign: narrow ? "left" : "right", minWidth: narrow ? "100%" : undefined }}>
           <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1.2 }}>PAYSLIP</div>
           <div style={{ fontSize:14, fontWeight:700, marginTop:6, fontFamily:"Georgia,serif" }}>{payslip.monthLabel}</div>
-          <div style={{ fontSize:10, color:C.sub, marginTop:4, fontFamily:"system-ui,sans-serif" }}>Salary date Â· {payslip.credited}</div>
+          <div style={{ fontSize:10, color:C.sub, marginTop:4, fontFamily:"system-ui,sans-serif" }}>Salary date Ã‚Â· {payslip.credited}</div>
         </div>
       </div>
 
@@ -1303,7 +1303,7 @@ const PayslipSheet = ({ logoUrl, companyTagline, emp, payslip, breakdown, approv
         <Row label="TDS" value={formatInrNum(b.tds)} />
         <div style={{ display:"flex", justifyContent:"space-between", padding:"10px 0 4px", fontSize:12, fontWeight:700, fontFamily:"system-ui,sans-serif", color:C.sub }}>
           <span>Total deductions</span>
-          <span>âˆ’ {formatInrNum(b.totalDed)}</span>
+          <span>Ã¢Ë†â€™ {formatInrNum(b.totalDed)}</span>
         </div>
       </div>
 
@@ -1600,7 +1600,7 @@ const LoginScreen = ({ onLogin, logoUrl, tagline }) => {
             </div>
             <div>
               <label style={{ display:"block", fontSize:12, fontWeight:700, color:C.sub, marginBottom:6, textTransform:"uppercase", letterSpacing:0.5 }}>Password</label>
-              <input type="password" value={password} onChange={e=>setPassword(e.target.value)} onFocus={()=>setFocusInput('pass')} onBlur={()=>setFocusInput(null)} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" style={{ width:"100%", boxSizing:"border-box", padding:"12px 14px", borderRadius:10, border:`1px solid ${focusInput==='pass'?C.p:C.bdr}`, outline:"none", fontSize:14, background:focusInput==='pass'?C.wht:C.bg, boxShadow:focusInput==='pass'?`0 0 0 3px rgba(var(--p-rgb),.15)`:"", transition:"all 0.2s" }} />
+              <input type="password" value={password} onChange={e=>setPassword(e.target.value)} onFocus={()=>setFocusInput('pass')} onBlur={()=>setFocusInput(null)} placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢" style={{ width:"100%", boxSizing:"border-box", padding:"12px 14px", borderRadius:10, border:`1px solid ${focusInput==='pass'?C.p:C.bdr}`, outline:"none", fontSize:14, background:focusInput==='pass'?C.wht:C.bg, boxShadow:focusInput==='pass'?`0 0 0 3px rgba(var(--p-rgb),.15)`:"", transition:"all 0.2s" }} />
             </div>
             <button type="submit" disabled={loading || !(email && password)} style={{ marginTop:8, width:"100%", padding:"14px", borderRadius:10, background:loading?C.sub:(email && password ? C.p : C.bg), color:(email && password)?"#fff":C.sub, border:(email && password)?"none":`1px solid ${C.bdr}`, fontSize:15, fontWeight:700, cursor:(loading || !(email && password))?"not-allowed":"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
               {loading ? "Authenticating..." : "Login"}
@@ -1624,7 +1624,7 @@ const LoginScreen = ({ onLogin, logoUrl, tagline }) => {
   );
 };
 
-// â”€â”€â”€ Offboard Default Steps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Offboard Default Steps Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 const OFFBOARD_DEFAULT_STEPS = [
   { name: "Resignation/Termination/Retirement email shared", status: "Pending", group: "Phase 1: Communication" },
   { name: "Notice Period discussed and finalized", status: "Pending", group: "Phase 1: Communication" },
@@ -1637,7 +1637,7 @@ const OFFBOARD_DEFAULT_STEPS = [
   { name: "F&F Settlement completed", status: "Pending", group: "Phase 4: Closure" },
 ];
 
-// â”€â”€â”€ Onboard Default Steps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Onboard Default Steps Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 const ONBOARD_DEFAULT_STEPS = [
   { name: "Offer Letter Sent", status: "Pending", group: "Phase 1: Documents" },
   { name: "Offer Letter Signed", status: "Pending", group: "Phase 1: Documents" },
@@ -1686,7 +1686,7 @@ let GLOBAL_ONBOARDINGS = [
   }
 ];
 
-// â”€â”€â”€ Shared Lifecycle UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Shared Lifecycle UI Components Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 const KpiPill = ({ label, value, color = null }: any) => (
   <div style={{ textAlign:"center", padding:"14px 18px", borderRadius:12, background:C.surf, border:`1px solid ${C.bdr}`, flex:1, minWidth:72 }}>
     <div style={{ fontSize:20, fontWeight:800, color: color || C.p, letterSpacing:-0.5 }}>{value}</div>
@@ -1811,7 +1811,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
               <div style={{ width:40, height:40, borderRadius:10, background:`linear-gradient(135deg,${C.p},${C.p2||"#818cf8"})`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:16, fontWeight:800 }}>{ob.name.charAt(0)}</div>
               <div>
                 <h2 style={{ fontSize:20, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{ob.name}</h2>
-                <div style={{ fontSize:12, color:C.sub, marginTop:2 }}>{ob.role} &nbsp;Â·&nbsp; Joining {ob.doj}</div>
+                <div style={{ fontSize:12, color:C.sub, marginTop:2 }}>{ob.role} &nbsp;Ã‚Â·&nbsp; Joining {ob.doj}</div>
               </div>
             </div>
           </div>
@@ -1888,7 +1888,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
                 <div style={{ width:44, height:44, borderRadius:12, background:`linear-gradient(135deg,${C.p},${C.p2||"#818cf8"})`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:17, fontWeight:800, flexShrink:0 }}>{o.name.charAt(0)}</div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontSize:15, fontWeight:700, color:C.txt }}>{o.name}</div>
-                  <div style={{ fontSize:12, color:C.sub, marginTop:3 }}>{o.role} &nbsp;Â·&nbsp; Joining {o.doj}</div>
+                  <div style={{ fontSize:12, color:C.sub, marginTop:3 }}>{o.role} &nbsp;Ã‚Â·&nbsp; Joining {o.doj}</div>
                   <div style={{ marginTop:8, height:4, background:C.surf, borderRadius:99, overflow:"hidden", maxWidth:240 }}>
                     <div style={{ height:"100%", background:pct===100?"#22c55e":`linear-gradient(90deg,${C.p},${C.p2||"#818cf8"})`, width:`${pct}%`, borderRadius:99 }} />
                   </div>
@@ -1913,173 +1913,187 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
   const [isEditingSteps, setIsEditingSteps] = useState(false);
   const [form, setForm] = useState({ empId:"", reason:"Resignation", lastDate:"" });
 
-  const toggleOffboardTask = (itemId, taskIndex) => {
+  const toggleOffboardTask = (itemId, idx) => {
     setOffboardingItems(prev => prev.map(item => {
       if (item.id !== itemId) return item;
-      const nextChecklist = [...item.checklist];
-      const cur = nextChecklist[taskIndex].status;
-      const nextStatus = cur === "Pending" ? "In Progress" : cur === "In Progress" ? "Completed" : "Pending";
-      nextChecklist[taskIndex] = { ...nextChecklist[taskIndex], status: nextStatus };
-      const completed = nextChecklist.filter(c => c.status === "Completed").length;
-      return { ...item, checklist: nextChecklist, progress: Math.round((completed / nextChecklist.length) * 100) };
+      const c = [...item.checklist];
+      c[idx] = { ...c[idx], status: c[idx].status === "Completed" ? "Pending" : "Completed" };
+      const done = c.filter(x => x.status === "Completed").length;
+      return { ...item, checklist: c, progress: Math.round((done / c.length) * 100) };
     }));
   };
 
-  const addOffboardStep = (itemId) => {
-    setOffboardingItems(prev => prev.map(item => item.id === itemId ? { ...item, checklist: [...item.checklist, { name: "New Step", status: "Pending" }] } : item));
-  };
-
-  const deleteOffboardStep = (itemId, taskIndex) => {
-    setOffboardingItems(prev => prev.map(item => item.id === itemId ? { ...item, checklist: item.checklist.filter((_, i) => i !== taskIndex) } : item));
-  };
-
-  const updateOffboardStepName = (itemId, taskIndex, newName) => {
-    setOffboardingItems(prev => prev.map(item => {
-      if (item.id !== itemId) return item;
-      const nextChecklist = [...item.checklist];
-      nextChecklist[taskIndex].name = newName;
-      return { ...item, checklist: nextChecklist };
-    }));
-  };
-
-  const updateOffboardMeta = (itemId, field, value) => {
-    setOffboardingItems(prev => prev.map(item => item.id === itemId ? { ...item, [field]: value } : item));
-  };
+  const addOffboardStep = (itemId) => setOffboardingItems(prev => prev.map(item => item.id !== itemId ? item : { ...item, checklist: [...item.checklist, { name: "New Step", status: "Pending", group: "Phase 4: Closure" }] }));
+  const deleteOffboardStep = (itemId, idx) => setOffboardingItems(prev => prev.map(item => item.id !== itemId ? item : { ...item, checklist: item.checklist.filter((_,i) => i !== idx) }));
+  const updateOffboardStepName = (itemId, idx, val) => setOffboardingItems(prev => prev.map(item => { if (item.id !== itemId) return item; const c=[...item.checklist]; c[idx]={...c[idx],name:val}; return {...item,checklist:c}; }));
+  const updateOffboardMeta = (itemId, field, value) => setOffboardingItems(prev => prev.map(item => item.id === itemId ? { ...item, [field]: value } : item));
 
   const handleStart = () => {
     if (!form.empId || form.empId === "Pick person..." || !form.lastDate) return toast("Select teammate & last date");
     const emp = employees.find(e => e.id === Number(form.empId));
     const newItem = {
-      id: Date.now(),
-      empId: Number(form.empId),
-      name: emp?.name || "Unknown",
-      status: "In Progress",
-      progress: 0,
-      lastAction: `LWD: ${form.lastDate}`,
-      checklist: [
-        { name: "Resignation sharing email", status: "Pending" },
-        { name: "Notice Period finalized", status: "Pending" },
-        { name: "KT Sessions started", status: "Pending" },
-        { name: "Replacement hiring initiated", status: "Pending" },
-        { name: "Company documents shared", status: "Pending" },
-        { name: "Exit Feedback conducted", status: "Pending" },
-        { name: "Property returned", status: "Pending" },
-        { name: "Workspace removal", status: "Pending" },
-        { name: "F&F Settlement", status: "Pending" }
-      ]
+      id: Date.now(), empId: Number(form.empId),
+      name: emp?.name || "Unknown", reason: form.reason,
+      status: "In Progress", progress: 0,
+      lastAction: `Last Working Day: ${form.lastDate}`,
+      checklist: JSON.parse(JSON.stringify(OFFBOARD_DEFAULT_STEPS))
     };
     setOffboardingItems([newItem, ...offboardingItems]);
+    if (papers && setPapers) {
+      const doc = { id: Date.now()+1, name: `${form.reason} Docket - ${emp?.name}`, empId: Number(form.empId), type: "Other", status: "Generated", date: new Date().toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}), url: "#" };
+      setPapers([doc, ...papers]);
+    }
     setShowInitiate(false);
-    toast(`Journey started for ${emp?.name}`);
+    setForm({ empId:"", reason:"Resignation", lastDate:"" });
+    toast(`Exit journey started for ${emp?.name}`);
+    if (addNotif) addNotif({ title:"Exit Journey Started", body:`${emp?.name}'s offboarding has been initiated.`, icon:"ðŸšª" });
   };
 
   if (activeId) {
     const item = offboardingItems.find(o => o.id === activeId);
     if (!item) return null;
+    const checklist = item.checklist;
+    const done = checklist.filter(c => c.status === "Completed").length;
+    const total = checklist.length;
+    const progress = total > 0 ? Math.round((done / total) * 100) : 0;
+    const groups = [...new Set(checklist.map(c => c.group || "General"))];
+
     return (
-      <div style={{ animation:"fadeIn 0.3s" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
-          <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub }}><IconChevronLeft /></button>
+      <div style={{ maxWidth:820, margin:"0 auto", width:"100%", animation:"fadeIn 0.3s" }}>
+        <div style={{ display:"flex", alignItems:"flex-start", gap:16, marginBottom:24 }}>
+          <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, marginTop:4, display:"flex" }}><IconChevronLeft /></button>
           <div style={{ flex:1 }}>
-            <h2 style={{ fontSize:22, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{item.name}</h2>
-            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>{item.lastAction}</div>
+            <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+              <div style={{ width:40, height:40, borderRadius:10, background:`linear-gradient(135deg,#f43f5e,#ec4899)`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:16, fontWeight:800 }}>{item.name.charAt(0)}</div>
+              <div>
+                <h2 style={{ fontSize:20, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{item.name}</h2>
+                <div style={{ fontSize:12, color:C.sub, marginTop:2 }}>{item.reason || "Exit"} &nbsp;Â·&nbsp; {item.lastAction}</div>
+              </div>
+            </div>
           </div>
-          <button onClick={() => setIsEditingSteps(!isEditingSteps)} style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 14px", borderRadius:10, border:`1px solid ${C.bdr}`, background:"transparent", color:C.sub, fontSize:12, fontWeight:700, cursor:"pointer" }}>
-            <IconSettings size={14} /> {isEditingSteps ? "Save Steps" : "Manage Steps"}
+          <button onClick={() => setIsEditingSteps(!isEditingSteps)} style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 14px", borderRadius:10, border:`1px solid ${isEditingSteps ? C.p : C.bdr}`, background: isEditingSteps ? `rgba(var(--p-rgb),0.06)` : "transparent", color: isEditingSteps ? C.p : C.sub, fontSize:12, fontWeight:700, cursor:"pointer", transition:"all 0.2s" }}>
+            <IconSettings size={13} color={isEditingSteps ? C.p : C.sub} /> {isEditingSteps ? "Done Editing" : "Manage Steps"}
           </button>
         </div>
-        <div style={{ height:8, background:C.surf, borderRadius:4, overflow:"hidden", marginBottom:32, border:`1px solid ${C.bdr}` }}>
-          <div style={{ height:"100%", background:C.p, width:`${item.progress}%`, transition:"width 0.4s" }} />
+
+        <div style={{ display:"flex", gap:10, marginBottom:24 }}>
+          <KpiPill label="Completed" value={done} color="#22c55e" />
+          <KpiPill label="Remaining" value={total - done} color="#f43f5e" />
+          <KpiPill label="Total Steps" value={total} />
+          <KpiPill label="Progress" value={`${progress}%`} color={progress === 100 ? "#22c55e" : "#f43f5e"} />
         </div>
-        
-        <div style={{ display:"grid", gap:20 }}>
-          <Card style={{ padding:28 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-               <h3 style={{ fontSize:11, fontWeight:700, color:C.sub, textTransform:"uppercase", letterSpacing:1.5 }}>Offboarding Checklist</h3>
-               {isEditingSteps && <button onClick={()=>addOffboardStep(item.id)} style={{ fontSize:11, color:C.p, fontWeight:700, background:"none", border:"none", cursor:"pointer" }}>+ Add Step</button>}
-            </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-              {item.checklist.map((c, i) => {
-                const checked = c.status === "Completed";
-                return (
-                  <div key={i} style={{ padding:"12px 16px", borderRadius:12, border:`1px solid ${checked?C.p:C.bdr}`, background:checked?"rgba(var(--p-rgb),0.02)":C.surf, display:"flex", alignItems:"center", gap:12 }}>
-                    {!isEditingSteps && (
-                      <div onClick={() => toggleOffboardTask(item.id, i)} style={{ width:18, height:18, borderRadius:5, border:`1.5px solid ${checked?C.p:C.bdr}`, background:checked?C.p:"transparent", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer" }}>
-                        {checked && <IconCheck color="#fff" size={10} />}
-                      </div>
-                    )}
-                    <div style={{ flex:1 }}>
-                       {isEditingSteps ? (
-                         <input value={c.name} onChange={(e)=>updateOffboardStepName(item.id, i, e.target.value)} style={{ width:"100%", border:"none", background:"transparent", fontSize:14, color:C.txt, outline:"none", borderBottom:`1px solid ${C.bdr}` }} />
-                       ) : (
-                         <span style={{ fontSize:14, color:C.txt, fontWeight:checked?600:400 }}>{c.name}</span>
-                       )}
-                    </div>
-                    {isEditingSteps && (
-                      <button onClick={()=>deleteOffboardStep(item.id, i)} style={{ background:"none", border:"none", cursor:"pointer", color:C.p }}><IconTrash size={14} /></button>
-                    )}
-                    {(c.name.includes("email") || c.name.includes("documents")) && !isEditingSteps && (
-                      <Btn variant="outline" onClick={()=>setPage("Paperwork Hub")} style={{ fontSize:10, padding:"4px 10px" }}>Paperwork Hub <IconExternal size={10} style={{ marginLeft:4 }} /></Btn>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            {item.checklist.some(c=>c.name.includes("Notice Period")) && !isEditingSteps && (
-              <div style={{ marginTop:24, paddingTop:24, borderTop:`1px solid ${C.bdr}`, display:"flex", gap:16 }}>
-                 <div style={{ flex:1 }}><label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:6 }}>NOTICE LENGTH (DAYS)</label>
-                   <input type="number" value={item.noticeLength||""} onChange={(e)=>updateOffboardMeta(item.id, 'noticeLength', e.target.value)} style={{ width:"100%", padding:10, borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13 }} placeholder="e.g. 30" />
-                 </div>
-                 <div style={{ flex:1 }}><label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:6 }}>END DATE</label>
-                   <input type="date" value={item.noticeEnd||""} onChange={(e)=>updateOffboardMeta(item.id, 'noticeEnd', e.target.value)} style={{ width:"100%", padding:10, borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13 }} />
-                 </div>
-              </div>
-            )}
-          </Card>
+
+        <div style={{ height:6, background:C.surf, borderRadius:99, overflow:"hidden", marginBottom:24, border:`1px solid ${C.bdr}` }}>
+          <div style={{ height:"100%", background: progress === 100 ? "#22c55e" : `linear-gradient(90deg,#f43f5e,#ec4899)`, width:`${progress}%`, transition:"width 0.5s cubic-bezier(0.4,0,0.2,1)", borderRadius:99 }} />
         </div>
+
+        <div style={{ display:"flex", gap:12, marginBottom:28 }}>
+          <div style={{ flex:1, padding:"12px 16px", borderRadius:10, background:C.surf, border:`1px solid ${C.bdr}` }}>
+            <label style={{ fontSize:9, fontWeight:800, color:C.sub, display:"block", marginBottom:6, textTransform:"uppercase", letterSpacing:1 }}>Notice Length (Days)</label>
+            <input type="number" value={item.noticeLength||""} onChange={e=>updateOffboardMeta(item.id,'noticeLength',e.target.value)} placeholder="e.g. 30" style={{ width:"100%", border:"none", background:"transparent", fontSize:14, fontWeight:700, color:C.txt, outline:"none" }} />
+          </div>
+          <div style={{ flex:1, padding:"12px 16px", borderRadius:10, background:C.surf, border:`1px solid ${C.bdr}` }}>
+            <label style={{ fontSize:9, fontWeight:800, color:C.sub, display:"block", marginBottom:6, textTransform:"uppercase", letterSpacing:1 }}>Notice End Date</label>
+            <input type="date" value={item.noticeEnd||""} onChange={e=>updateOffboardMeta(item.id,'noticeEnd',e.target.value)} style={{ width:"100%", border:"none", background:"transparent", fontSize:14, fontWeight:700, color:C.txt, outline:"none" }} />
+          </div>
+          <div style={{ flex:1, padding:"12px 16px", borderRadius:10, background:`rgba(var(--p-rgb),0.04)`, border:`1px dashed ${C.p}`, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+            <div><div style={{ fontSize:9, fontWeight:800, color:C.p, textTransform:"uppercase", letterSpacing:1, marginBottom:2 }}>Exit Documents</div><div style={{ fontSize:11, color:C.sub }}>Docket auto-generated</div></div>
+            <button onClick={()=>setPage("Paperwork Hub")} style={{ display:"flex", alignItems:"center", gap:4, padding:"5px 10px", borderRadius:7, border:`1px solid ${C.bdr}`, background:C.wht, color:C.sub, fontSize:10, fontWeight:700, cursor:"pointer" }}>View <IconExternal size={9} color={C.sub} /></button>
+          </div>
+        </div>
+
+        <div style={{ display:"grid", gap:24 }}>
+          {groups.map(g => {
+            const items = checklist.filter(c => (c.group||"General") === g);
+            const gDone = items.filter(c => c.status === "Completed").length;
+            return (
+              <section key={g}>
+                <PhaseHeader label={g} done={gDone} total={items.length} isEditMode={isEditingSteps} />
+                {items.map(c => {
+                  const idx = checklist.indexOf(c);
+                  return (
+                    <LifecycleRow key={idx} item={c} isEditMode={isEditingSteps}
+                      onToggle={() => toggleOffboardTask(item.id, idx)}
+                      onEdit={val => updateOffboardStepName(item.id, idx, val)}
+                      onDelete={() => deleteOffboardStep(item.id, idx)}
+                      cta={(c.name.toLowerCase().includes("email") || c.name.toLowerCase().includes("documents")) ? "Paperwork Hub" : null}
+                      onCtaClick={() => setPage("Paperwork Hub")}
+                    />
+                  );
+                })}
+              </section>
+            );
+          })}
+          {isEditingSteps && (
+            <button onClick={() => addOffboardStep(item.id)} style={{ padding:"14px", borderRadius:10, border:`1px dashed ${C.bdr}`, background:C.surf, color:C.p, fontSize:12, fontWeight:700, display:"flex", alignItems:"center", justifyContent:"center", gap:8, cursor:"pointer" }}>
+              <IconPlus size={14} color={C.p} /> Add Custom Step
+            </button>
+          )}
+        </div>
+        <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}`}</style>
       </div>
     );
   }
 
   return (
-    <div style={{ animation:"fadeIn 0.3s" }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
-        <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, display:"flex", alignItems:"center", gap:8 }}><IconChevronLeft /> Back</button>
-        <Btn onClick={() => setShowInitiate(true)} style={{ padding:"12px 24px" }}><IconPlus size={16} color="#fff" style={{ marginRight:8 }} /> Initiate Transition</Btn>
+    <div style={{ maxWidth:820, margin:"0 auto", width:"100%", animation:"fadeIn 0.3s" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:32 }}>
+        <div>
+          <h2 style={{ fontSize:26, fontWeight:700, color:C.txt, margin:"0 0 6px", fontFamily:"Georgia,serif" }}>Active Offboardings</h2>
+          <p style={{ color:C.sub, fontSize:14, margin:0 }}>Managing teammates moving to their next chapter.</p>
+        </div>
+        <Btn onClick={() => setShowInitiate(true)} style={{ padding:"10px 20px", display:"flex", alignItems:"center", gap:8 }}>
+          <IconPlus size={14} color="#fff" /> Initiate Transition
+        </Btn>
       </div>
-      <h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Active Offboardings</h2>
-      <p style={{ color:C.sub, fontSize:15, margin:"0 0 32px" }}>Managing teammates moving to their next chapter.</p>
-      
+
       {offboardingItems.length === 0 ? (
-        <div style={{ textAlign:"center", padding:80, background:C.surf, borderRadius:20, border:`1px dashed ${C.bdr}` }}>
-          <div style={{ marginBottom:16, display:"flex", justifyContent:"center" }}><IconBox /></div>
-          <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Cloudless Sky</h3>
-          <p style={{ color:C.sub, fontSize:14 }}>No departures currently in the workflow.</p>
+        <div style={{ textAlign:"center", padding:"72px 40px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
+          <div style={{ display:"flex", justifyContent:"center", marginBottom:16, opacity:0.4 }}><IconBox size={44} /></div>
+          <h3 style={{ fontSize:16, fontWeight:700, color:C.txt, margin:"0 0 6px" }}>Cloudless Sky</h3>
+          <p style={{ color:C.sub, fontSize:13, margin:0 }}>No active offboardings. Use 'Initiate Transition' to begin.</p>
         </div>
       ) : (
-        <div style={{ display:"grid", gap:16 }}>
-          {offboardingItems.map(o => (
-            <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:24, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.p} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
-              <div style={{ width:48, height:48, borderRadius:12, background:`rgba(var(--p-rgb),0.1)`, display:"flex", alignItems:"center", justifyContent:"center", color:C.p, fontSize:18, fontWeight:700 }}>{o.name.charAt(0)}</div>
-              <div style={{ flex:1 }}><h4 style={{ fontSize:17, fontWeight:700, margin:0, color:C.txt }}>{o.name}</h4><div style={{ fontSize:12, color:C.sub, marginTop:4 }}>{o.lastAction}</div></div>
-              <div style={{ textAlign:"right" }}><div style={{ fontSize:14, fontWeight:700, color:C.p }}>{o.progress || 0}%</div><div style={{ fontSize:10, color:C.sub, textTransform:"uppercase", fontWeight:700 }}>Complete</div></div>
-            </Card>
-          ))}
+        <div style={{ display:"grid", gap:12 }}>
+          {offboardingItems.map(o => {
+            const pct = o.progress || 0;
+            return (
+              <div key={o.id} onClick={() => setActiveId(o.id)} style={{ display:"flex", alignItems:"center", gap:18, padding:"18px 22px", borderRadius:14, background:C.wht, border:`1px solid ${C.bdr}`, cursor:"pointer", transition:"all 0.18s" }} onMouseEnter={e=>{e.currentTarget.style.borderColor="#f43f5e";e.currentTarget.style.transform="translateY(-1px)";e.currentTarget.style.boxShadow="0 4px 20px rgba(244,63,94,0.08)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr;e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";}}>
+                <div style={{ width:44, height:44, borderRadius:12, background:`linear-gradient(135deg,#f43f5e,#ec4899)`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:17, fontWeight:800, flexShrink:0 }}>{o.name.charAt(0)}</div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:15, fontWeight:700, color:C.txt }}>{o.name}</div>
+                  <div style={{ fontSize:12, color:C.sub, marginTop:3 }}>{o.reason || "Exit"} &nbsp;Â·&nbsp; {o.lastAction}</div>
+                  <div style={{ marginTop:8, height:4, background:C.surf, borderRadius:99, overflow:"hidden", maxWidth:240 }}>
+                    <div style={{ height:"100%", background: pct===100 ? "#22c55e" : `linear-gradient(90deg,#f43f5e,#ec4899)`, width:`${pct}%`, borderRadius:99 }} />
+                  </div>
+                </div>
+                <div style={{ textAlign:"right", flexShrink:0 }}>
+                  <div style={{ fontSize:18, fontWeight:800, color: pct===100 ? "#22c55e" : "#f43f5e" }}>{pct}%</div>
+                  <div style={{ fontSize:10, fontWeight:700, color:C.sub, textTransform:"uppercase", letterSpacing:0.5, marginTop:2 }}>{o.checklist?.filter(c=>c.status==="Completed").length||0}/{o.checklist?.length||0} done</div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 
       {showInitiate && (
-        <Modal title="Initiate Transition" onClose={() => setShowInitiate(false)} width={450}>
-           <div style={{ display:"grid", gap:16 }}>
-             <Inp label="Teammate" value={form.empId} onChange={e=>setForm({...form, empId:e.target.value})} opts={["Pick person...", ...employees.map(e=>({label:e.name, value:String(e.id)}))]} />
-             <Inp label="Last Date" type="date" value={form.lastDate} onChange={e=>setForm({...form, lastDate:e.target.value})} />
-             <div style={{ display:"flex", justifyContent:"flex-end", gap:12, marginTop:24 }}><Btn variant="ghost" onClick={()=>setShowInitiate(false)}>Discard</Btn><Btn onClick={handleStart}>Start Journey</Btn></div>
-           </div>
+        <Modal title="Initiate Transition" onClose={() => setShowInitiate(false)} width={460}>
+          <p style={{ fontSize:13, color:C.sub, lineHeight:1.6, margin:"0 0 20px" }}>Starting an exit journey creates a phase-grouped checklist and generates an official exit docket in the Paperwork Hub.</p>
+          <div style={{ display:"grid", gap:12 }}>
+            <Inp label="Teammate" value={form.empId} onChange={e=>setForm({...form,empId:e.target.value})} opts={["Pick person...", ...employees.map(e=>({label:e.name,value:String(e.id)}))]} />
+            <Inp label="Separation Reason" value={form.reason} onChange={e=>setForm({...form,reason:e.target.value})} opts={["Resignation","Termination","Contract End","Retirement"]} />
+            <Inp label="Last Working Date" type="date" value={form.lastDate} onChange={e=>setForm({...form,lastDate:e.target.value})} />
+          </div>
+          <div style={{ display:"flex", justifyContent:"flex-end", gap:12, marginTop:24, paddingTop:20, borderTop:`1px solid ${C.surf}` }}>
+            <Btn variant="ghost" onClick={()=>setShowInitiate(false)}>Cancel</Btn>
+            <Btn onClick={handleStart} style={{ padding:"10px 24px" }}>Start Journey</Btn>
+          </div>
         </Modal>
       )}
+      <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}`}</style>
     </div>
   );
-};
 
 
 const PayrollWizardModal = ({ 
@@ -2096,7 +2110,7 @@ const PayrollWizardModal = ({
   const empStates = employees.map(emp => {
     const existingPayslip = saPayslips.find(p => p.empId === emp.id && p.monthIndex === selectedMonthIndex && parseInt(p.year) === currentYear);
     const pId = existingPayslip ? existingPayslip.id : `new_pay_${emp.id}_${selectedMonthIndex}`;
-    const netFallback = emp.ctc ? `â‚¹${Math.round(parseInt(emp.ctc.replace(/\D/g,'')) / 12).toLocaleString("en-IN")}` : "â‚¹50,000";
+    const netFallback = emp.ctc ? `Ã¢â€šÂ¹${Math.round(parseInt(emp.ctc.replace(/\D/g,'')) / 12).toLocaleString("en-IN")}` : "Ã¢â€šÂ¹50,000";
     const p = existingPayslip || { id: pId, empId: emp.id, name: emp.name, net: netFallback };
     const hasBank = !!emp.bankInfo?.acc && !!emp.bankInfo?.ifsc;
     const isPaid = !!processedPayments[pId];
@@ -2129,7 +2143,7 @@ const PayrollWizardModal = ({
                  year: currentYear.toString(), month: selectedMonthIndex, monthIndex: selectedMonthIndex,
                  monthLabel: `${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`,
                  credited: new Date().toLocaleDateString("en-IN", {day:"numeric",month:"short",year:"numeric"}),
-                 gross: `â‚¹${Math.round((parseInt(pState.p.net.replace(/\D/g,'')) || 50000) * 1.38).toLocaleString("en-IN")}`,
+                 gross: `Ã¢â€šÂ¹${Math.round((parseInt(pState.p.net.replace(/\D/g,'')) || 50000) * 1.38).toLocaleString("en-IN")}`,
                  net: pState.p.net, status: "Unpaid"
               });
            }
@@ -2140,7 +2154,7 @@ const PayrollWizardModal = ({
       setPaymentLogs(prev => [{
         ts: new Date().toLocaleString("en-IN"), actor: "Super Admin",
         monthYear: `${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`,
-        amount: `â‚¹${totalAmt.toLocaleString("en-IN")}`, count: selectedIds.length
+        amount: `Ã¢â€šÂ¹${totalAmt.toLocaleString("en-IN")}`, count: selectedIds.length
       }, ...prev]);
       setIsProcessing(false);
       setStep(4);
@@ -2227,7 +2241,7 @@ const PayrollWizardModal = ({
                           <span style={{ fontWeight:600, color:C.txt, fontSize:13 }}>{p.name}</span>
                         </div>
                      </td>
-                     <td style={{ padding:"14px 16px", color:C.sub, fontSize:13 }}>{emp.dept || "â€”"}</td>
+                     <td style={{ padding:"14px 16px", color:C.sub, fontSize:13 }}>{emp.dept || "Ã¢â‚¬â€"}</td>
                      <td style={{ padding:"14px 16px", textAlign:"right", fontWeight:800, color:C.p, fontSize:14, fontFamily:"'JetBrains Mono', 'Roboto Mono', monospace" }}>{editedSalaries[p.id] || p.net}</td>
                   </tr>
                 ))}
@@ -2270,7 +2284,7 @@ const PayrollWizardModal = ({
         )}
 
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:32, paddingTop:24, borderTop:`1px solid ${C.bdr}` }}>
-           <Btn variant="ghost" onClick={() => setStep(1)}>â† Change Month</Btn>
+           <Btn variant="ghost" onClick={() => setStep(1)}>Ã¢â€ Â Change Month</Btn>
            <div style={{ display:"flex", gap:12 }}>
              <Btn variant="outline" onClick={onClose}>Cancel</Btn>
              <Btn style={{ padding:"12px 28px", background:C.p, color:"#fff", fontSize:14, boxShadow:`0 4px 12px rgba(var(--p-rgb),.3)` }} disabled={selectedIds.length === 0} onClick={() => setStep(3)}>Proceed to Summary</Btn>
@@ -2296,7 +2310,7 @@ const PayrollWizardModal = ({
            <div style={{ background:C.dk, padding:32, borderRadius:24, marginBottom:32, position:"relative", overflow:"hidden" }}>
              <div style={{ position:"absolute", top:0, left:0, right:0, height:4, background:C.p }} />
              <div style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,0.5)", letterSpacing:1.5, marginBottom:12 }}>TOTAL DISBURSEMENT</div>
-             <div style={{ fontSize:42, fontWeight:800, color:"#fff", fontFamily:"system-ui" }}>â‚¹{totalAmt.toLocaleString("en-IN")}</div>
+             <div style={{ fontSize:42, fontWeight:800, color:"#fff", fontFamily:"system-ui" }}>Ã¢â€šÂ¹{totalAmt.toLocaleString("en-IN")}</div>
              <div style={{ fontSize:12, color:"rgba(255,255,255,0.4)", marginTop:12 }}>Secure transfer via Institutional Gateway</div>
            </div>
 
@@ -2359,14 +2373,14 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
   const rowData = targetEmployees.map(emp => {
     const existingPayslip = saPayslips.find(p => p.empId === emp.id && p.monthIndex === selectedMonthIndex && parseInt(p.year) === currentYear);
     const pId = existingPayslip ? existingPayslip.id : `new_pay_${emp.id}_${selectedMonthIndex}`;
-    const netFallback = emp.ctc ? `â‚¹${Math.round(parseInt(emp.ctc.replace(/\D/g,'')) / 12).toLocaleString("en-IN")}` : "â‚¹50,000";
+    const netFallback = emp.ctc ? `Ã¢â€šÂ¹${Math.round(parseInt(emp.ctc.replace(/\D/g,'')) / 12).toLocaleString("en-IN")}` : "Ã¢â€šÂ¹50,000";
     
     const p = existingPayslip || { id: pId, empId: emp.id, name: emp.name, net: netFallback, released: false };
     const isReleased = !!p.released;
     const daysWorked = editedDays[pId] !== undefined ? editedDays[pId] : totalDaysInMonth;
     const baseNet = parseInr(p.net);
     const calculatedNet = Math.round((baseNet / totalDaysInMonth) * daysWorked);
-    const calcNetStr = `â‚¹${calculatedNet.toLocaleString("en-IN")}`;
+    const calcNetStr = `Ã¢â€šÂ¹${calculatedNet.toLocaleString("en-IN")}`;
 
     return { emp, p, isReleased, daysWorked, calcNetStr, pId };
   });
@@ -2397,7 +2411,7 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
               year: currentYear.toString(), month: selectedMonthIndex, monthIndex: selectedMonthIndex,
               monthLabel: `${MONTHS_SHORT[selectedMonthIndex]} ${currentYear}`,
               credited: new Date().toLocaleDateString("en-IN", {day:"numeric",month:"short",year:"numeric"}),
-              gross: `â‚¹${Math.round((parseInr(pState.p.net) || 50000) * 1.38).toLocaleString("en-IN")}`,
+              gross: `Ã¢â€šÂ¹${Math.round((parseInr(pState.p.net) || 50000) * 1.38).toLocaleString("en-IN")}`,
               net: pState.calcNetStr, workedDays: pState.daysWorked, released: true, status: "Unpaid"
            });
         }
@@ -2551,7 +2565,7 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
           </div>
         )}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:32, paddingTop:24, borderTop:`1px solid ${C.bdr}` }}>
-           <Btn variant="ghost" onClick={() => setStep(1)}>â† Change Period</Btn>
+           <Btn variant="ghost" onClick={() => setStep(1)}>Ã¢â€ Â Change Period</Btn>
            <div style={{ display:"flex", gap:12 }}>
              <Btn variant="outline" onClick={onClose}>Cancel</Btn>
              <Btn onClick={handleRelease} style={{ padding:"12px 28px", background:C.p, color:"#fff", fontSize:14, fontWeight:700, boxShadow:`0 4px 12px rgba(var(--p-rgb),.3)` }} disabled={selectedIds.length === 0}>
@@ -2566,7 +2580,7 @@ const ReleasePayslipsModal = ({ onClose, saPayslips, setSaPayslips, employees, t
 };
 
 
-// â”€â”€â”€ Presence (Attendance) Module â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Presence (Attendance) Module Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 const PresenceModule = ({ 
   isSA, isAdmin, isClockedIn, setIsClockedIn, attendanceMode, setAttendanceMode, 
   attendanceData, setAttendanceData, presenceEmpId, setPresenceEmpId, 
@@ -2627,17 +2641,17 @@ const PresenceModule = ({
     const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     if (!isClockedIn) {
       setAttendanceData(prev => ({ ...prev, [ME_ID]: { ...(prev[ME_ID] || {}), [iso]: { checkIn: time, checkOut: '--', hours: '--' } } }));
-      setIsClockedIn(true); toast(`Clocked in at ${time} âœ“`);
+      setIsClockedIn(true); toast(`Clocked in at ${time} Ã¢Å“â€œ`);
     } else {
       const entry = attendanceData[presenceEmpId]?.[iso] || { checkIn: '09:00' };
       setAttendanceData(prev => ({ ...prev, [ME_ID]: { ...(prev[ME_ID] || {}), [iso]: { ...entry, checkOut: time, hours: '8.5' } } }));
-      setIsClockedIn(false); toast(`Clocked out at ${time} âœ“`);
+      setIsClockedIn(false); toast(`Clocked out at ${time} Ã¢Å“â€œ`);
     }
   };
 
   const handleModeChange = (id) => {
     setAttendanceMode(id);
-    toast("Mode updated â€” past attendance records are unaffected âœ“");
+    toast("Mode updated Ã¢â‚¬â€ past attendance records are unaffected Ã¢Å“â€œ");
   };
 
   const [slackConnected, setSlackConnected] = React.useState(false);
@@ -2659,15 +2673,15 @@ const PresenceModule = ({
       <div style={{ position:"relative", margin:`0 ${-pad}px 28px`, padding: heroPadStd, background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`, borderBottom:`1px solid ${C.bdr}`, overflow:"hidden" }}>
         <div style={{ position:"absolute", right:-40, top:-30, width:220, height:220, borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`, pointerEvents:"none" }} />
         <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:20, flexWrap:"wrap" }}>
-          <div><div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>â—‰ Attendance</div><h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12 }}>Presence</h1><p style={{ color:C.sub, fontSize:13, margin:"10px 0 0" }}>{isAdmin ? "Monitoring org-wide engagement." : "Your personal activity feed."}</p></div>
+          <div><div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>Ã¢â€”â€° Attendance</div><h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12 }}>Presence</h1><p style={{ color:C.sub, fontSize:13, margin:"10px 0 0" }}>{isAdmin ? "Monitoring org-wide engagement." : "Your personal activity feed."}</p></div>
           <div style={{ display:"flex", gap:12, alignItems:"center" }}>
             {attendanceMode === 'HRMS' && presenceEmpId === ME_ID && (
               <Btn onClick={handleClockToggle} style={{ padding:"10px 24px", background: isClockedIn ? "none" : C.p, color: isClockedIn ? C.p : "#fff", border: isClockedIn ? `1px solid ${C.p}` : "none" }}>{isClockedIn ? "Clock Out" : "Clock In Now"}</Btn>
             )}
             <div style={{ display:"flex", background:C.wht, borderRadius:12, padding:4, border:`1px solid ${C.bdr}` }}>
-               <button onClick={() => setPresenceMonth(new Date(year, month - 1))} style={{ padding:"4px 10px", background:"none", border:"none", cursor:"pointer", color:C.sub }}>â†</button>
+               <button onClick={() => setPresenceMonth(new Date(year, month - 1))} style={{ padding:"4px 10px", background:"none", border:"none", cursor:"pointer", color:C.sub }}>Ã¢â€ Â</button>
                <div style={{ padding:"0 12px", fontSize:12, fontWeight:700, color:C.txt, alignSelf:"center" }}>{monthLabel} {year}</div>
-               <button onClick={() => setPresenceMonth(new Date(year, month + 1))} style={{ padding:"4px 10px", background:"none", border:"none", cursor:"pointer", color:C.sub }}>â†’</button>
+               <button onClick={() => setPresenceMonth(new Date(year, month + 1))} style={{ padding:"4px 10px", background:"none", border:"none", cursor:"pointer", color:C.sub }}>Ã¢â€ â€™</button>
             </div>
           </div>
         </div>
@@ -2696,7 +2710,7 @@ const PresenceModule = ({
             </div>
             {!hasAnyCalendarData ? (
               <div style={{ textAlign:"center", padding:"40px 0", color:C.sub, fontSize:13 }}>
-                <div style={{ fontSize:28, marginBottom:8 }}>ðŸ“…</div>
+                <div style={{ fontSize:28, marginBottom:8 }}>Ã°Å¸â€œâ€¦</div>
                 No attendance recorded yet
               </div>
             ) : (
@@ -2725,12 +2739,12 @@ const PresenceModule = ({
                     <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:6 }}>
                       <div style={{ width:8, height:8, borderRadius:"50%", background: status.color, flexShrink:0 }} />
                       <span style={{ fontWeight:700, fontSize:13, color:C.txt }}>{status.status}</span>
-                      {status.label && status.label !== status.status && <span style={{ fontSize:12, color:C.sub }}>â€¢ {status.label}</span>}
+                      {status.label && status.label !== status.status && <span style={{ fontSize:12, color:C.sub }}>Ã¢â‚¬Â¢ {status.label}</span>}
                     </div>
                   </div>
                   {status.status === 'Present' && attendanceMode === 'HRMS' && (
                     <div style={{ display:"flex", gap:24 }}>
-                      {[{l:"CHECK IN",v:data.checkIn||"â€”"},{l:"CHECK OUT",v:data.checkOut||"â€”"},{l:"TOTAL HRS",v:data.hours&&data.hours!=='--'?`${data.hours}h`:"Ongoing",c:C.p}].map(x=>(
+                      {[{l:"CHECK IN",v:data.checkIn||"Ã¢â‚¬â€"},{l:"CHECK OUT",v:data.checkOut||"Ã¢â‚¬â€"},{l:"TOTAL HRS",v:data.hours&&data.hours!=='--'?`${data.hours}h`:"Ongoing",c:C.p}].map(x=>(
                         <div key={x.l}><div style={{ fontSize:9, color:C.sub, fontWeight:800, letterSpacing:.8 }}>{x.l}</div><div style={{ fontWeight:700, fontSize:15, color:x.c||C.txt, marginTop:2 }}>{x.v}</div></div>
                       ))}
                     </div>
@@ -2767,7 +2781,7 @@ const PresenceModule = ({
               ))}
             </div>
             <div style={{ marginTop:24, paddingTop:20, borderTop:`1px solid rgba(255,255,255,0.2)`, fontSize:11, color:"#fff", lineHeight:1.5 }}>
-              <strong style={{ opacity: 0.9 }}>Priority:</strong> <span style={{ fontWeight:700 }}>Holidays â†’ Leave â†’ Logs</span>. Past records are never overwritten when changing mode.
+              <strong style={{ opacity: 0.9 }}>Priority:</strong> <span style={{ fontWeight:700 }}>Holidays Ã¢â€ â€™ Leave Ã¢â€ â€™ Logs</span>. Past records are never overwritten when changing mode.
             </div>
           </div>
           {isAdmin && (
@@ -2816,12 +2830,12 @@ const VibeCheckModule = ({
     };
     setVibeFeedback(prev => [newFeedback, ...prev]);
     setVForm({ type: "Suggestion", module: "Dashboard", msg: "", isAnon: false, file: null });
-    toast("Feedback sent! Thank you for the vibe check âœ¨");
+    toast("Feedback sent! Thank you for the vibe check Ã¢Å“Â¨");
   };
 
   const updateStatus = (id, status) => {
     setVibeFeedback(prev => prev.map(f => f.id === id ? { ...f, status } : f));
-    toast(`Status updated to ${status} âœ“`);
+    toast(`Status updated to ${status} Ã¢Å“â€œ`);
   };
 
   const visibleFeedback = vibeFeedback.filter(f => {
@@ -2841,7 +2855,7 @@ const VibeCheckModule = ({
         borderBottom:`1px solid ${C.bdr}`, overflow:"hidden",
       }}>
         <div style={{ position:"relative", zIndex:1 }}>
-          <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.p, textTransform:"uppercase" }}>âœ¨ Vibe Check</div>
+          <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.p, textTransform:"uppercase" }}>Ã¢Å“Â¨ Vibe Check</div>
           <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700 }}>Help us make this better.</h1>
           <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.5 }}>Share your thoughts, report bugs, or suggest new features to help us improve KinSphere.</p>
         </div>
@@ -2951,7 +2965,7 @@ const VibeCheckModule = ({
                   <div style={{ marginTop:14, paddingTop:14, borderTop:`1px solid ${C.surf}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                     <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                       <Av ini={f.empIni} sz={20} />
-                      <span style={{ fontSize:11, fontWeight:600, color:C.sub }}>{f.empName} <span style={{ fontWeight:400, opacity:0.6 }}>â€¢ {f.timestamp}</span></span>
+                      <span style={{ fontSize:11, fontWeight:600, color:C.sub }}>{f.empName} <span style={{ fontWeight:400, opacity:0.6 }}>Ã¢â‚¬Â¢ {f.timestamp}</span></span>
                     </div>
                     {isSA && (
                       <div style={{ display:"flex", gap:6 }}>
@@ -3038,7 +3052,7 @@ export default function App() {
   const handleReassignManager = (empId, newManagerId) => {
     if (empId === newManagerId) return toast("Cannot report to self!");
     setOrgManagers(prev => ({ ...prev, [empId]: newManagerId }));
-    toast("Reporting line updated âœ“");
+    toast("Reporting line updated Ã¢Å“â€œ");
   };
   const [saCalTooltip, setSaCalTooltip] = useState(null);
   const [companyLogoUrl, setCompanyLogoUrl] = useState(null);
@@ -3085,7 +3099,7 @@ export default function App() {
   const [showUploadDoc, setShowUploadDoc] = useState(false);
   const [showOffboard, setShowOffboard] = useState(false);
 
-  // â”€â”€â”€ Paperwork Hub â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Paperwork Hub Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const [papers, setPapers] = useState(INIT_PAPERS);
   const [candidates, setCandidates] = useState(INIT_CANDIDATES);
   const [paperModal, setPaperModal] = useState(false);
@@ -3171,7 +3185,7 @@ export default function App() {
     setShowNotifPanel(false);
   }, [page]);
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
   const handleProcessPayments = () => {
     setIsProcessingPayment(true);
@@ -3184,7 +3198,7 @@ export default function App() {
         totalAmt += parseInr(editedSalaries[p.id] || p.net);
         // Notify employee
         addNotif({
-          icon: "ðŸ’¸", title: "Payment Processed",
+          icon: "Ã°Å¸â€™Â¸", title: "Payment Processed",
           body: `Your salary for ${MONTHS_SHORT[p.month]} ${p.year} has been processed.`,
           forSA: false, forAll: false, forEmpIds: [p.empId]
         });
@@ -3195,13 +3209,13 @@ export default function App() {
         ts: new Date().toLocaleString("en-IN"),
         actor: "Arjun Mehta",
         monthYear: `${MONTHS_SHORT[payMonthFilter ?? new Date().getMonth()]} ${payYear}`,
-        amount: `â‚¹${totalAmt.toLocaleString("en-IN")}`,
+        amount: `Ã¢â€šÂ¹${totalAmt.toLocaleString("en-IN")}`,
         count: currentPayslips.length
       }, ...prev]);
       setIsProcessingPayment(false);
       setPayrollStep(0);
       setSelectedPayIds([]);
-      toast(`${currentPayslips.length} payments processed successfully âœ“`);
+      toast(`${currentPayslips.length} payments processed successfully Ã¢Å“â€œ`);
     }, 2000);
   };
   const [showTimeline, setShowTimeline] = useState(null); // holds the employee object
@@ -3217,13 +3231,13 @@ export default function App() {
   const [recogs, setRecogs] = useState(RECOGS);
   const [newRecogTags, setNewRecogTags] = useState([]);
   const [isPrivateRecog, setIsPrivateRecog] = useState(false);
-  const [recogTo, setRecogTo] = useState("Choose a teammateâ€¦");
+  const [recogTo, setRecogTo] = useState("Choose a teammateÃ¢â‚¬Â¦");
   const [recogMsg, setRecogMsg] = useState("");
   
   const RECO_TAGS = ["Teamwork", "Leadership", "Ownership", "Creativity"];
 
   const handlePostRecog = () => {
-    if (recogTo === "Choose a teammateâ€¦" || !recogMsg.trim()) {
+    if (recogTo === "Choose a teammateÃ¢â‚¬Â¦" || !recogMsg.trim()) {
       toast("Please select a teammate and write a message.");
       return;
     }
@@ -3244,18 +3258,18 @@ export default function App() {
     setRecogs(p => [newR, ...p]);
     // Notification for recognition
     addNotif({
-      icon: "ðŸŽ‰",
+      icon: "Ã°Å¸Å½â€°",
       title: "New Shout-out!",
       body: `${me.name} recognised ${recogTo} for ${newRecogTags.join(", ")}`,
       forSA: true,
       forAll: false,
       forEmpIds: target ? [target.id] : []
     });
-    setRecogTo("Choose a teammateâ€¦");
+    setRecogTo("Choose a teammateÃ¢â‚¬Â¦");
     setRecogMsg("");
     setNewRecogTags([]);
     setIsPrivateRecog(false);
-    toast(`${isPrivateRecog ? "Private" : "Public"} shout-out posted! âœ¦`);
+    toast(`${isPrivateRecog ? "Private" : "Public"} shout-out posted! Ã¢Å“Â¦`);
   };
 
   const handleToggleReaction = (recogId, type) => {
@@ -3273,7 +3287,7 @@ export default function App() {
       const targetEmp = employees.find(e => e.name === rr.to);
       if (targetEmp) {
         addNotif({
-          icon: type === 'like' ? 'ðŸ‘' : 'ðŸŽ‰',
+          icon: type === 'like' ? 'Ã°Å¸â€˜Â' : 'Ã°Å¸Å½â€°',
           title: "Reaction on your shout-out",
           body: `${me.name} reacted to your ${rr.tags[0] || "shout-out"}`,
           forSA: false,
@@ -3282,7 +3296,7 @@ export default function App() {
         });
       }
     }
-    toast(`Reacted with ${type === 'like' ? 'ðŸ‘' : 'ðŸŽ‰'} âœ“`);
+    toast(`Reacted with ${type === 'like' ? 'Ã°Å¸â€˜Â' : 'Ã°Å¸Å½â€°'} Ã¢Å“â€œ`);
   };
 
   const handleAddComment = (recogId, txt) => {
@@ -3294,7 +3308,7 @@ export default function App() {
         comments: [...r.comments, { from: me.name, ini: me.ini, txt, time: "Just now" }]
       };
     }));
-    toast("Comment added âœ“");
+    toast("Comment added Ã¢Å“â€œ");
   };
 
   /** Monthly Highlights Calculation */
@@ -3326,7 +3340,7 @@ export default function App() {
   const [showLeavePolicy, setShowLeavePolicy] = useState(false);
   const [showLeaveBal,    setShowLeaveBal]    = useState(false);
   const [selectedLeaveEmpId, setSelectedLeaveEmpId] = useState<number|null>(null);
-  // { [empId]: { [leaveType]: totalDays } } â€” overrides per-employee entitlement
+  // { [empId]: { [leaveType]: totalDays } } Ã¢â‚¬â€ overrides per-employee entitlement
   const [empLeaveOverrides, setEmpLeaveOverrides] = useState<Record<number,Record<string,number>>>({});
   // Draft for pending edits in the detail pane (before Save is clicked)
   const [leaveDetailDraft, setLeaveDetailDraft] = useState<Record<string,number>>({});
@@ -3416,7 +3430,7 @@ export default function App() {
         type: e.type || "Full Time",
         doj: e.joined || "",
         designation: e.designation || "",
-        dept: e.dept || "â€”",
+        dept: e.dept || "Ã¢â‚¬â€",
         manager: empById(e.managerId, employees)?.name || "No Manager",
         bankAcc: e.bankInfo?.accountNumber || "",
         bankIfsc: e.bankInfo?.ifsc || ""
@@ -3487,16 +3501,16 @@ export default function App() {
     a.click();
     a.remove();
     URL.revokeObjectURL(a.href);
-    toast("Downloaded â€” open the file and use Print â†’ Save as PDF");
+    toast("Downloaded Ã¢â‚¬â€ open the file and use Print Ã¢â€ â€™ Save as PDF");
   };
   const actLeave = (id, act) => {
     const row = leaves.find(l => l.id === id);
     setLeaves(p=>p.map(l=>l.id===id ? {...l,status:act} : l));
     if (row) {
       addNotif({
-        icon: act === "approved" ? "âœ…" : "âŒ",
+        icon: act === "approved" ? "Ã¢Å“â€¦" : "Ã¢ÂÅ’",
         title: `Leave ${act.charAt(0).toUpperCase() + act.slice(1)}`,
-        body: `Your ${row.type} request (${row.from}â€“${row.to}) has been ${act}.`,
+        body: `Your ${row.type} request (${row.from}Ã¢â‚¬â€œ${row.to}) has been ${act}.`,
         forSA: false, forAll: false, forEmpIds: [row.empId]
       });
       // Also notify SA if someone else (like a manager) approved it, 
@@ -3504,12 +3518,12 @@ export default function App() {
       // If the current user is NOT SA, we can notify SA as well.
       if (!isSA) {
         addNotif({
-          icon: "ðŸ—“", title: `Leave ${act.charAt(0).toUpperCase() + act.slice(1)}`,
+          icon: "Ã°Å¸â€”â€œ", title: `Leave ${act.charAt(0).toUpperCase() + act.slice(1)}`,
           body: `${me.name} ${act} leave for ${row.emp}`,
           forSA: true, forAll: false, forEmpIds: []
         });
       }
-      toast(`${act === "approved" ? "Approved" : "Rejected"} leave for ${row.emp} â€” they have been notified âœ“`);
+      toast(`${act === "approved" ? "Approved" : "Rejected"} leave for ${row.emp} Ã¢â‚¬â€ they have been notified Ã¢Å“â€œ`);
     }
   };
   const promptLeaveAction = (id, act) => setLeaveActionConfirm({ id, act });
@@ -3586,7 +3600,7 @@ export default function App() {
       color:C.txt,
       position:"relative",
     }}>
-      {/* â”€ STEP 3: E-SIGNATURE OVERLAY â”€ */}
+      {/* Ã¢â€â‚¬ STEP 3: E-SIGNATURE OVERLAY Ã¢â€â‚¬ */}
       {signId && (() => {
         const docToSign = papers.find(p => p.id === signId);
         if (!docToSign) return null;
@@ -3598,10 +3612,10 @@ export default function App() {
                 <div style={{ width:32, height:32, borderRadius:8, background:C.p, display:"flex", alignItems:"center", justifyContent:"center", color:"#2a3326", fontWeight:800 }}>KS</div>
                 <div>
                   <div style={{ fontSize:14, fontWeight:700, color:C.txt }}>Sign Document</div>
-                  <div style={{ fontSize:11, color:C.sub }}>{docToSign.name} â€¢ KinSphere Document Center</div>
+                  <div style={{ fontSize:11, color:C.sub }}>{docToSign.name} Ã¢â‚¬Â¢ KinSphere Document Center</div>
                 </div>
               </div>
-              <button onClick={() => { setSignId(null); setSigValue(""); }} style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 14px", fontSize:11, fontWeight:600, cursor:"pointer" }}>âœ• Cancel</button>
+              <button onClick={() => { setSignId(null); setSigValue(""); }} style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 14px", fontSize:11, fontWeight:600, cursor:"pointer" }}>Ã¢Å“â€¢ Cancel</button>
             </div>
             
             <div style={{ flex:1, overflowY:"auto", padding: narrow ? "20px 14px" : "40px", display:"flex", justifyContent:"center", background:C.bg }}>
@@ -3648,7 +3662,7 @@ export default function App() {
                         setPapers(papers.map(p => p.id === signId ? { ...p, status:"signed", date } : p));
                         setSignId(null);
                         setSigValue("");
-                        toast("Document Signed & Completed! âœ“");
+                        toast("Document Signed & Completed! Ã¢Å“â€œ");
                       }}
                     >
                       Sign & Complete Document
@@ -3695,7 +3709,7 @@ export default function App() {
               flexShrink:0,
             }}
           >
-            {navOpen ? "âœ•" : "â˜°"}
+            {navOpen ? "Ã¢Å“â€¢" : "Ã¢ËœÂ°"}
           </button>
           <div style={{ minWidth:0, flex:1 }}>
             <div style={{ color:"#fff", fontWeight:700, fontSize:15, fontFamily:"Georgia,serif", lineHeight:1.2 }}>KinSphere</div>
@@ -3720,7 +3734,7 @@ export default function App() {
         />
       )}
 
-      {/* â”€â”€ SIDEBAR â”€â”€ */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ SIDEBAR Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <aside style={{
         width: narrow ? 268 : 214,
         background:C.sb,
@@ -3842,7 +3856,7 @@ export default function App() {
             onMouseEnter={e => { e.currentTarget.style.background="rgba(255,255,255,.06)"; e.currentTarget.style.color="#fff"; }}
             onMouseLeave={e => { e.currentTarget.style.background="transparent"; e.currentTarget.style.color=C.dkAcc; }}
           >
-            <span style={{ fontSize:15 }}>{isDark ? "ðŸ”†" : "ðŸŒ™"}</span>
+            <span style={{ fontSize:15 }}>{isDark ? "Ã°Å¸â€â€ " : "Ã°Å¸Å’â„¢"}</span>
             {isDark ? "Light mode" : "Dark mode"}
           </button>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -3853,7 +3867,7 @@ export default function App() {
             </div>
             <button
               type="button"
-              onClick={() => { setIsLoggedIn(false); setRole("Employee"); setPage("Dashboard"); toast("Logged out âœ“"); }}
+              onClick={() => { setIsLoggedIn(false); setRole("Employee"); setPage("Dashboard"); toast("Logged out Ã¢Å“â€œ"); }}
               title="Log out"
               style={{
                 flexShrink:0,
@@ -3877,7 +3891,7 @@ export default function App() {
         </div>
       </aside>
 
-      {/* â”€â”€ MAIN â”€â”€ */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ MAIN Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <main style={{
         flex:1,
         minWidth:0,
@@ -3909,7 +3923,7 @@ export default function App() {
           }}>{showToast}</div>
         )}
 
-        {/* â”€â”€ NOTIFICATION BELL â”€â”€ */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ NOTIFICATION BELL Ã¢â€â‚¬Ã¢â€â‚¬ */}
         {(() => {
           if (page !== "Dashboard") return null;
           const visibleNotifs = notifications.filter(n =>
@@ -3985,7 +3999,7 @@ export default function App() {
                     <div style={{ padding:"14px 16px 10px", borderBottom:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between", alignItems:"center", flexShrink:0 }}>
                       <div>
                         <div style={{ fontWeight:700, fontSize:14, color:C.txt }}>Notifications</div>
-                        <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{unread} unread Â· {visibleNotifs.length} total</div>
+                        <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{unread} unread Ã‚Â· {visibleNotifs.length} total</div>
                       </div>
                       {unread > 0 && (
                         <button
@@ -4065,7 +4079,7 @@ export default function App() {
           </div>
         )}
 
-        {/* â”€ DASHBOARD â”€ */}
+        {/* Ã¢â€â‚¬ DASHBOARD Ã¢â€â‚¬ */}
         {page==="Dashboard" && (
           <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
             {/* Hero */}
@@ -4097,13 +4111,13 @@ export default function App() {
                   color:C.sub, margin:"10px 0 0", fontSize:13, maxWidth:480, lineHeight:1.5,
                 }}>
                   <span style={{ color:C.txt, fontWeight:600 }}>{dashDateLabel}</span>
-                  {" Â· "}
-                  Hereâ€™s a snapshot of your workspace â€” people, time away, and whatâ€™s next on the calendar.
+                  {" Ã‚Â· "}
+                  HereÃ¢â‚¬â„¢s a snapshot of your workspace Ã¢â‚¬â€ people, time away, and whatÃ¢â‚¬â„¢s next on the calendar.
                 </p>
               </div>
             </div>
 
-            {/* Metric row â€” pending KPI only for Super Admin (Admin/Employee see pending in the split leave card below) */}
+            {/* Metric row Ã¢â‚¬â€ pending KPI only for Super Admin (Admin/Employee see pending in the split leave card below) */}
             <div style={{
               display:"grid",
               gridTemplateColumns: narrow
@@ -4170,7 +4184,7 @@ export default function App() {
                     <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p, marginBottom:4 }}>QUEUE</div>
                     <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>Pending approvals</h2>
                     <p style={{ margin:"6px 0 0", fontSize:11, color:C.sub, lineHeight:1.45, maxWidth:440 }}>
-                      You see <strong style={{ color:C.txt }}>every</strong> pending leave request. Others only see requests where theyâ€™re the tagged approver.
+                      You see <strong style={{ color:C.txt }}>every</strong> pending leave request. Others only see requests where theyÃ¢â‚¬â„¢re the tagged approver.
                     </p>
                   </div>
                   <button
@@ -4181,7 +4195,7 @@ export default function App() {
                       fontSize:12, fontWeight:600, color:C.p, padding:"6px 0",
                     }}
                   >
-                    Open Time Away â†’
+                    Open Time Away Ã¢â€ â€™
                   </button>
                 </div>
                 {pendingApprovalsForDashboard.length===0
@@ -4191,7 +4205,7 @@ export default function App() {
                       borderRadius:12, background:`linear-gradient(180deg, ${C.bg}, ${C.surf})`,
                       border:`1px dashed ${C.bdr}`,
                     }}>
-                      <div style={{ fontSize:28, marginBottom:8, opacity:.9 }}>âœ“</div>
+                      <div style={{ fontSize:28, marginBottom:8, opacity:.9 }}>Ã¢Å“â€œ</div>
                       <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>All caught up</div>
                       <div style={{ fontSize:12, color:C.sub, marginTop:4 }}>
                         No pending leave requests right now.
@@ -4214,7 +4228,7 @@ export default function App() {
                           <div style={{ minWidth:0 }}>
                             <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>{l.emp}</div>
                             <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>
-                              {l.type} Â· {l.from}â€“{l.to} Â· {l.days}
+                              {l.type} Ã‚Â· {l.from}Ã¢â‚¬â€œ{l.to} Ã‚Â· {l.days}
                             </div>
                           </div>
                         </div>
@@ -4227,7 +4241,7 @@ export default function App() {
               </div>
               ) : (
               <div style={{ display:"flex", flexDirection:"column", gap:16, minWidth:0 }}>
-                {/* KPI-style card â€” Time away */}
+                {/* KPI-style card Ã¢â‚¬â€ Time away */}
                 <div style={{
                   position:"relative", background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
                   padding:"20px 22px 22px", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset", overflow:"hidden",
@@ -4247,7 +4261,7 @@ export default function App() {
                         onClick={()=>setPage("Time Away")}
                         style={{ border:"none", background:"transparent", cursor:"pointer", fontSize:11, fontWeight:600, color:C.p, padding:"4px 0", flexShrink:0 }}
                       >
-                        Time Away â†’
+                        Time Away Ã¢â€ â€™
                       </button>
                     </div>
                     {myLeaves.length === 0 ? (
@@ -4268,7 +4282,7 @@ export default function App() {
                               <Av ini={l.ini} sz={28} bg={C.p} />
                               <div style={{ minWidth:0 }}>
                                 <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>{l.type}</div>
-                                <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{l.from}â€“{l.to} Â· {l.days}</div>
+                                <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{l.from}Ã¢â‚¬â€œ{l.to} Ã‚Â· {l.days}</div>
                               </div>
                             </div>
                             <Badge s={l.status} />
@@ -4278,7 +4292,7 @@ export default function App() {
                     )}
                   </div>
                 </div>
-                {/* KPI-style card â€” Pending approvals */}
+                {/* KPI-style card Ã¢â‚¬â€ Pending approvals */}
                 <div style={{
                   position:"relative", background:C.wht, borderRadius:16, border:`1px solid ${C.bdr}`,
                   padding:"20px 22px 22px", boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset", overflow:"hidden",
@@ -4299,7 +4313,7 @@ export default function App() {
                       )}
                     </div>
                     <p style={{ margin:"0 0 12px", fontSize:11, color:C.sub, lineHeight:1.45 }}>
-                      Admin and Employee requests where youâ€™re the tagged approver.
+                      Admin and Employee requests where youÃ¢â‚¬â„¢re the tagged approver.
                     </p>
                     {myPendingTaggedApprovals.length === 0 ? (
                       <div style={{
@@ -4323,7 +4337,7 @@ export default function App() {
                             <div style={{ minWidth:0 }}>
                               <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>{l.emp}</div>
                               <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>
-                                {l.type} Â· {l.from}â€“{l.to} Â· {l.days}
+                                {l.type} Ã‚Â· {l.from}Ã¢â‚¬â€œ{l.to} Ã‚Â· {l.days}
                               </div>
                             </div>
                           </div>
@@ -4342,7 +4356,7 @@ export default function App() {
                         fontSize:11, fontWeight:600, color:C.p, padding:0,
                       }}
                     >
-                      Open Time Away â†’
+                      Open Time Away Ã¢â€ â€™
                     </button>
                   </div>
                 </div>
@@ -4369,9 +4383,9 @@ export default function App() {
                         boxShadow:"0 1px 0 rgba(255,255,255,.9) inset",
                       }}
                     >
-                      <span style={{ fontSize:20 }}>ðŸ—“</span>
+                      <span style={{ fontSize:20 }}>Ã°Å¸â€”â€œ</span>
                       <span style={{ flex:1 }}>Apply for leave</span>
-                      <span style={{ fontSize:16, color:C.bdr }}>â†’</span>
+                      <span style={{ fontSize:16, color:C.bdr }}>Ã¢â€ â€™</span>
                     </button>
                     {isAdmin && (
                       <button
@@ -4391,7 +4405,7 @@ export default function App() {
                       >
                         <span style={{ display:"flex", alignItems:"center", opacity:.95 }}>{ICONS["Add Employee"]}</span>
                         <span style={{ flex:1 }}>Add employee</span>
-                        <span style={{ fontSize:16, opacity:.9 }}>â†’</span>
+                        <span style={{ fontSize:16, opacity:.9 }}>Ã¢â€ â€™</span>
                       </button>
                     )}
                   </div>
@@ -4444,7 +4458,7 @@ export default function App() {
               }}>
                 <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                    <span style={{ fontSize:22 }}>ðŸŽ‚</span>
+                    <span style={{ fontSize:22 }}>Ã°Å¸Å½â€š</span>
                     <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>Birthdays</h2>
                   </div>
                   <span style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>NEXT 3 DAYS</span>
@@ -4454,7 +4468,7 @@ export default function App() {
                   const bdays = employees.map(e => ({ e, days: getEventDays(e.dob) })).filter(x => x.days !== null).sort((a,b) => a.days - b.days);
                   if (bdays.length === 0) return (
                     <p style={{ margin:0, fontSize:12, color:C.sub, lineHeight:1.55 }}>
-                      None in the next 3 days. When someoneâ€™s day is near, itâ€™ll show up here with a countdown.
+                      None in the next 3 days. When someoneÃ¢â‚¬â„¢s day is near, itÃ¢â‚¬â„¢ll show up here with a countdown.
                     </p>
                   );
                   return (
@@ -4500,7 +4514,7 @@ export default function App() {
               }}>
                 <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                    <span style={{ fontSize:22 }}>ðŸŽ‰</span>
+                    <span style={{ fontSize:22 }}>Ã°Å¸Å½â€°</span>
                     <h2 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>Work anniversaries</h2>
                   </div>
                   <span style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:.5 }}>NEXT 3 DAYS</span>
@@ -4533,7 +4547,7 @@ export default function App() {
                               <Av ini={e.ini} sz={32} bg={C.p2} />
                               <div>
                                 <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>{e.name}</div>
-                                <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{years} year{years !== 1 ? 's' : ''} Â· joined {e.joined.split(" ").slice(1).join(" ")}</div>
+                                <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{years} year{years !== 1 ? 's' : ''} Ã‚Â· joined {e.joined.split(" ").slice(1).join(" ")}</div>
                               </div>
                             </div>
                             {days === 0 ? (
@@ -4577,7 +4591,7 @@ export default function App() {
           />
         )}
 
-        {/* â”€ EMPLOYEES / MY PROFILE â”€ */}
+        {/* Ã¢â€â‚¬ EMPLOYEES / MY PROFILE Ã¢â€â‚¬ */}
         {onEmpProfilePage && (
           <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
             <div style={{
@@ -4600,18 +4614,18 @@ export default function App() {
                     padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                     fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                   }}>
-                    {isAdmin ? "â—‰ Directory" : "â—‰ You"}
+                    {isAdmin ? "Ã¢â€”â€° Directory" : "Ã¢â€”â€° You"}
                   </div>
                   <h1 style={{
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
                   }}>{isAdmin ? "Employees" : "My Profile"}</h1>
                   <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55, maxWidth:520 }}>
-                    {isAdmin ? `${employees.length} people at Bipolar Factory â€” open a row for the full profile.` : "Your details stay private; only you can see this page."}
+                    {isAdmin ? `${employees.length} people at Bipolar Factory Ã¢â‚¬â€ open a row for the full profile.` : "Your details stay private; only you can see this page."}
                   </p>
                 </div>
             {isAdmin && (
                 <div style={{ display:"flex", flexWrap:"wrap", gap:8, justifyContent:"flex-end" }}>
-                    <Btn variant="outline" onClick={() => { const csv = employeesToCSV(employees); downloadTextFile(`kinsphere-employees-${new Date().toISOString().slice(0,10)}.csv`, csv); toast("CSV exported âœ“"); }}>Export CSV</Btn>
+                    <Btn variant="outline" onClick={() => { const csv = employeesToCSV(employees); downloadTextFile(`kinsphere-employees-${new Date().toISOString().slice(0,10)}.csv`, csv); toast("CSV exported Ã¢Å“â€œ"); }}>Export CSV</Btn>
                     <Btn variant="outline" onClick={() => setShowImportCsv(true)}>Import CSV</Btn>
                     <Btn onClick={()=>setShowEmp(true)}>+ Add Employee</Btn>
                 </div>
@@ -4642,7 +4656,7 @@ export default function App() {
                 <input
                   value={empSearch}
                   onChange={e=>setEmpSearch(e.target.value)}
-                  placeholder="Search by name or departmentâ€¦"
+                  placeholder="Search by name or departmentÃ¢â‚¬Â¦"
                   style={{
                     width:"100%", padding:"11px 16px", borderRadius:12, border:`1px solid ${C.bdr}`,
                     background:C.wht, fontSize:13, color:C.txt, outline:"none", marginBottom:16, boxSizing:"border-box",
@@ -4671,7 +4685,7 @@ export default function App() {
                               <div>
                                 <div style={{ fontWeight:600, color:C.txt, display:"flex", alignItems:"center", gap:4 }}>
                                   {e.name}
-                                  {isAdmin && <span style={{ color:C.sub, fontSize:12 }}>â†—</span>}
+                                  {isAdmin && <span style={{ color:C.sub, fontSize:12 }}>Ã¢â€ â€”</span>}
                                 </div>
                                 <div style={{ fontSize:10, color:C.sub }}>{e.email}</div>
                               </div>
@@ -4693,7 +4707,7 @@ export default function App() {
           </div>
         )}
 
-        {/* â”€ TIME AWAY â”€ */}
+        {/* Ã¢â€â‚¬ TIME AWAY Ã¢â€â‚¬ */}
         {page==="Time Away" && (
           <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
             <div style={{
@@ -4715,12 +4729,12 @@ export default function App() {
                     display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
                     padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                     fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
-                  }}>â—· Leave</div>
+                  }}>Ã¢â€”Â· Leave</div>
                   <h1 style={{
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
                   }}>Time Away</h1>
                   <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55 }}>
-                    {isAdmin ? "Team calendar and approvals â€” hover a coloured date to see whoâ€™s out." : "Your leave in calendar and list views â€” apply when you need time off."}
+                    {isAdmin ? "Team calendar and approvals Ã¢â‚¬â€ hover a coloured date to see whoÃ¢â‚¬â„¢s out." : "Your leave in calendar and list views Ã¢â‚¬â€ apply when you need time off."}
                   </p>
                 </div>
                 <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
@@ -4750,7 +4764,7 @@ export default function App() {
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#dcfce7", border:`1px solid ${C.bdr}` }} /> Approved</span>
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fee2e2", border:`1px solid ${C.bdr}` }} /> Rejected</span>
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#ffedd5", border:`1px solid ${C.bdr}` }} /> Mixed</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e0e7ff", border:`1px solid ${C.bdr}` }} />ðŸ– Holiday</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e0e7ff", border:`1px solid ${C.bdr}` }} />Ã°Å¸Ââ€“ Holiday</span>
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#f3f4f6" }} /> Sunday (off)</span>
                     </div>
                   </div>
@@ -4760,11 +4774,11 @@ export default function App() {
                     <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:C.p, borderRadius:"4px 0 0 4px" }} />
                     <div style={{ padding:"22px 22px 24px 26px" }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-                      <Btn variant="outline" onClick={()=>setLeaveCalMonth(d=>new Date(d.getFullYear(), d.getMonth()-1, 1))} style={{ padding:"6px 12px" }}>â†</Btn>
+                      <Btn variant="outline" onClick={()=>setLeaveCalMonth(d=>new Date(d.getFullYear(), d.getMonth()-1, 1))} style={{ padding:"6px 12px" }}>Ã¢â€ Â</Btn>
                       <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:C.txt }}>
                         {leaveCalMonth.toLocaleString("en-IN", { month:"long", year:"numeric" })}
                       </div>
-                      <Btn variant="outline" onClick={()=>setLeaveCalMonth(d=>new Date(d.getFullYear(), d.getMonth()+1, 1))} style={{ padding:"6px 12px" }}>â†’</Btn>
+                      <Btn variant="outline" onClick={()=>setLeaveCalMonth(d=>new Date(d.getFullYear(), d.getMonth()+1, 1))} style={{ padding:"6px 12px" }}>Ã¢â€ â€™</Btn>
                     </div>
                     <p style={{ fontSize:11, color:C.sub, margin:"0 0 14px" }}>Hover any coloured date to see every person on leave that day (name, type, status).</p>
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:4, marginBottom:8 }}>
@@ -4788,8 +4802,8 @@ export default function App() {
                           let bg = saDayCellBg(isOff, dayLeaves);
                           if (isHoliday) bg = "#e0e7ff";
                           const tipLines = [
-                            ...(isHoliday ? [`ðŸ– ${holidayObj?.n}${holidayObj?.desc ? ` â€” ${holidayObj.desc}` : ""}`] : []),
-                            ...dayLeaves.map(l => `${l.emp} â€” ${l.type} (${l.status})`),
+                            ...(isHoliday ? [`Ã°Å¸Ââ€“ ${holidayObj?.n}${holidayObj?.desc ? ` Ã¢â‚¬â€ ${holidayObj.desc}` : ""}`] : []),
+                            ...dayLeaves.map(l => `${l.emp} Ã¢â‚¬â€ ${l.type} (${l.status})`),
                           ];
                           const hasTooltip = tipLines.length > 0;
                           cells.push(
@@ -4877,7 +4891,7 @@ export default function App() {
                                       <Btn variant="outline" onClick={()=>promptLeaveAction(l.id,"approved")} style={{ padding:"3px 9px", fontSize:10 }}>Approve</Btn>
                                       <Btn variant="ghost"   onClick={()=>promptLeaveAction(l.id,"rejected")} style={{ padding:"3px 9px", fontSize:10 }}>Reject</Btn>
                                     </div>
-                                  : <span style={{ color:C.bdr, fontSize:11 }}>â€”</span>
+                                  : <span style={{ color:C.bdr, fontSize:11 }}>Ã¢â‚¬â€</span>
                                 }
                               </td>
                             </tr>
@@ -4905,7 +4919,7 @@ export default function App() {
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#dcfce7", border:`1px solid ${C.bdr}` }} /> Approved</span>
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#fee2e2", border:`1px solid ${C.bdr}` }} /> Rejected</span>
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#ffedd5", border:`1px solid ${C.bdr}` }} /> Mixed</span>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e0e7ff", border:`1px solid ${C.bdr}` }} />ðŸ– Holiday</span>
+                      <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#e0e7ff", border:`1px solid ${C.bdr}` }} />Ã°Å¸Ââ€“ Holiday</span>
                       <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:11 }}><span style={{ width:14, height:14, borderRadius:4, background:"#f3f4f6" }} /> Sunday (off)</span>
                     </div>
                   </div>
@@ -4915,11 +4929,11 @@ export default function App() {
                     <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:C.p, borderRadius:"4px 0 0 4px" }} />
                     <div style={{ padding:"22px 22px 24px 26px" }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-                      <Btn variant="outline" onClick={()=>setLeaveCalMonth(d=>new Date(d.getFullYear(), d.getMonth()-1, 1))} style={{ padding:"6px 12px" }}>â†</Btn>
+                      <Btn variant="outline" onClick={()=>setLeaveCalMonth(d=>new Date(d.getFullYear(), d.getMonth()-1, 1))} style={{ padding:"6px 12px" }}>Ã¢â€ Â</Btn>
                       <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:C.txt }}>
                         {leaveCalMonth.toLocaleString("en-IN", { month:"long", year:"numeric" })}
                       </div>
-                      <Btn variant="outline" onClick={()=>setLeaveCalMonth(d=>new Date(d.getFullYear(), d.getMonth()+1, 1))} style={{ padding:"6px 12px" }}>â†’</Btn>
+                      <Btn variant="outline" onClick={()=>setLeaveCalMonth(d=>new Date(d.getFullYear(), d.getMonth()+1, 1))} style={{ padding:"6px 12px" }}>Ã¢â€ â€™</Btn>
                     </div>
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:4, marginBottom:8 }}>
                       {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=>(
@@ -4951,7 +4965,7 @@ export default function App() {
                               fontSize:12, fontWeight:600, color:isOff ? C.bdr : C.txt,
                             }}>
                               {day}
-                              {isHoliday && !isOff && <span style={{ fontSize:7, color:C.p, marginTop:1, textAlign:"center" }}>ðŸ–</span>}
+                              {isHoliday && !isOff && <span style={{ fontSize:7, color:C.p, marginTop:1, textAlign:"center" }}>Ã°Å¸Ââ€“</span>}
                               {hit && !isOff && !isHoliday && <span style={{ fontSize:8, color:C.sub, marginTop:2, textAlign:"center", lineHeight:1.2 }}>{hit.type}</span>}
                             </div>
                           );
@@ -5002,7 +5016,7 @@ export default function App() {
           </div>
         )}
 
-        {/* â”€ PAYDAYS â”€ */}
+        {/* Ã¢â€â‚¬ PAYDAYS Ã¢â€â‚¬ */}
         {page==="Paydays" && (
           <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
             <div style={{
@@ -5024,18 +5038,18 @@ export default function App() {
                     display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
                     padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                     fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
-                  }}>â‚¹ Payroll</div>
+                  }}>Ã¢â€šÂ¹ Payroll</div>
                   <h1 style={{
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
                   }}>Paydays</h1>
                   <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55, maxWidth:480 }}>
                     {(isSA || (role === "Admin" && me.paydaysAccess)) ? (
                       <>
-                        Company payslips, salary configuration, and net pay â€” credited on the 15th.
+                        Company payslips, salary configuration, and net pay Ã¢â‚¬â€ credited on the 15th.
                         {role === "Admin" && me.paydaysAccess && <span style={{ marginLeft:8, fontSize:10, fontWeight:700, color:C.p, background:`rgba(var(--p-rgb),.1)`, padding:"2px 6px", borderRadius:4, textTransform:"uppercase", verticalAlign:"middle" }}>Full Access</span>}
                       </>
                     ) : (
-                      "Your payslips for the selected year â€” download when you need them."
+                      "Your payslips for the selected year Ã¢â‚¬â€ download when you need them."
                     )}
                   </p>
                 </div>
@@ -5127,7 +5141,7 @@ export default function App() {
                               <Av ini={p.ini} sz={30} bg={employees.find(e=>e.id===p.empId)?.avatarC||C.p} />
                               <div>
                                 <div style={{ fontWeight:600, color:C.txt }}>{p.name}</div>
-                                {p.dept && p.dept !== "â€”" ? <div style={{ fontSize:10, color:C.sub }}>{p.dept}</div> : null}
+                                {p.dept && p.dept !== "Ã¢â‚¬â€" ? <div style={{ fontSize:10, color:C.sub }}>{p.dept}</div> : null}
                               </div>
                             </div>
                           </td>
@@ -5192,7 +5206,7 @@ export default function App() {
                     }}>
                       <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:C.p, borderRadius:"4px 0 0 4px" }} />
                       <div style={{ display:"flex", alignItems:"center", gap:12, minWidth:0 }}>
-                        <div style={{ width:44, height:44, borderRadius:12, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>ðŸ“„</div>
+                        <div style={{ width:44, height:44, borderRadius:12, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>Ã°Å¸â€œâ€ž</div>
                         <div>
                           <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:4 }}>{p.monthLabel.toUpperCase()}</div>
                           <div style={{ fontSize:10, color:C.sub }}>Credited {p.credited}</div>
@@ -5242,9 +5256,9 @@ export default function App() {
                           </div>
                         </td>
                         <td style={{ padding:"13px 14px", color:p.set?C.txt:C.bdr, fontWeight:p.set?600:400 }}>{p.ctc}</td>
-                        <td style={{ padding:"13px 14px" }}>{p.basic!=="â€”"?<Pill txt={p.basic} bg={C.surf}    c={C.sub} />:<span style={{color:C.bdr}}>â€”</span>}</td>
-                        <td style={{ padding:"13px 14px" }}>{p.hra  !=="â€”"?<Pill txt={p.hra}   bg="#fef9e7"   c="#7a6000" />:<span style={{color:C.bdr}}>â€”</span>}</td>
-                        <td style={{ padding:"13px 14px" }}>{p.other!=="â€”"?<Pill txt={p.other} bg={C.mid}     c={C.sub} />:<span style={{color:C.bdr}}>â€”</span>}</td>
+                        <td style={{ padding:"13px 14px" }}>{p.basic!=="Ã¢â‚¬â€"?<Pill txt={p.basic} bg={C.surf}    c={C.sub} />:<span style={{color:C.bdr}}>Ã¢â‚¬â€</span>}</td>
+                        <td style={{ padding:"13px 14px" }}>{p.hra  !=="Ã¢â‚¬â€"?<Pill txt={p.hra}   bg="#fef9e7"   c="#7a6000" />:<span style={{color:C.bdr}}>Ã¢â‚¬â€</span>}</td>
+                        <td style={{ padding:"13px 14px" }}>{p.other!=="Ã¢â‚¬â€"?<Pill txt={p.other} bg={C.mid}     c={C.sub} />:<span style={{color:C.bdr}}>Ã¢â‚¬â€</span>}</td>
                         <td style={{ padding:"13px 14px", color:p.set?C.p:C.bdr, fontWeight:p.set?700:400 }}>{p.net}</td>
                         <td style={{ padding:"13px 14px" }}>
                           <Btn 
@@ -5265,7 +5279,7 @@ export default function App() {
           </div>
         )}
 
-        {/* â”€ PAPERWORK HUB â”€ */}
+        {/* Ã¢â€â‚¬ PAPERWORK HUB Ã¢â€â‚¬ */}
         {page==="Paperwork Hub" && (() => {
           const canGenerate = isSA;
           const canSeeAll   = isSA;
@@ -5293,14 +5307,14 @@ export default function App() {
                 checklist: nextChecklist, 
                 progress: newProgress,
                 status: newProgress === 100 ? "Completed" : "In Progress",
-                lastAction: `Checklist updated: ${nextChecklist[taskIndex].name} â†’ ${nextStatus}`
+                lastAction: `Checklist updated: ${nextChecklist[taskIndex].name} Ã¢â€ â€™ ${nextStatus}`
               };
             }));
           };
 
           return (
             <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
-              {/* â”€â”€ Hero â”€â”€ */}
+              {/* Ã¢â€â‚¬Ã¢â€â‚¬ Hero Ã¢â€â‚¬Ã¢â€â‚¬ */}
               <div style={{
                 position:"relative", margin:`0 ${-pad}px 28px`, padding: heroPadStd,
                 background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
@@ -5309,14 +5323,14 @@ export default function App() {
                 <div style={{ position:"absolute", right:-40, top:-30, width:220, height:220, borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`, pointerEvents:"none" }} />
                 <div style={{ position:"relative", zIndex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-end", gap:16, flexWrap:"wrap" }}>
                   <div>
-                    <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>ðŸ“„ Document Centre</div>
+                    <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:10, padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`, fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase" }}>Ã°Å¸â€œâ€ž Document Centre</div>
                     <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em" }}>Paperwork Hub</h1>
                   </div>
 
                   <div style={{ display:"flex", gap:10, alignItems:"center" }}>
                     {isSA && (
                       <Btn variant="outline" onClick={() => setShowTplManage(true)} style={{ padding:"8px 16px", borderRadius:10, fontSize:12 }}>
-                        âš™ Manage Templates
+                        Ã¢Å¡â„¢ Manage Templates
                       </Btn>
                     )}
                     {canGenerate && (
@@ -5330,7 +5344,7 @@ export default function App() {
               </div>
 
 
-              {/* â”€â”€ Tab Content: Documents â”€â”€ */}
+              {/* Ã¢â€â‚¬Ã¢â€â‚¬ Tab Content: Documents Ã¢â€â‚¬Ã¢â€â‚¬ */}
               {paperTab === "Documents" && (
                 <>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:12 }}>
@@ -5381,7 +5395,7 @@ export default function App() {
                                     <div style={{ width:24, height:24, borderRadius:"50%", background:"#e0f2fe", color:"#0284c7", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700 }}>@</div>
                                     <span style={{ fontSize:12 }}>{doc.externalEmail} (External)</span>
                                   </div>
-                                ) : "â€”"}
+                                ) : "Ã¢â‚¬â€"}
                               </td>
                               <td style={{ padding:"14px 16px" }}>
                                 <span style={{ fontSize:11, color:C.sub, background:C.surf, padding:"2px 8px", borderRadius:6 }}>{doc.type}</span>
@@ -5406,29 +5420,29 @@ export default function App() {
                                     link.href = dummyUrl;
                                     link.download = `${doc.name.replace(/\s+/g,'_')}_Signed.pdf`;
                                     link.click();
-                                  }} style={{ background:"#f0fdf4", border:`1px solid #bbf7d0`, borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#16a34a", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.05)" }}>Download â¬‡</button>
+                                  }} style={{ background:"#f0fdf4", border:`1px solid #bbf7d0`, borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#16a34a", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.05)" }}>Download Ã¢Â¬â€¡</button>
                                 ) : doc.status === "sent" ? (
-                                  <button onClick={() => { toast("Simulating Secure Portal: This is what the recipient sees from their email link!"); setSignId(doc.id); }} style={{ background:C.p, border:"none", borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#2a3326", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.1)" }}>Simulate Recipient ðŸ‘</button>
+                                  <button onClick={() => { toast("Simulating Secure Portal: This is what the recipient sees from their email link!"); setSignId(doc.id); }} style={{ background:C.p, border:"none", borderRadius:8, padding:"5px 12px", fontSize:11, fontWeight:700, color:"#2a3326", cursor:"pointer", boxShadow:"0 2px 5px rgba(0,0,0,.1)" }}>Simulate Recipient Ã°Å¸â€˜Â</button>
                                 ) : doc.status === "draft" && isSA ? (
                                   <div style={{ display:"flex", gap:6, justifyContent:"flex-end" }}>
-                                    <button onClick={() => setViewingDoc(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:C.p, cursor:"pointer" }}>Look ðŸ‘</button>
+                                    <button onClick={() => setViewingDoc(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:C.p, cursor:"pointer" }}>Look Ã°Å¸â€˜Â</button>
                                     <button onClick={() => {
                                       const linkId = Math.random().toString(36).substring(7);
                                       const link = `https://sign.kinsphere.app/doc/${linkId}`;
                                       setPapers(papers.map(p => p.id === doc.id ? { ...p, status:"sent", sendLink: link } : p));
-                                      toast(`Document "${doc.name}" sent successfully âœ“`);
-                                    }} style={{ background:"#f0fdf4", border:`1px solid #bbf7d0`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:700, color:"#16a34a", cursor:"pointer" }}>Send âœ‰</button>
+                                      toast(`Document "${doc.name}" sent successfully Ã¢Å“â€œ`);
+                                    }} style={{ background:"#f0fdf4", border:`1px solid #bbf7d0`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:700, color:"#16a34a", cursor:"pointer" }}>Send Ã¢Å“â€°</button>
                                     <button onClick={() => {
                                       if (confirm(`Are you sure you want to delete "${doc.name}"?`)) {
                                         setPapers(papers.filter(p => p.id !== doc.id));
-                                        toast("Document deleted âœ“");
+                                        toast("Document deleted Ã¢Å“â€œ");
                                       }
-                                    }} style={{ background:"none", border:`1px solid rgba(220,38,38,.2)`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:"#dc2626", cursor:"pointer" }}>Delete ðŸ—‘</button>
+                                    }} style={{ background:"none", border:`1px solid rgba(220,38,38,.2)`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:"#dc2626", cursor:"pointer" }}>Delete Ã°Å¸â€”â€˜</button>
                                   </div>
                                 ) : doc.sendLink ? (
-                                  <button onClick={() => { navigator.clipboard.writeText(doc.sendLink); toast("Link copied to clipboard âœ“"); }} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:C.p, cursor:"pointer" }}>Copy Link</button>
+                                  <button onClick={() => { navigator.clipboard.writeText(doc.sendLink); toast("Link copied to clipboard Ã¢Å“â€œ"); }} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:600, color:C.p, cursor:"pointer" }}>Copy Link</button>
                                 ) : (
-                                  <span style={{ fontSize:10, color:C.bdr }}>â€”</span>
+                                  <span style={{ fontSize:10, color:C.bdr }}>Ã¢â‚¬â€</span>
                                 )}
                               </td>
                             </tr>
@@ -5464,7 +5478,7 @@ export default function App() {
                 </Modal>
               )}
 
-              {/* â”€â”€ Tab Content: Generate â”€â”€ */}
+              {/* Ã¢â€â‚¬Ã¢â€â‚¬ Tab Content: Generate Ã¢â€â‚¬Ã¢â€â‚¬ */}
               {paperTab === "Generate" && (
                 <div style={{ maxWidth:800, margin:"0 auto" }}>
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:30, marginBottom:32 }}>
@@ -5481,7 +5495,7 @@ export default function App() {
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))", gap:20 }}>
                       {templates.map(tpl => (
                         <Card key={tpl.id} onClick={() => { setGenTemplate(tpl); setGenStep(2); }} style={{ cursor:"pointer", transition:"transform .2s, border-color .2s", border:`1px solid ${genTemplate?.id === tpl.id ? C.p : C.bdr}`, background: genTemplate?.id === tpl.id ? `rgba(var(--p-rgb),.05)` : C.wht }}>
-                          <div style={{ fontSize:24, marginBottom:12 }}>{tpl.type==="Payslip"?"ðŸ“Š":tpl.type==="Offer Letter"?"âœ‰ï¸":"ðŸ“„"}</div>
+                          <div style={{ fontSize:24, marginBottom:12 }}>{tpl.type==="Payslip"?"Ã°Å¸â€œÅ ":tpl.type==="Offer Letter"?"Ã¢Å“â€°Ã¯Â¸Â":"Ã°Å¸â€œâ€ž"}</div>
                           <div style={{ fontWeight:700, fontSize:15, color:C.txt, marginBottom:4 }}>{tpl.name}</div>
                           <div style={{ fontSize:11, color:C.sub }}>{tpl.type}</div>
                         </Card>
@@ -5509,11 +5523,11 @@ export default function App() {
                           ))}
                         </div>
                         <div style={{ display:"flex", justifyContent:"space-between", marginTop:24, paddingTop:16, borderTop:`1px solid ${C.surf}` }}>
-                          <Btn variant="ghost" onClick={() => setGenStep(1)}>â† Back</Btn>
+                          <Btn variant="ghost" onClick={() => setGenStep(1)}>Ã¢â€ Â Back</Btn>
                           <Btn onClick={() => {
                             setGenFilledBody(fillTemplate(genTemplate.body, genVals));
                             setGenStep(3);
-                          }}>Next: Dispatch â†’</Btn>
+                          }}>Next: Dispatch Ã¢â€ â€™</Btn>
                         </div>
                       </Card>
 
@@ -5544,7 +5558,7 @@ export default function App() {
                           <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:8, letterSpacing:.5 }}>SELECT EMPLOYEE</label>
                           <select value={genEmpId} onChange={(e: any) => setGenEmpId(e.target.value)} style={{ width:"100%", padding:12, borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}>
                             <option value="">Choose an employee...</option>
-                            {employees.map(e => <option key={e.id} value={e.id}>{e.name} â€” {e.designation}</option>)}
+                            {employees.map(e => <option key={e.id} value={e.id}>{e.name} Ã¢â‚¬â€ {e.designation}</option>)}
                           </select>
                         </div>
                       )}
@@ -5562,7 +5576,7 @@ export default function App() {
                       )}
 
                       <div style={{ display:"flex", justifyContent:"space-between", marginTop:32, paddingTop:24, borderTop:`1px solid ${C.surf}` }}>
-                        <Btn variant="ghost" onClick={() => setGenStep(2)}>â† Back</Btn>
+                        <Btn variant="ghost" onClick={() => setGenStep(2)}>Ã¢â€ Â Back</Btn>
                         <Btn onClick={() => {
                           const linkId = Math.random().toString(36).substring(7);
                           const link = `https://sign.kinsphere.app/doc/${linkId}`;
@@ -5579,10 +5593,10 @@ export default function App() {
                             filledBody: genFilledBody,
                           };
                           setPapers([newDoc, ...papers]);
-                          toast(`Email securely dispatched to ${genRecipientType === 'external' ? genExternalEmail : (employees.find(e => e.id === Number(genEmpId))?.name || 'employee')} âœ“`);
+                          toast(`Email securely dispatched to ${genRecipientType === 'external' ? genExternalEmail : (employees.find(e => e.id === Number(genEmpId))?.name || 'employee')} Ã¢Å“â€œ`);
                           setPaperTab("Documents");
                           resetGen();
-                        }}>âœ‰ Generate & Email</Btn>
+                        }}>Ã¢Å“â€° Generate & Email</Btn>
                       </div>
                     </Card>
                   )}
@@ -5593,12 +5607,12 @@ export default function App() {
                 <Modal title="Upload Document" onClose={() => setPaperModal(false)} width={440}>
                   <div style={{ marginBottom:14 }}>
                     <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>DOCUMENT NAME</label>
-                    <input placeholder="e.g. Offer Letter â€” Priya" value={paperForm.name} onChange={(e: any)=>setPaperForm({...paperForm, name:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }} />
+                    <input placeholder="e.g. Offer Letter Ã¢â‚¬â€ Priya" value={paperForm.name} onChange={(e: any)=>setPaperForm({...paperForm, name:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }} />
                   </div>
                   <div style={{ marginBottom:14 }}>
                     <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>LINK TO PERSON</label>
                     <select value={paperForm.empId} onChange={(e: any)=>setPaperForm({...paperForm, empId:e.target.value})} style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12 }}>
-                      <option value="">Select recipientâ€¦</option>
+                      <option value="">Select recipientÃ¢â‚¬Â¦</option>
                       <optgroup label="Employees">
                         {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                       </optgroup>
@@ -5610,7 +5624,7 @@ export default function App() {
                   <div style={{ marginBottom:20 }}>
                      <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>FILE</label>
                      <div onClick={()=>setPaperForm({...paperForm, fileName:"uploaded_doc.pdf"})} style={{ width:"100%", padding:20, borderRadius:10, border:`2px dashed ${C.bdr}`, background:C.surf, textAlign:"center", cursor:"pointer" }}>
-                       {paperForm.fileName ? <span style={{ color:C.p, fontWeight:700 }}>ðŸ“Ž {paperForm.fileName}</span> : <span style={{ color:C.sub }}>Click to select file</span>}
+                       {paperForm.fileName ? <span style={{ color:C.p, fontWeight:700 }}>Ã°Å¸â€œÅ½ {paperForm.fileName}</span> : <span style={{ color:C.sub }}>Click to select file</span>}
                      </div>
                   </div>
                   <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
@@ -5619,13 +5633,13 @@ export default function App() {
                       if (!paperForm.name || !paperForm.fileName) return toast("Fill all fields");
                       setPapers([{ id:`up-${Date.now()}`, name:paperForm.name, empId:Number(paperForm.empId)||null, type:paperForm.type, date:"Today", fileName:paperForm.fileName, status:"draft" }, ...papers]);
                       setPaperModal(false);
-                      toast("Document uploaded âœ“");
+                      toast("Document uploaded Ã¢Å“â€œ");
                     }}>Upload</Btn>
                   </div>
                 </Modal>
               )}
 
-              {/* â”€ TEMPLATE MANAGER (SUPER ADMIN) â”€ */}
+              {/* Ã¢â€â‚¬ TEMPLATE MANAGER (SUPER ADMIN) Ã¢â€â‚¬ */}
               {showTplManage && (
                 <Modal title="Manage Templates" onClose={() => { setShowTplManage(false); setTplStep(1); setTplTab("Library"); setTplForm({ id:"", name:"", type:"Other", body:"", fileName:"" }); }} width={tplStep === 2 ? 650 : 500}>
                   {tplStep === 1 && (
@@ -5675,7 +5689,7 @@ export default function App() {
                                    reader.readAsText(file);
                                  } else {
                                    // For PDFs/Word docs in frontend prototype, use sample extraction
-                                   setTplForm({...tplForm, fileName: file.name, body: "[[ âš  Prototype Demo Note: Real PDF extraction requires the backend OCR which is not yet connected to this frontend mock. ]]\n\nDear [Candidate Name],\n\nWe are pleased to offer you the position of [Job Title] at KinSphere.\nYour starting salary will be [Salary] per year, beginning on [Start Date].\n\nBest,\nThe HR Team", pdfUrl: fileUrl});
+                                   setTplForm({...tplForm, fileName: file.name, body: "[[ Ã¢Å¡Â  Prototype Demo Note: Real PDF extraction requires the backend OCR which is not yet connected to this frontend mock. ]]\n\nDear [Candidate Name],\n\nWe are pleased to offer you the position of [Job Title] at KinSphere.\nYour starting salary will be [Salary] per year, beginning on [Start Date].\n\nBest,\nThe HR Team", pdfUrl: fileUrl});
                                    setTimeout(() => setTplStep(2), 1500);
                                  }
                                }}
@@ -5684,7 +5698,7 @@ export default function App() {
                                if (!tplForm.name) return toast("Please enter a template name first.");
                                document.getElementById('tpl-upload-input')?.click();
                              }} style={{ width:"100%", padding:24, borderRadius:12, border:`2px dashed ${C.bdr}`, background:C.surf, textAlign:"center", cursor:"pointer", transition:"all .2s" }}>
-                               {tplForm.fileName ? <span style={{ color:C.p, fontWeight:700, fontSize:13 }}>ðŸ“„ {tplForm.fileName} uploaded</span> : <span style={{ color:C.sub, fontSize:12, fontWeight:500 }}>Drop file here or browse from your computer</span>}
+                               {tplForm.fileName ? <span style={{ color:C.p, fontWeight:700, fontSize:13 }}>Ã°Å¸â€œâ€ž {tplForm.fileName} uploaded</span> : <span style={{ color:C.sub, fontSize:12, fontWeight:500 }}>Drop file here or browse from your computer</span>}
                              </div>
                           </div>
                         </div>
@@ -5713,14 +5727,14 @@ export default function App() {
                                   <div style={{ fontSize:14, fontWeight:700, color:C.txt, marginBottom:2 }}>{t.name}</div>
                                   <div style={{ fontSize:11, color:C.sub, display:"flex", alignItems:"center", gap:6 }}>
                                     <span style={{ background:C.surf, padding:"2px 6px", borderRadius:4, fontWeight:600 }}>{t.type}</span>
-                                    <span>â€¢</span>
+                                    <span>Ã¢â‚¬Â¢</span>
                                     {t.fields?.length || 0} dynamic fields
                                   </div>
                                 </div>
                                 <div style={{ display:"flex", gap:10 }}>
-                                  <span onClick={(e) => { e.stopPropagation(); setTplViewPdf(t.pdfUrl || "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"); }} style={{ fontSize:12, color:C.txt, fontWeight:700, background:`rgba(0,0,0,.05)`, padding:"6px 12px", borderRadius:6, transition:"all .15s" }} onMouseEnter={e=>e.currentTarget.style.background=`rgba(0,0,0,.09)`} onMouseLeave={e=>e.currentTarget.style.background=`rgba(0,0,0,.05)`}>ðŸ‘ View PDF</span>
-                                  <span onClick={() => { setTplForm({ ...t, fileName: t.name + ".pdf" }); setTplStep(2); }} style={{ fontSize:12, color:C.p, fontWeight:700, background:`rgba(var(--p-rgb),.1)`, padding:"6px 12px", borderRadius:6, transition:"all .15s" }} onMouseEnter={e=>e.currentTarget.style.background=`rgba(var(--p-rgb),.15)`} onMouseLeave={e=>e.currentTarget.style.background=`rgba(var(--p-rgb),.1)`}>Edit âœŽ</span>
-                                  <span onClick={(e) => { e.stopPropagation(); setTemplates(prev => prev.filter(x => x.id !== t.id)); toast(`Template "${t.name}" deleted.`); }} style={{ fontSize:12, color:"#dc2626", fontWeight:700, background:`#fee2e2`, padding:"6px 12px", borderRadius:6, transition:"all .15s" }} onMouseEnter={e=>e.currentTarget.style.background=`#fecaca`} onMouseLeave={e=>e.currentTarget.style.background=`#fee2e2`}>ðŸ—‘ Delete</span>
+                                  <span onClick={(e) => { e.stopPropagation(); setTplViewPdf(t.pdfUrl || "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"); }} style={{ fontSize:12, color:C.txt, fontWeight:700, background:`rgba(0,0,0,.05)`, padding:"6px 12px", borderRadius:6, transition:"all .15s" }} onMouseEnter={e=>e.currentTarget.style.background=`rgba(0,0,0,.09)`} onMouseLeave={e=>e.currentTarget.style.background=`rgba(0,0,0,.05)`}>Ã°Å¸â€˜Â View PDF</span>
+                                  <span onClick={() => { setTplForm({ ...t, fileName: t.name + ".pdf" }); setTplStep(2); }} style={{ fontSize:12, color:C.p, fontWeight:700, background:`rgba(var(--p-rgb),.1)`, padding:"6px 12px", borderRadius:6, transition:"all .15s" }} onMouseEnter={e=>e.currentTarget.style.background=`rgba(var(--p-rgb),.15)`} onMouseLeave={e=>e.currentTarget.style.background=`rgba(var(--p-rgb),.1)`}>Edit Ã¢Å“Å½</span>
+                                  <span onClick={(e) => { e.stopPropagation(); setTemplates(prev => prev.filter(x => x.id !== t.id)); toast(`Template "${t.name}" deleted.`); }} style={{ fontSize:12, color:"#dc2626", fontWeight:700, background:`#fee2e2`, padding:"6px 12px", borderRadius:6, transition:"all .15s" }} onMouseEnter={e=>e.currentTarget.style.background=`#fecaca`} onMouseLeave={e=>e.currentTarget.style.background=`#fee2e2`}>Ã°Å¸â€”â€˜ Delete</span>
                                 </div>
                               </div>
                             ))}
@@ -5744,14 +5758,14 @@ export default function App() {
 
                       <div style={{ padding:14, borderRadius:8, background:"#f0fdf4", border:"1px solid #bbf7d0", marginBottom:16 }}>
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
-                          <div style={{ fontSize:11, fontWeight:700, color:"#166534" }}>ðŸ’¡ HOW TO ADD FIELDS</div>
+                          <div style={{ fontSize:11, fontWeight:700, color:"#166534" }}>Ã°Å¸â€™Â¡ HOW TO ADD FIELDS</div>
                           <Btn variant="outline" onClick={() => {
                             let newBody = tplForm.body;
                             // AI Simulation: Convert [Field] to {{field}} and detect currency
                             newBody = newBody.replace(/\[([^\]]+)\]/g, (match, p1) => `{{${p1.replace(/\s+/g, '')}}}`);
-                            toast("âœ¨ AI Detection Complete! Found potential dynamic fields.");
+                            toast("Ã¢Å“Â¨ AI Detection Complete! Found potential dynamic fields.");
                             setTplForm(f => ({...f, body: newBody}));
-                          }} style={{ padding:"4px 10px", fontSize:10, borderRadius:6, borderColor:"#166534", color:"#166534", background:"#dcfce7" }}>âœ¨ Auto-Detect Fields (AI)</Btn>
+                          }} style={{ padding:"4px 10px", fontSize:10, borderRadius:6, borderColor:"#166534", color:"#166534", background:"#dcfce7" }}>Ã¢Å“Â¨ Auto-Detect Fields (AI)</Btn>
                         </div>
                         <div style={{ fontSize:11, color:"#15803d", lineHeight:1.5 }}>
                           Replace static text with double curly braces (or square brackets if using Auto-Detect) to create a dynamic field.<br/>
@@ -5776,7 +5790,7 @@ export default function App() {
                           const uniqueFields = [...new Set(matches)];
                           setTplExtracted(uniqueFields);
                           setTplStep(3);
-                        }}>Next: Confirm Criteria â†’</Btn>
+                        }}>Next: Confirm Criteria Ã¢â€ â€™</Btn>
                       </div>
                     </>
                   )}
@@ -5805,7 +5819,7 @@ export default function App() {
                       )}
 
                       <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
-                        <Btn variant="ghost" onClick={() => setTplStep(2)}>â† Back to Map Fields</Btn>
+                        <Btn variant="ghost" onClick={() => setTplStep(2)}>Ã¢â€ Â Back to Map Fields</Btn>
                         <Btn onClick={() => {
                           const newTpl = {
                             id: tplForm.id || `tpl-${Date.now()}`,
@@ -5820,7 +5834,7 @@ export default function App() {
                           setTplStep(1);
                           setTplTab("Library");
                           setTplForm({ id:"", name:"", type:"Other", body:"", fileName:"" });
-                          toast(`Template "${newTpl.name}" created âœ“`);
+                          toast(`Template "${newTpl.name}" created Ã¢Å“â€œ`);
                         }}>Save Template</Btn>
                       </div>
                     </>
@@ -5828,7 +5842,7 @@ export default function App() {
                 </Modal>
               )}
 
-              {/* â”€ PDF NATIVE PREVIEW VIEWER â”€ */}
+              {/* Ã¢â€â‚¬ PDF NATIVE PREVIEW VIEWER Ã¢â€â‚¬ */}
               {tplViewPdf && (
                 <Modal title="Original Document" onClose={() => setTplViewPdf(null)} width={800}>
                   <div style={{ height:600, background:"#f0f0f0", borderRadius:10, overflow:"hidden", border:`1px solid ${C.bdr}` }}>
@@ -5842,7 +5856,7 @@ export default function App() {
 
       <div style={{ display:"none" }}>{paperTemplatePreview}</div>
 
-        {/* â”€ RECOGNITION â”€ */}
+        {/* Ã¢â€â‚¬ RECOGNITION Ã¢â€â‚¬ */}
         {page==="Recognition" && (
           <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
             <div style={{
@@ -5864,7 +5878,7 @@ export default function App() {
                   padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                   fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                 }}>
-                  <span style={{ fontSize:12, lineHeight:1 }}>âœ¦</span>
+                  <span style={{ fontSize:12, lineHeight:1 }}>Ã¢Å“Â¦</span>
                   Community
                 </div>
                 <h1 style={{
@@ -5872,15 +5886,15 @@ export default function App() {
                   letterSpacing:"-.02em",
                 }}>Recognition</h1>
                 <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55, maxWidth:520 }}>
-                  Public shout-outs for everyone to see â€” now with reactions, tags, and private notes.
+                  Public shout-outs for everyone to see Ã¢â‚¬â€ now with reactions, tags, and private notes.
                 </p>
               </div>
             </div>
 
-            {/* â”€ MONTHLY HIGHLIGHTS â”€ */}
+            {/* Ã¢â€â‚¬ MONTHLY HIGHLIGHTS Ã¢â€â‚¬ */}
             <div style={{ display:"grid", gridTemplateColumns: narrow ? "1fr" : "1fr 1fr", gap:20, marginBottom:28 }}>
               <Card style={{ padding:"18px 22px", background:`linear-gradient(145deg, ${C.wht} 0%, ${C.bg} 100%)`, boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset" }}>
-                <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:12 }}>ðŸ† TOP RECOGNISED</div>
+                <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:12 }}>Ã°Å¸Ââ€  TOP RECOGNISED</div>
                 <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                   {recogHighlights.topRecognised.map((h, i) => (
                     <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
@@ -5895,7 +5909,7 @@ export default function App() {
                 </div>
               </Card>
               <Card style={{ padding:"18px 22px", background:`linear-gradient(145deg, ${C.wht} 0%, ${C.bg} 100%)`, boxShadow:"0 2px 16px rgba(var(--shadow-rgb),.06), 0 1px 0 rgba(var(--wht-rgb),.8) inset" }}>
-                <div style={{ fontSize:10, fontWeight:700, color:C.p2, letterSpacing:1, marginBottom:12 }}>ðŸš€ MOST ACTIVE RECOGNISERS</div>
+                <div style={{ fontSize:10, fontWeight:700, color:C.p2, letterSpacing:1, marginBottom:12 }}>Ã°Å¸Å¡â‚¬ MOST ACTIVE RECOGNISERS</div>
                 <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                   {recogHighlights.topGivers.map((h, i) => (
                     <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
@@ -5923,14 +5937,14 @@ export default function App() {
                 <h2 style={{ margin:"0 0 16px", fontFamily:"Georgia,serif", fontSize:17, fontWeight:700, color:C.txt }}>New shout-out</h2>
                 <Inp 
                   label="Recognise someone" 
-                  opts={["Choose a teammateâ€¦",...employees.filter(e=>e.name!==me.name).map(e=>e.name)]} 
+                  opts={["Choose a teammateÃ¢â‚¬Â¦",...employees.filter(e=>e.name!==me.name).map(e=>e.name)]} 
                   value={recogTo}
                   onChange={e=>setRecogTo(e.target.value)}
                 />
                 <Inp 
                   label="What did they do?" 
                   type="textarea" 
-                  placeholder="Share what they did that made a differenceâ€¦" 
+                  placeholder="Share what they did that made a differenceÃ¢â‚¬Â¦" 
                   value={recogMsg}
                   onChange={e=>setRecogMsg(e.target.value)}
                 />
@@ -5989,7 +6003,7 @@ export default function App() {
                       <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                         <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, color:C.p }}>SHOUT-OUT</div>
                         {r.isPrivate && (
-                          <span style={{ fontSize:10, fontWeight:700, color:"#92400e", background:"#fef3c7", padding:"3px 8px", borderRadius:6 }}>ðŸ”’ PRIVATE</span>
+                          <span style={{ fontSize:10, fontWeight:700, color:"#92400e", background:"#fef3c7", padding:"3px 8px", borderRadius:6 }}>Ã°Å¸â€â€™ PRIVATE</span>
                         )}
                       </div>
                       <span style={{
@@ -6014,7 +6028,7 @@ export default function App() {
                       <div style={{
                         width:32, height:32, borderRadius:"50%", background:C.surf, border:`1px solid ${C.bdr}`,
                         display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, color:C.p, fontWeight:800, flexShrink:0,
-                      }}>â†’</div>
+                      }}>Ã¢â€ â€™</div>
                       <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                         <Av ini={r.tIni} sz={44} bg={C.p2} />
                         <div style={{ minWidth:0 }}>
@@ -6057,13 +6071,13 @@ export default function App() {
                           onClick={()=>handleToggleReaction(r.id, 'like')}
                           style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:8, padding:"5px 10px", fontSize:12, cursor:"pointer", display:"flex", alignItems:"center", gap:6, color:C.txt }}
                         >
-                          <span>ðŸ‘</span> <span style={{ fontWeight:700 }}>{r.reactions?.like || 0}</span>
+                          <span>Ã°Å¸â€˜Â</span> <span style={{ fontWeight:700 }}>{r.reactions?.like || 0}</span>
                         </button>
                         <button 
                           onClick={()=>handleToggleReaction(r.id, 'celebrate')}
                           style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:8, padding:"5px 10px", fontSize:12, cursor:"pointer", display:"flex", alignItems:"center", gap:6, color:C.txt }}
                         >
-                          <span>ðŸŽ‰</span> <span style={{ fontWeight:700 }}>{r.reactions?.celebrate || 0}</span>
+                          <span>Ã°Å¸Å½â€°</span> <span style={{ fontWeight:700 }}>{r.reactions?.celebrate || 0}</span>
                         </button>
                       </div>
                       <span style={{ fontSize:11, color:C.sub, fontWeight:600 }}>{r.comments?.length || 0} Comment{r.comments?.length !== 1 ? 's' : ''}</span>
@@ -6105,7 +6119,7 @@ export default function App() {
           </div>
         )}
 
-        {/* â”€ ORG CHART â”€ */}
+        {/* Ã¢â€â‚¬ ORG CHART Ã¢â€â‚¬ */}
         {page==="Org Chart" && (
           <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
             <div style={{
@@ -6127,7 +6141,7 @@ export default function App() {
                     display:"inline-flex", alignItems:"center", gap:8, marginBottom:10,
                     padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                     fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
-                  }}>âŠ¹ Structure</div>
+                  }}>Ã¢Å Â¹ Structure</div>
                   <h1 style={{
                     fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12, letterSpacing:"-.02em",
                   }}>Org Chart</h1>
@@ -6147,8 +6161,8 @@ export default function App() {
                         boxShadow:"inset 0 1px 2px rgba(var(--shadow-rgb),.04)",
                       }}
                     />
-                    <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", fontSize:14, opacity:0.5 }}>ðŸ”</span>
-                    {orgSearch && <button onClick={()=>setOrgSearch("")} style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:14 }}>Ã—</button>}
+                    <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", fontSize:14, opacity:0.5 }}>Ã°Å¸â€Â</span>
+                    {orgSearch && <button onClick={()=>setOrgSearch("")} style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:14 }}>Ãƒâ€”</button>}
                   </div>
                   {isAdmin && <Btn variant="outline" onClick={()=>setShowOrgEdit(true)} style={{ padding:"10px 18px" }}>Configure</Btn>}
                 </div>
@@ -6173,7 +6187,7 @@ export default function App() {
                   cursor:"pointer", zIndex:10,
                 }}
               >
-                âž¹ Center View
+                Ã¢Å¾Â¹ Center View
               </button>
 
               <div id="org-chart-root" style={{ display:"flex", justifyContent:"center", alignItems:"flex-start", gap:48, flexWrap:"wrap", minWidth:0 }}>
@@ -6181,7 +6195,7 @@ export default function App() {
                   const roots = employees.filter(e => orgManagers[e.id] == null);
                   if (roots.length === 0) return (
                     <div style={{ textAlign:"center", color:C.sub, padding:"60px 20px", fontSize:13, borderRadius:12, background:C.bg, border:`1px dashed ${C.bdr}` }}>
-                      No top-level role defined. {isAdmin ? <>Use <strong style={{ color:C.txt }}>Configure</strong> to set a â€œTop levelâ€ manager.</> : <>Contact Admin to set hierarchy.</>}
+                      No top-level role defined. {isAdmin ? <>Use <strong style={{ color:C.txt }}>Configure</strong> to set a Ã¢â‚¬Å“Top levelÃ¢â‚¬Â manager.</> : <>Contact Admin to set hierarchy.</>}
                     </div>
                   );
                   return roots.map(root => (
@@ -6216,7 +6230,7 @@ export default function App() {
           </div>
         )}
 
-        {/* â”€ LISTENING ROOM â”€ */}
+        {/* Ã¢â€â‚¬ LISTENING ROOM Ã¢â€â‚¬ */}
         {page==="Listening Room" && (
           <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
             <div style={{
@@ -6238,7 +6252,7 @@ export default function App() {
                   padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                   fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                 }}>
-                  <span style={{ fontSize:13, lineHeight:1, opacity:.9 }}>â—Ž</span>
+                  <span style={{ fontSize:13, lineHeight:1, opacity:.9 }}>Ã¢â€”Å½</span>
                   Private
                 </div>
                 <h1 style={{
@@ -6246,7 +6260,7 @@ export default function App() {
                   letterSpacing:"-.02em",
                 }}>The Listening Room</h1>
                 <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55, maxWidth:520 }}>
-                  A calm place to slow down and put words to what youâ€™re carrying â€” work stress, tough days, or anything that needs air.
+                  A calm place to slow down and put words to what youÃ¢â‚¬â„¢re carrying Ã¢â‚¬â€ work stress, tough days, or anything that needs air.
                 </p>
               </div>
             </div>
@@ -6262,11 +6276,11 @@ export default function App() {
                 <div style={{
                   width:36, height:36, borderRadius:10, background:C.surf, border:`1px solid ${C.bdr}`,
                   display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0,
-                }}>ðŸ”’</div>
+                }}>Ã°Å¸â€â€™</div>
                 <div>
                   <div style={{ fontSize:11, fontWeight:700, color:C.txt, marginBottom:3 }}>Only you can see this</div>
                   <p style={{ margin:0, fontSize:12, color:C.sub, lineHeight:1.5 }}>
-                    Nothing here is shared with your team or HR. Itâ€™s a prototype space for reflection and gentle prompts.
+                    Nothing here is shared with your team or HR. ItÃ¢â‚¬â„¢s a prototype space for reflection and gentle prompts.
                   </p>
                 </div>
               </div>
@@ -6300,10 +6314,10 @@ export default function App() {
                         width:56, height:56, borderRadius:16, background:C.surf, border:`1px solid ${C.bdr}`,
                         display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, marginBottom:14,
                         boxShadow:"inset 0 1px 0 rgba(255,255,255,.6)",
-                      }}>ðŸ’¬</div>
-                      <div style={{ fontSize:14, fontWeight:600, color:C.txt, marginBottom:6 }}>Start when youâ€™re ready</div>
+                      }}>Ã°Å¸â€™Â¬</div>
+                      <div style={{ fontSize:14, fontWeight:600, color:C.txt, marginBottom:6 }}>Start when youÃ¢â‚¬â„¢re ready</div>
                       <div style={{ fontSize:12, color:C.sub, lineHeight:1.5, maxWidth:280 }}>
-                        Type below or tap a starter. Thereâ€™s no wrong way to begin.
+                        Type below or tap a starter. ThereÃ¢â‚¬â„¢s no wrong way to begin.
                       </div>
                     </div>
                   )
@@ -6357,7 +6371,7 @@ export default function App() {
                   <input
                     value={input}
                     onChange={e=>setInput(e.target.value)}
-                    placeholder="Type how you're feelingâ€¦"
+                    placeholder="Type how you're feelingÃ¢â‚¬Â¦"
                     onKeyDown={e=>e.key==="Enter"&&sendMsg()}
                     style={{
                       flex:1, padding:"12px 16px", borderRadius:12, border:`1px solid ${C.bdr}`, fontSize:13, color:C.txt,
@@ -6372,12 +6386,12 @@ export default function App() {
           </div>
         )}
 
-        {/* â”€ PEOPLE CHAPTERS â”€ */}
+        {/* Ã¢â€â‚¬ PEOPLE CHAPTERS Ã¢â€â‚¬ */}
         {page === "People Chapters" && (
              <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"800px", margin:"0 auto" }}>
                {/* Hero */}
                <div style={{ padding:"40px 0", textAlign:"center" }}>
-                 <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:16, padding:"6px 14px", borderRadius:999, background:C.surf, border:`1px solid ${C.bdr}`, fontSize:11, fontWeight:700, letterSpacing:1, color:C.p, textTransform:"uppercase" }}>ðŸ§­ Employee Journeys</div>
+                 <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:16, padding:"6px 14px", borderRadius:999, background:C.surf, border:`1px solid ${C.bdr}`, fontSize:11, fontWeight:700, letterSpacing:1, color:C.p, textTransform:"uppercase" }}>Ã°Å¸Â§Â­ Employee Journeys</div>
                  <h1 style={{ fontFamily:"Georgia,serif", fontSize:32, color:C.txt, margin:"0 0 16px", fontWeight:700 }}>People Chapters</h1>
                  <p style={{ color:C.sub, fontSize:15, lineHeight:1.6, maxWidth:500, margin:"0 auto" }}>Manage the critical transitions of your workforce, from their first day to their final handover.</p>
                </div>
@@ -6385,7 +6399,7 @@ export default function App() {
                {chapterTab === "Menu" ? (
                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:24, marginTop:20 }}>
                    <Card onClick={() => setChapterTab("Onboarding")} style={{ padding:40, textAlign:"center", cursor:"pointer", transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)" }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.p} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
-                     <div style={{ width:64, height:64, borderRadius:"50%", background:"#e0f2fe", color:"#0369a1", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center" }}>ðŸ‘‹</div>
+                     <div style={{ width:64, height:64, borderRadius:"50%", background:"#e0f2fe", color:"#0369a1", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center" }}>Ã°Å¸â€˜â€¹</div>
                      <div>
                        <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Onboarding</h2>
                        <p style={{ fontSize:14, color:C.sub, margin:0, lineHeight:1.5 }}>Set up and welcome new employees into the organization.</p>
@@ -6393,7 +6407,7 @@ export default function App() {
                    </Card>
                    
                    <Card onClick={() => setChapterTab("Offboarding")} style={{ padding:40, textAlign:"center", cursor:"pointer", transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)" }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.p} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
-                     <div style={{ width:64, height:64, borderRadius:"50%", background:"#fce7f3", color:"#be185d", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center" }}>ðŸšª</div>
+                     <div style={{ width:64, height:64, borderRadius:"50%", background:"#fce7f3", color:"#be185d", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center" }}>Ã°Å¸Å¡Âª</div>
                      <div>
                        <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Offboarding</h2>
                        <p style={{ fontSize:14, color:C.sub, margin:0, lineHeight:1.5 }}>Manage exits, clearances, and employee transitions.</p>
@@ -6417,16 +6431,16 @@ export default function App() {
                   />
                 ) : (
                   <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
-                    <div style={{ fontSize:40, marginBottom:16 }}>ðŸŽ¢</div>
+                    <div style={{ fontSize:40, marginBottom:16 }}>Ã°Å¸Å½Â¢</div>
                     <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 12px" }}>{chapterTab} flows coming soon</h2>
                     <p style={{ fontSize:14, color:C.sub, margin:"0 0 24px", maxWidth:400, marginLeft:"auto", marginRight:"auto" }}>The detailed workflows and automations for {chapterTab.toLowerCase()} are currently under construction.</p>
-                    <Btn variant="outline" onClick={() => setChapterTab("Menu")}>â† Back to Chapters</Btn>
+                    <Btn variant="outline" onClick={() => setChapterTab("Menu")}>Ã¢â€ Â Back to Chapters</Btn>
                   </div>
                 )}
              </div>
         )}
 
-        {/* â”€ SETTINGS â”€ */}
+        {/* Ã¢â€â‚¬ SETTINGS Ã¢â€â‚¬ */}
         {page==="Settings" && (
           <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
             <div style={{
@@ -6448,7 +6462,7 @@ export default function App() {
                   padding:"5px 12px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
                   fontSize:10, fontWeight:700, letterSpacing:.85, color:C.sub, textTransform:"uppercase",
                 }}>
-                  âš™ Account
+                  Ã¢Å¡â„¢ Account
                 </div>
                 <h1 style={{
                   fontFamily:"Georgia,serif", fontSize:"clamp(26px, 3.5vw, 32px)", color:C.txt, margin:0, fontWeight:700, lineHeight:1.12,
@@ -6456,7 +6470,7 @@ export default function App() {
                 }}>Settings</h1>
                 <p style={{ color:C.sub, fontSize:13, margin:"10px 0 0", lineHeight:1.55, maxWidth:560 }}>
                   {isSA
-                    ? "Organisation controls, security, and your personal account â€” all in one place."
+                    ? "Organisation controls, security, and your personal account Ã¢â‚¬â€ all in one place."
                     : isAdmin
                       ? "Manage notifications and credentials for your administrator workspace."
                       : "Your profile preferences and sign-in security."}
@@ -6488,7 +6502,7 @@ export default function App() {
                       key={t}
                       onClick={() => {
                         setTheme(t);
-                        toast(`${t} theme applied âœ“`);
+                        toast(`${t} theme applied Ã¢Å“â€œ`);
                       }}
                       style={{
                         padding: "14px 12px",
@@ -6565,7 +6579,7 @@ export default function App() {
                         {departments.map(d => (
                           <div key={d} style={{ display:"flex", alignItems:"center", gap:6, padding:"4px 10px", borderRadius:20, background:C.surf, border:`1px solid ${C.bdr}`, fontSize:12, color:C.txt }}>
                             {d}
-                            <button onClick={()=>setDepartments(p=>p.filter(x=>x!==d))} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:10, padding:0, display:"flex" }} title="Remove">âœ•</button>
+                            <button onClick={()=>setDepartments(p=>p.filter(x=>x!==d))} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:10, padding:0, display:"flex" }} title="Remove">Ã¢Å“â€¢</button>
                           </div>
                         ))}
                       </div>
@@ -6581,7 +6595,7 @@ export default function App() {
                   <SettingsPanel label="Branding" title="Logo" accent="#6b7d5e">
                     <div style={{ display:"flex", alignItems:"center", gap:20 }}>
                       <div style={{ width:60, height:60, borderRadius:12, border:`1px solid ${C.bdr}`, background:C.surf, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" }}>
-                        {companyLogoUrl ? <img src={companyLogoUrl} style={{ width:"100%", height:"100%", objectFit:"contain" }} /> : <span style={{ fontSize:20 }}>ðŸ¢</span>}
+                        {companyLogoUrl ? <img src={companyLogoUrl} style={{ width:"100%", height:"100%", objectFit:"contain" }} /> : <span style={{ fontSize:20 }}>Ã°Å¸ÂÂ¢</span>}
                       </div>
                       <Btn variant="outline" onClick={() => logoInputRef.current?.click()}>Upload Logo</Btn>
                     </div>
@@ -6651,7 +6665,7 @@ export default function App() {
                             <Btn onClick={() => {
                               const newRole = sel.role === "Admin" ? "Super Admin" : "Admin";
                               setEmployees(prev => prev.map(e => e.id === sel.id ? { ...e, role: newRole, paydaysAccess: newRole === "Super Admin" } : e));
-                              toast(`${sel.name} is now a ${newRole} âœ“`);
+                              toast(`${sel.name} is now a ${newRole} Ã¢Å“â€œ`);
                             }} style={{ background: sel.role === "Admin" ? "#ea580c" : C.p, color:"#fff", border:"none", padding:"10px 20px" }}>
                               {sel.role === "Admin" ? "Promote to SA" : "Elevate to Admin"}
                             </Btn>
@@ -6676,7 +6690,7 @@ export default function App() {
                                 onClick={() => {
                                   const newVal = !sel.paydaysAccess;
                                   setEmployees(prev => prev.map(e => e.id === sel.id ? { ...e, paydaysAccess: newVal } : e));
-                                  toast(`Paydays access ${newVal ? "granted" : "revoked"} for ${sel.name} âœ“`);
+                                  toast(`Paydays access ${newVal ? "granted" : "revoked"} for ${sel.name} Ã¢Å“â€œ`);
                                 }} 
                                 variant={sel.paydaysAccess ? "outline" : "primary"}
                                 style={{ 
@@ -6708,7 +6722,7 @@ export default function App() {
                               <Btn 
                                 onClick={() => {
                                   setEmployees(prev => prev.map(e => e.id === sel.id ? { ...e, role: "Employee", paydaysAccess: false } : e));
-                                  toast(`${sel.name} has been demoted to Employee âœ“`);
+                                  toast(`${sel.name} has been demoted to Employee Ã¢Å“â€œ`);
                                   setAccessSelectedEmpId(""); // Clear selection
                                 }} 
                                 style={{ 
@@ -6777,7 +6791,7 @@ export default function App() {
                     Download complete system records including employees, payroll history, and time away data for external reporting.
                   </p>
                   <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-                    <Btn variant="outline" onClick={()=>toast("Exporting complete system data (CSV)... âœ“")}>Export Complete System Data</Btn>
+                    <Btn variant="outline" onClick={()=>toast("Exporting complete system data (CSV)... Ã¢Å“â€œ")}>Export Complete System Data</Btn>
                   </div>
                 </SettingsPanel>
 
@@ -6797,8 +6811,8 @@ export default function App() {
                       </thead>
                       <tbody>
                         {[
-                          ["Today Â· 09:14", "Arjun Mehta", "Updated company tagline"],
-                          ["Mon Â· 16:02", "Arjun Mehta", "Exported employee directory (CSV)"],
+                          ["Today Ã‚Â· 09:14", "Arjun Mehta", "Updated company tagline"],
+                          ["Mon Ã‚Â· 16:02", "Arjun Mehta", "Exported employee directory (CSV)"],
                         ].map((row, i) => (
                           <tr key={i} style={{ borderBottom:`1px solid ${C.surf}` }}>
                             {row.map((cell, j) => (
@@ -6818,7 +6832,7 @@ export default function App() {
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(130px, 1fr))", gap:10 }}>
                       {["Slack", "Teams", "HRIS", "Other"].map(svc => (
                         <div key={svc} style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 14px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.surf }}>
-                          <span style={{ fontSize:16 }}>{svc === 'Slack' ? 'ðŸ’¬' : svc === 'Teams' ? 'ðŸ‘¥' : svc === 'HRIS' ? 'ðŸ§¬' : 'ðŸ”—'}</span>
+                          <span style={{ fontSize:16 }}>{svc === 'Slack' ? 'Ã°Å¸â€™Â¬' : svc === 'Teams' ? 'Ã°Å¸â€˜Â¥' : svc === 'HRIS' ? 'Ã°Å¸Â§Â¬' : 'Ã°Å¸â€â€”'}</span>
                           <span style={{ fontSize:12, fontWeight:600, color:C.txt }}>{svc}</span>
                         </div>
                       ))}
@@ -6879,7 +6893,7 @@ export default function App() {
                         <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>{t}</div>
                         <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{d}</div>
                       </div>
-                      <Btn variant="outline" onClick={()=>toast(`${t} â€” preference saved âœ“`)} style={{ padding:"5px 12px", fontSize:10 }}>On</Btn>
+                      <Btn variant="outline" onClick={()=>toast(`${t} Ã¢â‚¬â€ preference saved Ã¢Å“â€œ`)} style={{ padding:"5px 12px", fontSize:10 }}>On</Btn>
                     </div>
                   ))}
                 </div>
@@ -6902,7 +6916,7 @@ export default function App() {
                         <div style={{ fontSize:12, fontWeight:600, color:C.txt }}>{t}</div>
                         <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{d}</div>
                       </div>
-                      <Btn variant="outline" onClick={()=>toast(`${t} â€” subscribed âœ“`)} style={{ padding:"5px 12px", fontSize:10 }}>On</Btn>
+                      <Btn variant="outline" onClick={()=>toast(`${t} Ã¢â‚¬â€ subscribed Ã¢Å“â€œ`)} style={{ padding:"5px 12px", fontSize:10 }}>On</Btn>
                     </div>
                   ))}
                 </div>
@@ -6924,7 +6938,7 @@ export default function App() {
               <Inp label="Current Password" type="password" />
               <Inp label="New Password" type="password" />
               <Inp label="Confirm New Password" type="password" />
-              <Btn onClick={()=>toast("Password updated âœ“")} style={{ width:"100%", padding:"11px", marginTop:4 }}>Update password</Btn>
+              <Btn onClick={()=>toast("Password updated Ã¢Å“â€œ")} style={{ width:"100%", padding:"11px", marginTop:4 }}>Update password</Btn>
             </SettingsPanel>
           </div>
         )}
@@ -6965,11 +6979,11 @@ export default function App() {
 
         return (
           <Modal
-            title={detailEmp ? `${detailEmp.name} â€” Leave Detail` : "Team Leave Balances"}
+            title={detailEmp ? `${detailEmp.name} Ã¢â‚¬â€ Leave Detail` : "Team Leave Balances"}
             onClose={() => { setShowLeaveBal(false); setSelectedLeaveEmpId(null); }}
             width={860}
           >
-            {/* â”€â”€ DETAIL VIEW â”€â”€ */}
+            {/* Ã¢â€â‚¬Ã¢â€â‚¬ DETAIL VIEW Ã¢â€â‚¬Ã¢â€â‚¬ */}
             {detailEmp ? (
               <div>
                 {/* Back */}
@@ -6977,7 +6991,7 @@ export default function App() {
                   onClick={() => setSelectedLeaveEmpId(null)}
                   style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 14px", fontSize:12, fontWeight:600, color:C.sub, cursor:"pointer", marginBottom:20 }}
                 >
-                  â† Back to all employees
+                  Ã¢â€ Â Back to all employees
                 </button>
 
                 {/* Employee card */}
@@ -6985,11 +6999,11 @@ export default function App() {
                   <Av ini={detailEmp.ini} sz={44} bg={detailEmp.avatarC} />
                   <div style={{ flex:1 }}>
                     <div style={{ fontWeight:700, fontSize:16, color:C.txt }}>{detailEmp.name}</div>
-                    <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{detailEmp.designation} Â· {detailEmp.dept}</div>
+                    <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{detailEmp.designation} Ã‚Â· {detailEmp.dept}</div>
                   </div>
                 </div>
 
-                {/* â”€â”€ Entitlement overrides â”€â”€ */}
+                {/* Ã¢â€â‚¬Ã¢â€â‚¬ Entitlement overrides Ã¢â€â‚¬Ã¢â€â‚¬ */}
                 <div style={{ marginBottom:24 }}>
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:10, marginBottom:12 }}>
                     <div style={{ fontSize:11, fontWeight:700, color:C.p, letterSpacing:1 }}>LEAVE ENTITLEMENTS (override per-employee)</div>
@@ -7004,15 +7018,15 @@ export default function App() {
                             delete next[detailEmp.id];
                             return next;
                           });
-                          toast("Reset to policy defaults âœ“");
+                          toast("Reset to policy defaults Ã¢Å“â€œ");
                         }}
-                      >â†© Reset all</Btn>
+                      >Ã¢â€ Â© Reset all</Btn>
                       <Btn
                         style={{ padding:"5px 16px", fontSize:11 }}
                         onClick={() => {
-                          toast(`Leave entitlements saved for ${detailEmp.name} âœ“`);
+                          toast(`Leave entitlements saved for ${detailEmp.name} Ã¢Å“â€œ`);
                         }}
-                      >ðŸ’¾ Save changes</Btn>
+                      >Ã°Å¸â€™Â¾ Save changes</Btn>
                     </div>
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px, 1fr))", gap:12 }}>
@@ -7055,7 +7069,7 @@ export default function App() {
                               }}
                               style={{ fontSize:9, color:C.sub, background:"none", border:"none", cursor:"pointer", marginTop:4, padding:0 }}
                             >
-                              â†© Reset to default ({pol.total as number}d)
+                              Ã¢â€ Â© Reset to default ({pol.total as number}d)
                             </button>
                           )}
                         </div>
@@ -7064,7 +7078,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* â”€â”€ Leave history â”€â”€ */}
+                {/* Ã¢â€â‚¬Ã¢â€â‚¬ Leave history Ã¢â€â‚¬Ã¢â€â‚¬ */}
                 <div>
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:10, marginBottom:12 }}>
                     <div style={{ fontSize:11, fontWeight:700, color:C.p, letterSpacing:1 }}>LEAVE HISTORY</div>
@@ -7127,7 +7141,7 @@ export default function App() {
                 </div>
               </div>
             ) : (
-              /* â”€â”€ SUMMARY TABLE â”€â”€ */
+              /* Ã¢â€â‚¬Ã¢â€â‚¬ SUMMARY TABLE Ã¢â€â‚¬Ã¢â€â‚¬ */
               <div>
                 {/* Year / Month context row */}
                 <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:12, marginBottom:16 }}>
@@ -7184,7 +7198,7 @@ export default function App() {
                             <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                               <Av ini={e.ini} sz={26} bg={e.avatarC} />
                               <div>
-                                <div style={{ fontWeight:600, color:C.p }}>{e.name} <span style={{ fontSize:10, color:C.bdr }}>â†—</span></div>
+                                <div style={{ fontWeight:600, color:C.p }}>{e.name} <span style={{ fontSize:10, color:C.bdr }}>Ã¢â€ â€”</span></div>
                                 <div style={{ fontSize:10, color:C.sub }}>{e.designation || e.dept}</div>
                               </div>
                             </div>
@@ -7201,7 +7215,7 @@ export default function App() {
                                     <span style={{ color:C.bdr, fontWeight:400 }}>0 used</span>
                                   )}
                                 </div>
-                                <div style={{ fontSize:9, color:C.bdr }}>Used: {used}d{override !== undefined ? " Â· custom" : ""}</div>
+                                <div style={{ fontSize:9, color:C.bdr }}>Used: {used}d{override !== undefined ? " Ã‚Â· custom" : ""}</div>
                               </td>
                             );
                           })}
@@ -7232,7 +7246,7 @@ export default function App() {
       })()}
 
 
-      {/* â”€ LEAVE CONFIG MODAL â”€ */}
+      {/* Ã¢â€â‚¬ LEAVE CONFIG MODAL Ã¢â€â‚¬ */}
       {salaryModal && (
         <Modal onClose={()=>setSalaryModal(null)} width={540}>
           {(() => {
@@ -7249,7 +7263,7 @@ export default function App() {
                       </h2>
                       <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>{salaryModal.name}</div>
                       <p style={{ margin:"6px 0 0", fontSize:11, color:C.sub, lineHeight:1.45 }}>
-                        {salaryModal.set ? "Adjust annual CTC, component split, and monthly statutory deductions." : "Enter figures below. Rupee fields show â‚¹; Basic and HRA use % of CTC."}
+                        {salaryModal.set ? "Adjust annual CTC, component split, and monthly statutory deductions." : "Enter figures below. Rupee fields show Ã¢â€šÂ¹; Basic and HRA use % of CTC."}
                       </p>
                     </div>
                   </div>
@@ -7272,7 +7286,7 @@ export default function App() {
                     style={{ gridColumn:"1 / -1" }}
                     label="Annual CTC"
                     hint="Total cost to company per year (before monthly deductions at line level)."
-                    prefix="â‚¹"
+                    prefix="Ã¢â€šÂ¹"
                     type="number"
                     value={salaryForm.annualCtc}
                     onChange={e=>setSalaryForm(f=>({ ...f, annualCtc:e.target.value }))}
@@ -7283,7 +7297,7 @@ export default function App() {
                   </div>
                   <AffixField
                     label="Basic"
-                    hint="Typically 40â€“50% of annual CTC."
+                    hint="Typically 40Ã¢â‚¬â€œ50% of annual CTC."
                     suffix="%"
                     type="number"
                     value={salaryForm.basicPct}
@@ -7299,12 +7313,12 @@ export default function App() {
                   />
 
                   <div style={{ gridColumn:"1 / -1", marginTop:4 }}>
-                    <ModalSectionLabel>MONTHLY STATUTORY & TAX (â‚¹)</ModalSectionLabel>
+                    <ModalSectionLabel>MONTHLY STATUTORY & TAX (Ã¢â€šÂ¹)</ModalSectionLabel>
                   </div>
                   <AffixField
                     label="Professional tax"
                     hint="Per month, as per state rules."
-                    prefix="â‚¹"
+                    prefix="Ã¢â€šÂ¹"
                     type="number"
                     value={salaryForm.profTax}
                     onChange={e=>setSalaryForm(f=>({ ...f, profTax:e.target.value }))}
@@ -7312,7 +7326,7 @@ export default function App() {
                   <AffixField
                     label="PF (employee)"
                     hint="Provident fund contribution per month."
-                    prefix="â‚¹"
+                    prefix="Ã¢â€šÂ¹"
                     type="number"
                     value={salaryForm.pf}
                     onChange={e=>setSalaryForm(f=>({ ...f, pf:e.target.value }))}
@@ -7321,7 +7335,7 @@ export default function App() {
                     style={{ gridColumn:"1 / -1" }}
                     label="TDS"
                     hint="Estimated tax deducted at source per month."
-                    prefix="â‚¹"
+                    prefix="Ã¢â€šÂ¹"
                     type="number"
                     value={salaryForm.tds}
                     onChange={e=>setSalaryForm(f=>({ ...f, tds:e.target.value }))}
@@ -7346,19 +7360,19 @@ export default function App() {
                     setPayrollRows(rows => rows.map(r => r.ini !== ini ? r : {
                       ...r,
                       set: true,
-                      ctc: a ? `â‚¹${a.toLocaleString("en-IN")}` : "Not set",
-                      basic: salaryForm.basicPct ? `${salaryForm.basicPct}%` : "â€”",
-                      hra: salaryForm.hraPct ? `${salaryForm.hraPct}%` : "â€”",
+                      ctc: a ? `Ã¢â€šÂ¹${a.toLocaleString("en-IN")}` : "Not set",
+                      basic: salaryForm.basicPct ? `${salaryForm.basicPct}%` : "Ã¢â‚¬â€",
+                      hra: salaryForm.hraPct ? `${salaryForm.hraPct}%` : "Ã¢â‚¬â€",
                       other: (() => {
                         const b = Number(salaryForm.basicPct) || 0;
                         const h = Number(salaryForm.hraPct) || 0;
                         const o = Math.max(0, 100 - b - h);
-                        return o ? `${o}%` : "â€”";
+                        return o ? `${o}%` : "Ã¢â‚¬â€";
                       })(),
-                      net: a ? `â‚¹${Math.round(a / 12).toLocaleString("en-IN")}` : "â€”",
+                      net: a ? `Ã¢â€šÂ¹${Math.round(a / 12).toLocaleString("en-IN")}` : "Ã¢â‚¬â€",
                     }));
                     setSalaryModal(null);
-                    toast("Salary configuration saved âœ“");
+                    toast("Salary configuration saved Ã¢Å“â€œ");
                   }}>Save configuration</Btn>
                 </div>
               </>
@@ -7367,7 +7381,7 @@ export default function App() {
         </Modal>
       )}
 
-      {/* â”€ PAYSLIP PREVIEW â”€ */}
+      {/* Ã¢â€â‚¬ PAYSLIP PREVIEW Ã¢â€â‚¬ */}
       {payslipPreview && (() => {
         const emp = empById(payslipPreview.empId, employees);
         if (!emp) return null;
@@ -7411,7 +7425,7 @@ export default function App() {
                       width:40, height:36, borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, cursor:"pointer",
                       fontSize:16, color:C.sub, lineHeight:1, padding:0,
                     }}
-                  >âœ•</button>
+                  >Ã¢Å“â€¢</button>
                 </div>
               </div>
               <div style={{ overflowY:"auto", padding:18, flex:1 }}>
@@ -7432,22 +7446,22 @@ export default function App() {
         );
       })()}
 
-      {/* â”€ COMPANY TAGLINE (SA) â”€ */}
+      {/* Ã¢â€â‚¬ COMPANY TAGLINE (SA) Ã¢â€â‚¬ */}
       {showTaglineEdit && isSA && (
         <Modal title="Company tagline" onClose={()=>setShowTaglineEdit(false)} width={420}>
           <p style={{ fontSize:12, color:C.sub, marginTop:0, lineHeight:1.5 }}>Shown under KinSphere in the sidebar and on payslip headers.</p>
           <Inp label="Tagline" value={taglineDraft} onChange={e=>setTaglineDraft(e.target.value)} placeholder="e.g. Bipolar Factory" />
           <div style={{ display:"flex", gap:9, justifyContent:"flex-end", marginTop:18 }}>
             <Btn variant="ghost" onClick={()=>setShowTaglineEdit(false)}>Cancel</Btn>
-            <Btn onClick={()=>{ setCompanyTagline(taglineDraft.trim() || "Bipolar Factory"); setShowTaglineEdit(false); toast("Tagline updated âœ“"); }}>Save</Btn>
+            <Btn onClick={()=>{ setCompanyTagline(taglineDraft.trim() || "Bipolar Factory"); setShowTaglineEdit(false); toast("Tagline updated Ã¢Å“â€œ"); }}>Save</Btn>
           </div>
         </Modal>
       )}
 
-      {/* â”€ ORG HIERARCHY EDITOR (SA) â”€ */}
+      {/* Ã¢â€â‚¬ ORG HIERARCHY EDITOR (SA) Ã¢â€â‚¬ */}
       {showOrgEdit && (
         <Modal title="Edit reporting hierarchy" onClose={()=>setShowOrgEdit(false)} width={520}>
-          <p style={{ fontSize:12, color:C.sub, marginTop:0, lineHeight:1.5 }}>Pick each personâ€™s manager. Leave as top level for the root role. The org chart redraws from these assignments.</p>
+          <p style={{ fontSize:12, color:C.sub, marginTop:0, lineHeight:1.5 }}>Pick each personÃ¢â‚¬â„¢s manager. Leave as top level for the root role. The org chart redraws from these assignments.</p>
           {employees.map(e=>(
             <div key={e.id} style={{ display:"flex", flexDirection: narrow ? "column" : "row", alignItems: narrow ? "stretch" : "center", gap:12, marginBottom:12 }}>
               <div style={{ width: narrow ? "auto" : 140, minWidth: 0, fontSize:12, fontWeight:600, color:C.txt }}>{e.name}</div>
@@ -7459,7 +7473,7 @@ export default function App() {
                 }}
                 style={{ flex:1, padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt }}
               >
-                <option value="">â€” Top level (no manager) â€”</option>
+                <option value="">Ã¢â‚¬â€ Top level (no manager) Ã¢â‚¬â€</option>
                 {employees.filter(x => x.id !== e.id).map(x => (
                   <option key={x.id} value={x.id}>{x.name}</option>
                 ))}
@@ -7467,7 +7481,7 @@ export default function App() {
             </div>
           ))}
           <div style={{ display:"flex", justifyContent:"flex-end", marginTop:8 }}>
-            <Btn onClick={()=>{ setShowOrgEdit(false); toast("Org hierarchy updated âœ“"); }}>Done</Btn>
+            <Btn onClick={()=>{ setShowOrgEdit(false); toast("Org hierarchy updated Ã¢Å“â€œ"); }}>Done</Btn>
           </div>
         </Modal>
       )}
@@ -7503,7 +7517,7 @@ export default function App() {
       )}
 
 
-      {/* â”€ EMPLOYEE PROFILE (SA) â”€ */}
+      {/* Ã¢â€â‚¬ EMPLOYEE PROFILE (SA) Ã¢â€â‚¬ */}
       {profilePick != null && empById(profilePick, employees) && (
         <Modal title="Employee profile" onClose={()=>setProfilePick(null)} width={640}>
           <ProfileDetail
@@ -7520,11 +7534,11 @@ export default function App() {
                 documents: emp.documents.map((d, i) => i === docIdx ? { ...d, v: true } : d)
               }));
               addNotif({
-                icon: "âœ…", title: "Document Verified",
+                icon: "Ã¢Å“â€¦", title: "Document Verified",
                 body: `Your ${docName} has been approved and verified by HR`,
                 forSA: false, forAll: false, forEmpIds: [profilePick]
               });
-              toast("Document approved âœ“");
+              toast("Document approved Ã¢Å“â€œ");
             } : null}
             onRejectDoc={isSA ? (docIdx) => {
               const emp = empById(profilePick, employees);
@@ -7534,7 +7548,7 @@ export default function App() {
                 documents: emp.documents.filter((_, i) => i !== docIdx)
               }));
               addNotif({
-                icon: "âŒ", title: "Document Rejected",
+                icon: "Ã¢ÂÅ’", title: "Document Rejected",
                 body: `Your ${docName} upload was rejected. Please re-upload with correct details.`,
                 forSA: false, forAll: false, forEmpIds: [profilePick]
               });
@@ -7576,7 +7590,7 @@ export default function App() {
              <Btn variant="ghost" onClick={() => setBankPick(null)} style={{ flex:1 }}>Cancel</Btn>
              <Btn onClick={() => {
                 setEmployees(emps => emps.map(emp => emp.id === bankPick ? { ...emp, bankInfo: { accountNumber: bankForm.acc, ifsc: bankForm.ifsc } } : emp));
-                toast("Bank details updated successfully âœ“");
+                toast("Bank details updated successfully Ã¢Å“â€œ");
                 setBankPick(null);
              }} style={{ flex:1, background:C.p, color:"#fff" }}>Save Bank Info</Btn>
           </div>
@@ -7584,7 +7598,7 @@ export default function App() {
       )}
 
       {showTimeline && (
-        <Modal title={`Activity Timeline â€” ${showTimeline.name}`} onClose={()=>setShowTimeline(null)} width={560}>
+        <Modal title={`Activity Timeline Ã¢â‚¬â€ ${showTimeline.name}`} onClose={()=>setShowTimeline(null)} width={560}>
           <ActivityTimeline events={showTimeline.timeline || []} />
           <div style={{ display:"flex", justifyContent:"flex-end", marginTop:20, paddingTop:16, borderTop:`1px solid ${C.bdr}` }}>
             <Btn variant="ghost" onClick={()=>setShowTimeline(null)}>Close</Btn>
@@ -7606,7 +7620,7 @@ export default function App() {
               setEmployees(emps => emps.map(e => e.id === profilePick ? { ...e, devices: [...e.devices, `${devForm.name} (${devForm.type})`] } : e));
               setShowAssignDevice(false);
               setDevForm({ name: "", type: "Laptop", model: "", serial: "", tag: "" });
-              toast("Device assigned successfully âœ“");
+              toast("Device assigned successfully Ã¢Å“â€œ");
             }}>Assign device</Btn>
           </div>
         </Modal>
@@ -7634,14 +7648,14 @@ export default function App() {
                   <div style={{ width:28, height:28, borderRadius:7, background:C.p, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, color:"#fff", fontSize:10 }}>KS</div>
                   <div>
                     <div style={{ color:"#fff", fontWeight:700, fontSize:13 }}>{doc.n}</div>
-                    <div style={{ color:C.dkAcc, fontSize:10 }}>{emp.name} Â· Document Preview</div>
+                    <div style={{ color:C.dkAcc, fontSize:10 }}>{emp.name} Ã‚Â· Document Preview</div>
                   </div>
                 </div>
                 <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                   <span style={{ fontSize:10, fontWeight:700, padding:"3px 10px", borderRadius:20, background: isVerified ? "#4a7c59" : "#b45309", color:"#fff" }}>
-                    {isVerified ? "âœ“ VERIFIED" : "â³ PENDING"}
+                    {isVerified ? "Ã¢Å“â€œ VERIFIED" : "Ã¢ÂÂ³ PENDING"}
                   </span>
-                  <button onClick={() => setDocPreviewItem(null)} style={{ background:"rgba(255,255,255,.1)", border:"none", borderRadius:8, color:"#fff", fontSize:16, width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>âœ•</button>
+                  <button onClick={() => setDocPreviewItem(null)} style={{ background:"rgba(255,255,255,.1)", border:"none", borderRadius:8, color:"#fff", fontSize:16, width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>Ã¢Å“â€¢</button>
                 </div>
               </div>
 
@@ -7649,12 +7663,12 @@ export default function App() {
               <div style={{ flex:1, overflowY:"auto", padding:24, display:"flex", flexDirection:"column", alignItems:"center", gap:16, background:C.bg }}>
                 {/* Prototype notice */}
                 <div style={{ width:"100%", background:`rgba(var(--p-rgb),.08)`, border:`1px solid ${C.bdr}`, borderRadius:10, padding:"8px 14px", fontSize:11, color:C.sub, display:"flex", alignItems:"center", gap:8 }}>
-                  <span>â„¹ï¸</span>
-                  <span>Prototype preview â€” actual file content will render here in production.</span>
+                  <span>Ã¢â€žÂ¹Ã¯Â¸Â</span>
+                  <span>Prototype preview Ã¢â‚¬â€ actual file content will render here in production.</span>
                 </div>
 
                 {isId ? (
-                  /* â”€â”€ ID Card layout â”€â”€ */
+                  /* Ã¢â€â‚¬Ã¢â€â‚¬ ID Card layout Ã¢â€â‚¬Ã¢â€â‚¬ */
                   <div style={{
                     width:"100%", maxWidth:420, borderRadius:16, overflow:"hidden",
                     boxShadow:"0 8px 30px rgba(0,0,0,.15)", position:"relative",
@@ -7679,7 +7693,7 @@ export default function App() {
                         {[
                           ["Document", doc.n],
                           ["Doc. No.", "XXXX-XXXX-XXXX"],
-                          ["Date of Birth", emp.dob || "â€”"],
+                          ["Date of Birth", emp.dob || "Ã¢â‚¬â€"],
                           ["Issued", new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" })],
                         ].map(([k, v]) => (
                           <div key={k}>
@@ -7689,7 +7703,7 @@ export default function App() {
                         ))}
                       </div>
                       <div style={{ marginTop:18, paddingTop:14, borderTop:"1px solid rgba(255,255,255,.12)", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                        <div style={{ fontSize:9, color:C.dkAcc }}>Bipolar Factory Â· KinSphere HRMS</div>
+                        <div style={{ fontSize:9, color:C.dkAcc }}>Bipolar Factory Ã‚Â· KinSphere HRMS</div>
                         <div style={{ background: isVerified ? "#4a7c59" : "#b45309", borderRadius:6, padding:"3px 9px", fontSize:9, fontWeight:700, color:"#fff" }}>
                           {isVerified ? "VERIFIED" : "PENDING VERIFICATION"}
                         </div>
@@ -7697,7 +7711,7 @@ export default function App() {
                     </div>
                   </div>
                 ) : (
-                  /* â”€â”€ Paper document layout â”€â”€ */
+                  /* Ã¢â€â‚¬Ã¢â€â‚¬ Paper document layout Ã¢â€â‚¬Ã¢â€â‚¬ */
                   <div style={{
                     width:"100%", maxWidth:440, background:"#fff", borderRadius:12,
                     boxShadow:"0 4px 24px rgba(0,0,0,.12)", border:`1px solid ${C.bdr}`,
@@ -7712,7 +7726,7 @@ export default function App() {
                       {/* Header */}
                       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:22 }}>
                         <div>
-                          <div style={{ fontSize:9, fontWeight:700, letterSpacing:1.2, color:C.sub, marginBottom:4 }}>BIPOLAR FACTORY Â· OFFICIAL DOCUMENT</div>
+                          <div style={{ fontSize:9, fontWeight:700, letterSpacing:1.2, color:C.sub, marginBottom:4 }}>BIPOLAR FACTORY Ã‚Â· OFFICIAL DOCUMENT</div>
                           <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:C.txt }}>{doc.n}</div>
                         </div>
                         <div style={{ textAlign:"right" }}>
@@ -7723,7 +7737,7 @@ export default function App() {
                       <div style={{ marginBottom:18, padding:"10px 14px", background:C.surf, borderRadius:8, border:`1px solid ${C.bdr}` }}>
                         <div style={{ fontSize:10, color:C.sub, fontWeight:600, marginBottom:4 }}>ISSUED TO</div>
                         <div style={{ fontSize:13, fontWeight:700, color:C.txt }}>{emp.name}</div>
-                        <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{emp.designation || emp.dept} Â· {emp.email}</div>
+                        <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{emp.designation || emp.dept} Ã‚Â· {emp.email}</div>
                       </div>
                       {/* Simulated body lines */}
                       {[85, 100, 70, 95, 60, 88, 45].map((w, i) => (
@@ -7775,7 +7789,7 @@ export default function App() {
               setEmployees(emps => emps.map(e => e.id === targetId ? { ...e, documents: [...e.documents, { n: docForm.name, v: false }] } : e));
               setShowUploadDoc(false);
               setDocForm({ name: "", type: "ID", file: "" });
-              toast("Document uploaded successfully âœ“");
+              toast("Document uploaded successfully Ã¢Å“â€œ");
             }}>Upload</Btn>
           </div>
         </Modal>
@@ -7807,7 +7821,7 @@ export default function App() {
         </Modal>
       )}
 
-      {/* â”€ LEAVE APPROVE / REJECT CONFIRM â”€ */}
+      {/* Ã¢â€â‚¬ LEAVE APPROVE / REJECT CONFIRM Ã¢â€â‚¬ */}
       {leaveActionConfirm && (() => {
         const row = leaves.find(l => l.id === leaveActionConfirm.id);
         const isAppr = leaveActionConfirm.act === "approved";
@@ -7830,11 +7844,11 @@ export default function App() {
               }}>
                 <div style={{ fontWeight:700, marginBottom:8 }}>{row.emp}</div>
                 <div style={{ color:C.sub }}>
-                  {row.type} Â· {row.from}â€“{row.to} ({row.days})
+                  {row.type} Ã‚Â· {row.from}Ã¢â‚¬â€œ{row.to} ({row.days})
                 </div>
-                {row.reason && row.reason !== "â€”" ? (
+                {row.reason && row.reason !== "Ã¢â‚¬â€" ? (
                   <div style={{ marginTop:10, paddingTop:10, borderTop:`1px solid ${C.surf}`, color:C.txt }}>
-                    â€œ{row.reason}â€
+                    Ã¢â‚¬Å“{row.reason}Ã¢â‚¬Â
                   </div>
                 ) : null}
               </div>
@@ -7862,7 +7876,7 @@ export default function App() {
         );
       })()}
 
-      {/* â”€ ADD / VIEW HOLIDAYS MODAL â”€ */}
+      {/* Ã¢â€â‚¬ ADD / VIEW HOLIDAYS MODAL Ã¢â€â‚¬ */}
       {showHolidays && (
         <Modal title={isSA ? "Add/View Holidays" : "View Holidays"} onClose={()=>setShowHolidays(false)} width={480}>
           <p style={{ fontSize:12, color:C.sub, marginTop:0, marginBottom:16, lineHeight:1.5 }}>
@@ -7874,7 +7888,7 @@ export default function App() {
               <div key={h.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 12px", borderRadius:10, border:`1px solid ${C.bdr}`, background:C.bg }}>
                 <div>
                   <div style={{ fontSize:13, fontWeight:600, color:C.txt }}>{h.n}</div>
-                  <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{h.d} {h.desc ? `Â· ${h.desc}` : ""}</div>
+                  <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>{h.d} {h.desc ? `Ã‚Â· ${h.desc}` : ""}</div>
                 </div>
                 {isSA && (
                   <Btn variant="ghost" onClick={() => {
@@ -7936,7 +7950,7 @@ export default function App() {
                   setNewHolidayName("");
                   setNewHolidayDate("");
                   setNewHolidayDesc("");
-                  toast("Holiday added âœ“");
+                  toast("Holiday added Ã¢Å“â€œ");
                 }}>+ Add Holiday</Btn>
               </div>
             </div>
@@ -7948,7 +7962,7 @@ export default function App() {
         </Modal>
       )}
 
-      {/* â”€ LEAVE POLICY MODAL (SA) â”€ */}
+      {/* Ã¢â€â‚¬ LEAVE POLICY MODAL (SA) Ã¢â€â‚¬ */}
       {showLeavePolicy && policyDraft && (
         <Modal title="Leave Policy Configuration" onClose={()=>setShowLeavePolicy(false)} width={460}>
           <p style={{ fontSize:12, color:C.sub, marginTop:0, marginBottom:16, lineHeight:1.5 }}>
@@ -7988,7 +8002,7 @@ export default function App() {
         </Modal>
       )}
 
-      {/* â”€ APPLY LEAVE MODAL â”€ */}
+      {/* Ã¢â€â‚¬ APPLY LEAVE MODAL Ã¢â€â‚¬ */}
       {showLeave && (
         <Modal title={isSA ? "Raise leave" : "Apply for Leave"} onClose={()=>setShowLeave(false)} width={480}>
           {isSA && (
@@ -8027,14 +8041,14 @@ export default function App() {
             return (
               <div style={{ padding:"10px 14px", borderRadius:9, background: insufficient ? "#4a1a1a" : C.surf, border:`1px solid ${insufficient ? "#dc2626" : C.bdr}`, marginBottom:13, fontSize:12 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                  <span style={{ color:C.sub }}>Balance Â· {leaveApply.type}</span>
+                  <span style={{ color:C.sub }}>Balance Ã‚Â· {leaveApply.type}</span>
                   <span style={{ fontWeight:700, color: remaining <= 2 ? "#ef4444" : C.p }}>{remaining} / {pol.total} days remaining</span>
                 </div>
                 {applyDayCount > 0 && (
                   <div style={{ marginTop:5, fontSize:11, color: insufficient ? "#ef4444" : C.sub }}>
                     {insufficient
-                      ? `âš  Insufficient balance â€” requesting ${applyDayCount}d, only ${remaining}d left.`
-                      : `Requesting ${applyDayCount}d â€” ${remaining - applyDayCount}d will remain after.`}
+                      ? `Ã¢Å¡Â  Insufficient balance Ã¢â‚¬â€ requesting ${applyDayCount}d, only ${remaining}d left.`
+                      : `Requesting ${applyDayCount}d Ã¢â‚¬â€ ${remaining - applyDayCount}d will remain after.`}
                   </div>
                 )}
               </div>
@@ -8075,7 +8089,7 @@ export default function App() {
             if (hConflict.length > 0) {
               return (
                 <div style={{ padding:"9px 14px", borderRadius:9, background:"rgba(59,130,246,.12)", border:"1px solid #2563eb", marginBottom:13, fontSize:12, color:"#1d4ed8" }}>
-                  â„¹ Selected dates include company holiday{hConflict.length>1?"s":""}: {hConflict.map(h => h.n).join(", ")}.
+                  Ã¢â€žÂ¹ Selected dates include company holiday{hConflict.length>1?"s":""}: {hConflict.map(h => h.n).join(", ")}.
                 </div>
               );
             }
@@ -8083,19 +8097,19 @@ export default function App() {
           })()}
           {leaveConflicts.length > 0 && (
             <div style={{ padding:"9px 14px", borderRadius:9, background:"rgba(251,191,36,.12)", border:"1px solid #b45309", marginBottom:13, fontSize:12, color:"#92400e" }}>
-              â„¹ {leaveConflicts.length} team member{leaveConflicts.length>1?"s are":" is"} already on leave during this period.
+              Ã¢â€žÂ¹ {leaveConflicts.length} team member{leaveConflicts.length>1?"s are":" is"} already on leave during this period.
             </div>
           )}
           <Inp
             label="Tag Approvers"
-            opts={["Select approverâ€¦",...employees.filter(e => e.id !== (isSA ? leaveApply.forEmpId : ME_ID)).map(e => e.name)]}
-            value={leaveApply.approver && leaveApply.approver !== "" ? leaveApply.approver : "Select approverâ€¦"}
-            onChange={e => setLeaveApply(f => ({ ...f, approver: e.target.value === "Select approverâ€¦" ? "" : e.target.value }))}
+            opts={["Select approverÃ¢â‚¬Â¦",...employees.filter(e => e.id !== (isSA ? leaveApply.forEmpId : ME_ID)).map(e => e.name)]}
+            value={leaveApply.approver && leaveApply.approver !== "" ? leaveApply.approver : "Select approverÃ¢â‚¬Â¦"}
+            onChange={e => setLeaveApply(f => ({ ...f, approver: e.target.value === "Select approverÃ¢â‚¬Â¦" ? "" : e.target.value }))}
           />
           <Inp
             label="Reason"
             type="textarea"
-            placeholder="Brief reason for leaveâ€¦"
+            placeholder="Brief reason for leaveÃ¢â‚¬Â¦"
             value={leaveApply.reason}
             onChange={e => setLeaveApply(f => ({ ...f, reason: e.target.value }))}
           />
@@ -8119,9 +8133,9 @@ export default function App() {
                 setLeaves(p => [...p, newRow]);
                 // Add notifications
                 const empName = isSA ? (employees.find(e => e.id === leaveApply.forEmpId)?.name ?? "Employee") : me.name;
-                addNotif({ icon:"ðŸ—“", title:"Leave request submitted", body:`${empName} applied for ${leaveApply.type} Â· ${leaveApply.from} to ${leaveApply.to}`, forSA:true, forAll:false, forEmpIds:[] });
-                if (!isSA) addNotif({ icon:"ðŸ—“", title:"Leave request sent", body:`Your ${leaveApply.type} request has been submitted to ${leaveApply.approver || "your approver"}`, forSA:false, forAll:false, forEmpIds:[ME_ID] });
-                toast(`Leave request submitted âœ“ â€” ${res.row.approver} has been notified.`);
+                addNotif({ icon:"Ã°Å¸â€”â€œ", title:"Leave request submitted", body:`${empName} applied for ${leaveApply.type} Ã‚Â· ${leaveApply.from} to ${leaveApply.to}`, forSA:true, forAll:false, forEmpIds:[] });
+                if (!isSA) addNotif({ icon:"Ã°Å¸â€”â€œ", title:"Leave request sent", body:`Your ${leaveApply.type} request has been submitted to ${leaveApply.approver || "your approver"}`, forSA:false, forAll:false, forEmpIds:[ME_ID] });
+                toast(`Leave request submitted Ã¢Å“â€œ Ã¢â‚¬â€ ${res.row.approver} has been notified.`);
                 setShowLeave(false);
               }}
               style={{ flex:2, padding:"10px" }}
@@ -8132,7 +8146,7 @@ export default function App() {
         </Modal>
       )}
 
-      {/* â”€ ADD/EDIT EMPLOYEE MODAL â”€ */}
+      {/* Ã¢â€â‚¬ ADD/EDIT EMPLOYEE MODAL Ã¢â€â‚¬ */}
       {showEmp && (
         <Modal title={profilePick ? "Edit Employee details" : "Add Employee"} onClose={()=>setShowEmp(false)} width={520}>
           <div style={{ fontSize:10, fontWeight:700, color:C.p, marginBottom:10, letterSpacing:1 }}>PERSONAL DETAILS</div>
@@ -8149,7 +8163,7 @@ export default function App() {
             <Inp label="Employment Type" opts={["Full Time","Part Time","Contract"]} value={empForm.type} onChange={e=>setEmpForm({...empForm, type:e.target.value})} />
             <Inp label="Date of Joining *" value={empForm.doj} onChange={e=>setEmpForm({...empForm, doj:e.target.value})} />
             <Inp label="Designation" value={empForm.designation} onChange={e=>setEmpForm({...empForm, designation:e.target.value})} />
-            <Inp label="Department" opts={["â€”", ...departments]} value={empForm.dept} onChange={e=>setEmpForm({...empForm, dept:e.target.value})} />
+            <Inp label="Department" opts={["Ã¢â‚¬â€", ...departments]} value={empForm.dept} onChange={e=>setEmpForm({...empForm, dept:e.target.value})} />
             <Inp label="Manager" opts={["No Manager",...employees.map(e=>e.name)]} value={empForm.manager} onChange={e=>setEmpForm({...empForm, manager:e.target.value})} />
           </div>
           <div style={{ fontSize:10, fontWeight:700, color:C.p, margin:"16px 0 10px", letterSpacing:1 }}>EMERGENCY CONTACT</div>
@@ -8176,7 +8190,7 @@ export default function App() {
           {(empForm.customFields||[]).map((cf,i)=>(
             <div key={i} style={{ display:"flex", justifyContent:"space-between", fontSize:12, color:C.txt, padding:"5px 10px", background:C.surf, borderRadius:8, marginBottom:6, border:`1px solid ${C.bdr}` }}>
               <span><strong>{cf.k}:</strong> {cf.v}</span>
-              <button onClick={()=>setEmpForm(f=>({...f, customFields:f.customFields.filter((_,j)=>j!==i)}))} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:13 }}>âœ•</button>
+              <button onClick={()=>setEmpForm(f=>({...f, customFields:f.customFields.filter((_,j)=>j!==i)}))} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:13 }}>Ã¢Å“â€¢</button>
             </div>
           ))}
           <div style={{ display:"flex", gap:9, marginTop:20 }}>
@@ -8189,8 +8203,8 @@ export default function App() {
               if (profilePick) {
                 const prev = empById(profilePick, employees);
                 const changes = [];
-                if (prev && prev.role !== empForm.role) changes.push({ type:"role_change", label:`Role changed: ${prev.role} â†’ ${empForm.role}`, ts: Date.now() });
-                if (prev && prev.dept !== empForm.dept) changes.push({ type:"dept_change", label:`Department changed: ${prev.dept} â†’ ${empForm.dept}`, ts: Date.now() });
+                if (prev && prev.role !== empForm.role) changes.push({ type:"role_change", label:`Role changed: ${prev.role} Ã¢â€ â€™ ${empForm.role}`, ts: Date.now() });
+                if (prev && prev.dept !== empForm.dept) changes.push({ type:"dept_change", label:`Department changed: ${prev.dept} Ã¢â€ â€™ ${empForm.dept}`, ts: Date.now() });
                 setEmployees(emps => emps.map(e => e.id === profilePick ? {
                   ...e,
                   name: targetName,
@@ -8209,7 +8223,7 @@ export default function App() {
                   timeline: [...(e.timeline||[]), ...changes],
                   bankInfo: { accountNumber: empForm.bankAcc, ifsc: empForm.bankIfsc }
                 } : e));
-                toast("Changes saved successfully âœ“");
+                toast("Changes saved successfully Ã¢Å“â€œ");
               } else {
                 const newId = Math.max(...employees.map(x => typeof x.id === 'number' ? x.id : 0), 0) + 1;
                 setEmployees(emps => [{
@@ -8232,10 +8246,10 @@ export default function App() {
                   timeline: [{ type:"joined", label:`Joined the company (\${empForm.doj})`, ts: Date.now() }],
                   bankInfo: { accountNumber: empForm.bankAcc, ifsc: empForm.bankIfsc }
                 }, ...emps]);
-                toast("Employee created & invite sent âœ“");
+                toast("Employee created & invite sent Ã¢Å“â€œ");
               }
               setShowEmp(false);
-            }} style={{ flex:2, padding:"10px" }}>{profilePick ? "Make changes â†’" : "Create Employee â†’"}</Btn>
+            }} style={{ flex:2, padding:"10px" }}>{profilePick ? "Make changes Ã¢â€ â€™" : "Create Employee Ã¢â€ â€™"}</Btn>
           </div>
         </Modal>
       )}
@@ -8265,11 +8279,11 @@ export default function App() {
                 ["dob", "Date of birth"],
                 ["ini", "Two-letter initials; derived from name if omitted"],
                 ["avatar_color", "CSS colour, e.g. #99a98f"],
-                ["manager_email", "Must match an existing or newly imported employeeâ€™s email"],
+                ["manager_email", "Must match an existing or newly imported employeeÃ¢â‚¬â„¢s email"],
               ].map(([c, hint]) => (
                 <li key={c}>
                   <span style={{ fontFamily:"ui-monospace,monospace", fontSize:11, color:C.txt }}>{c}</span>
-                  {" â€” "}{hint}
+                  {" Ã¢â‚¬â€ "}{hint}
                 </li>
               ))}
             </ul>
@@ -8297,7 +8311,7 @@ export default function App() {
                   return next;
                 });
                 setShowImportCsv(false);
-                toast(`Imported ${additions.length} employee(s) âœ“`);
+                toast(`Imported ${additions.length} employee(s) Ã¢Å“â€œ`);
               } catch (err) {
                 toast(String(err?.message || err));
               }
@@ -8305,11 +8319,12 @@ export default function App() {
           />
           <div style={{ display:"flex", gap:9, justifyContent:"flex-end", flexWrap:"wrap" }}>
             <Btn variant="ghost" onClick={() => setShowImportCsv(false)}>Cancel</Btn>
-            <Btn onClick={() => importCsvRef.current?.click()}>Choose CSV fileâ€¦</Btn>
+            <Btn onClick={() => importCsvRef.current?.click()}>Choose CSV fileÃ¢â‚¬Â¦</Btn>
           </div>
         </Modal>
       )}
     </div>
   );
 }
+
 
