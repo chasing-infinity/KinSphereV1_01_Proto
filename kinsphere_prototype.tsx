@@ -6401,7 +6401,7 @@ export default function App() {
 
                {chapterTab === "Menu" ? (
                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:24, marginTop:20 }}>
-                   <Card onClick={() => setChapterTab("Onboarding")} style={{ padding:40, textAlign:"center", cursor:"pointer", transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)" }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.p} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
+                   <Card onClick={() => setChapterTab("Onboarding")} style={{ padding:40, textAlign:"center", cursor:"pointer", transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)" }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.p;e.currentTarget.style.boxShadow=`0 8px 28px rgba(var(--p-rgb),0.10)`;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr;e.currentTarget.style.boxShadow="0 4px 15px rgba(0,0,0,0.02)";}}>
                      <div style={{ width:64, height:64, borderRadius:"50%", background:"#e0f2fe", color:"#0369a1", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center" }}>👋</div>
                      <div>
                        <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Onboarding</h2>
@@ -6409,8 +6409,8 @@ export default function App() {
                      </div>
                    </Card>
                    
-                   <Card onClick={() => setChapterTab("Offboarding")} style={{ padding:40, textAlign:"center", cursor:"pointer", transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)" }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.p} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
-                     <div style={{ width:64, height:64, borderRadius:"50%", background:"#fce7f3", color:"#be185d", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center" }}>🚪</div>
+                   <Card onClick={() => setChapterTab("Offboarding")} style={{ padding:40, textAlign:"center", cursor:"pointer", transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)" }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.p;e.currentTarget.style.boxShadow=`0 8px 28px rgba(var(--p-rgb),0.10)`;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr;e.currentTarget.style.boxShadow="0 4px 15px rgba(0,0,0,0.02)";}}>
+                     <div style={{ width:64, height:64, borderRadius:18, background:`rgba(var(--p-rgb),0.09)`, color:C.p, display:"flex", alignItems:"center", justifyContent:"center" }}><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
                      <div>
                        <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Offboarding</h2>
                        <p style={{ fontSize:14, color:C.sub, margin:0, lineHeight:1.5 }}>Manage exits, clearances, and employee transitions.</p>
