@@ -5986,7 +5986,7 @@ export default function App() {
 
             </div>
           );
-        })}{/* ─ RECOGNITION ─ */}
+        })()}{/* ─ RECOGNITION ─ */}
         {page==="Recognition" && (
           <div style={{ padding:`0 ${pad}px ${padBottom}px`, width:"100%", maxWidth:"100%", boxSizing:"border-box" }}>
             <div style={{
