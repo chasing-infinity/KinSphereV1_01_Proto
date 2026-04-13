@@ -782,7 +782,11 @@ const Inp = ({ label, type="text", opts, ...rest }) => (
     <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>{label.toUpperCase()}</label>
     {opts ? (
       <select style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }} {...rest}>
-        {opts.map(o=><option key={o}>{o}</option>)}
+        {opts.map((o, idx) => {
+          const l = typeof o === 'object' ? o.label : o;
+          const v = typeof o === 'object' ? o.value : o;
+          return <option key={idx} value={v}>{l}</option>;
+        })}
       </select>
     ) : type==="textarea" ? (
       <textarea style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, minHeight:70, boxSizing:"border-box", fontFamily:"sans-serif", resize:"vertical" }} {...rest} />
@@ -1863,7 +1867,7 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
   };
 
   const handleStart = () => {
-    if (!form.empId || !form.lastDate) return toast("Missing required fields");
+    if (!form.empId || form.empId === "Pick person..." || !form.lastDate) return toast("Please select a teammate and provide a last date");
     const emp = employees.find(e => e.id === Number(form.empId));
     const newItem = {
       id: Date.now(),
