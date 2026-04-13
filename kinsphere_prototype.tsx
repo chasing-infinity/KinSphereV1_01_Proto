@@ -1866,6 +1866,10 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
     }));
   };
 
+  const updateOffboardMeta = (itemId, field, value) => {
+    setOffboardingItems(prev => prev.map(item => item.id === itemId ? { ...item, [field]: value } : item));
+  };
+
   const handleStart = () => {
     if (!form.empId || form.empId === "Pick person..." || !form.lastDate) return toast("Please select a teammate and provide a last date");
     const emp = employees.find(e => e.id === Number(form.empId));
@@ -1877,13 +1881,15 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
       progress: 20,
       lastAction: `Exit initiated (${form.reason}). LWD: ${form.lastDate}`,
       checklist: [
-        { name: "Resignation / Exit Notice", status: "Completed", date: "Today" },
-        { name: "Manager handover / KT", status: "In Progress", date: "-" },
-        { name: "IT Hardware / Badge Return", status: "Pending", date: "-" },
-        { name: "Software License Revocation", status: "Pending", date: "-" },
-        { name: "Finance Clearance (Loans/Petty)", status: "Pending", date: "-" },
-        { name: "Exit Interview (HR)", status: "Pending", date: "-" },
-        { name: "F&F Settlement & Relieving", status: "Pending", date: "-" }
+        { name: "Resignation/Exit email shared", status: "Completed", date: "Today" },
+        { name: "Notice Period discussed and finalized", status: "In Progress", date: "-" },
+        { name: "Started KT sessions", status: "Pending", date: "-" },
+        { name: "Initiated replacement hiring", status: "Pending", date: "-" },
+        { name: "Documents shared from company side", status: "Pending", date: "-" },
+        { name: "Exit Feedback conducted", status: "Pending", date: "-" },
+        { name: "Devices/Property returned", status: "Pending", date: "-" },
+        { name: "Taken off of Workspace (Slack + Gmail)", status: "Pending", date: "-" },
+        { name: "F&F Settlement", status: "Pending", date: "-" }
       ]
     };
     setOffboardingItems([newItem, ...offboardingItems]);
@@ -1934,14 +1940,51 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               {item.checklist.map((c, i) => (
-                <div key={i} onClick={() => isAdmin && toggleOffboardTask(item.id, i)} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 18px", borderRadius:12, border:`1px solid ${c.status==="Completed"?C.p:(c.status==="In Progress"?"#f59e0b":C.bdr)}`, background:c.status==="Completed"?"rgba(var(--p-rgb),0.02)":C.surf, cursor: isAdmin ? "pointer" : "default", transition:"all 0.2s" }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-                    <div style={{ width:22, height:22, borderRadius:"50%", background: c.status==="Completed"?"#22c55e":c.status==="In Progress"?"#f59e0b":"transparent", border:c.status==="Pending"?`1.5px solid ${C.bdr}`:"none", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:11 }}>
-                      {c.status==="Completed"?"✓":c.status==="In Progress"?"⋯":""}
+                <div key={i} style={{ padding:"14px 18px", borderRadius:12, border:`1px solid ${c.status==="Completed"?C.p:(c.status==="In Progress"?"#f59e0b":C.bdr)}`, background:c.status==="Completed"?"rgba(var(--p-rgb),0.02)":C.surf, transition:"all 0.2s" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", cursor: isAdmin ? "pointer" : "default" }} onClick={() => isAdmin && toggleOffboardTask(item.id, i)}>
+                    <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                      <div style={{ width:22, height:22, borderRadius:"50%", background: c.status==="Completed"?"#22c55e":c.status==="In Progress"?"#f59e0b":"transparent", border:c.status==="Pending"?`1.5px solid ${C.bdr}`:"none", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:11 }}>
+                        {c.status==="Completed"?"✓":c.status==="In Progress"?"⋯":""}
+                      </div>
+                      <span style={{ fontSize:14, fontWeight:600, color:C.txt }}>{c.name}</span>
                     </div>
-                    <span style={{ fontSize:14, fontWeight:600, color:C.txt }}>{c.name}</span>
+                    <span style={{ fontSize:11, color:C.sub, fontWeight:700 }}>{c.date}</span>
                   </div>
-                  <span style={{ fontSize:11, color:C.sub, fontWeight:700 }}>{c.date}</span>
+
+                  {/* Contextual Actions & Inputs */}
+                  {(c.name.includes("email shared") || c.name.includes("Documents shared")) && (
+                    <div style={{ marginTop: 12, paddingLeft: 36 }}>
+                      <Btn variant="outline" onClick={(e) => { e.stopPropagation(); setPage("Paperwork Hub"); }} style={{ fontSize: 10, padding: "5px 12px", borderStyle: "dashed" }}>
+                        Paperwork Hub 📄
+                      </Btn>
+                    </div>
+                  )}
+
+                  {c.name.includes("Notice Period") && (
+                    <div style={{ marginTop: 12, paddingLeft: 36, display: "flex", gap: 10, flexWrap: "wrap" }}>
+                      <div style={{ flex: 1, minWidth: 100 }}>
+                        <label style={{ fontSize: 9, fontWeight: 700, color: C.sub, display: "block", marginBottom: 4, textTransform: "uppercase" }}>Notice Length (Days)</label>
+                        <input 
+                          type="number" 
+                          placeholder="e.g. 30"
+                          value={item.noticeLength || ""}
+                          onChange={(e) => updateOffboardMeta(item.id, 'noticeLength', e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: `1px solid ${C.bdr}`, fontSize: 12, background: C.wht, color: C.txt, outline: "none" }}
+                        />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 140 }}>
+                        <label style={{ fontSize: 9, fontWeight: 700, color: C.sub, display: "block", marginBottom: 4, textTransform: "uppercase" }}>Notice End Date</label>
+                        <input 
+                          type="date" 
+                          value={item.noticeEnd || ""}
+                          onChange={(e) => updateOffboardMeta(item.id, 'noticeEnd', e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: `1px solid ${C.bdr}`, fontSize: 12, background: C.wht, color: C.txt, outline: "none" }}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
