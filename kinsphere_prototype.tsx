@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const THEMES = {
   Original: {
@@ -2094,6 +2094,9 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
       <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}`}</style>
     </div>
   );
+
+
+};
 
 
 const PayrollWizardModal = ({ 
