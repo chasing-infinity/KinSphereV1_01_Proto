@@ -6402,7 +6402,7 @@ export default function App() {
                {chapterTab === "Menu" ? (
                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:24, marginTop:20 }}>
                    <Card onClick={() => setChapterTab("Onboarding")} style={{ padding:40, textAlign:"center", cursor:"pointer", transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:16, border:`1px solid ${C.bdr}`, boxShadow:"0 4px 15px rgba(0,0,0,0.02)" }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.p;e.currentTarget.style.boxShadow=`0 8px 28px rgba(var(--p-rgb),0.10)`;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr;e.currentTarget.style.boxShadow="0 4px 15px rgba(0,0,0,0.02)";}}>
-                     <div style={{ width:64, height:64, borderRadius:"50%", background:"#e0f2fe", color:"#0369a1", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center" }}>👋</div>
+                     <div style={{ width:64, height:64, borderRadius:18, background:`rgba(var(--p-rgb),0.09)`, color:C.p, display:"flex", alignItems:"center", justifyContent:"center" }}><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
                      <div>
                        <h2 style={{ fontSize:20, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Onboarding</h2>
                        <p style={{ fontSize:14, color:C.sub, margin:0, lineHeight:1.5 }}>Set up and welcome new employees into the organization.</p>
