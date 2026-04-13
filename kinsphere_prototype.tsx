@@ -745,13 +745,43 @@ const Btn = ({ children, onClick, variant="primary", style:s={}, disabled=false 
   );
 };
 
-const Card = ({ children, style:s={}, ...props }: any) => (
+const Card = ({ children, style: s = {}, ...props }: any) => (
   <div {...props} style={{
     background:C.wht, borderRadius:14, border:`1px solid ${C.bdr}`,
     padding:"clamp(16px, 3.5vw, 22px) clamp(16px, 4vw, 24px)",
     ...s,
   }}>{children}</div>
 );
+
+// --- Icons (Premium / Minimalist) ---
+const IconPlus = ({ size=16, strokeWidth=2.5, color="currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+);
+const IconTrash = ({ size=16, strokeWidth=2, color="currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+);
+const IconEdit = ({ size=16, strokeWidth=2, color="currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path></svg>
+);
+const IconCheck = ({ size=14, strokeWidth=3, color="currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+);
+const IconChevronLeft = ({ size=18, color="currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+);
+const IconBox = ({ size=48, color=C.bdr }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>
+);
+const IconUser = ({ size=18, color="currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+);
+const IconExternal = ({ size=12, color="currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+);
+const IconSettings = ({ size=16, color="currentColor" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+);
+// --- end icons ---
 
 /** Accent-bar panel for Settings (matches Dashboard / Listening Room cards). */
 const SettingsPanel = ({ label, title, accent = C.p, children, style: wrapStyle = {} }) => (
@@ -1602,22 +1632,34 @@ let GLOBAL_ONBOARDINGS = [
     role: "Backend Engineer",
     email: "aman@bipolarfactory.com",
     doj: "2026-05-15",
-    state: {
-      offerSent: true, offerSigned: true, docsCollected: true, idVerified: true,
-      inviteSent: false, emailCreated: false, slackJoined: false, jiraAccess: false,
-      laptopAssigned: false, monitorProvided: false, securityKey: false, badgeIssued: false,
-      managerAssign: false, buddyAssign: false, addedOrg: false, trainingPlan: false,
-      salarySet: false, bankSet: false, policySigned: false, apptLetterSent: false
-    }
+    checklist: [
+      { name: "Offer Letter Sent", status: "Completed", group: "Phase 1" },
+      { name: "Offer Letter Signed", status: "Completed", group: "Phase 1" },
+      { name: "Verification Documents Collected", status: "Completed", group: "Phase 1" },
+      { name: "Background Verification Complete", status: "Completed", group: "Phase 1" },
+      { name: "Company Email Created", status: "Pending", group: "Phase 2" },
+      { name: "Slack / Teams Set up", status: "Pending", group: "Phase 2" }
+    ]
   }
+];
+
+const ONBOARD_DEFAULT_STEPS = [
+  { name: "Offer Letter Sent", status: "Pending", group: "Phase 1: Documents" },
+  { name: "Offer Letter Signed", status: "Pending", group: "Phase 1: Documents" },
+  { name: "Verification Documents Collected", status: "Pending", group: "Phase 1: Documents" },
+  { name: "Background Verification Complete", status: "Pending", group: "Phase 1: Documents" },
+  { name: "Company Email Created", status: "Pending", group: "Phase 2: Access" },
+  { name: "Slack / Teams Set up", status: "Pending", group: "Phase 2: Access" },
+  { name: "Jira / Key Tools Provisioned", status: "Pending", group: "Phase 2: Access" },
+  { name: "HRMS Invite Sent", status: "Pending", group: "Phase 2: Access" }
 ];
 
 const OnboardingFlow = ({ setPage, onBack, employees }) => {
   const [obs, setObs] = useState(GLOBAL_ONBOARDINGS);
   const [activeId, setActiveId] = useState(null);
   const [showNew, setShowNew] = useState(false);
+  const [isEditingSteps, setIsEditingSteps] = useState(false);
 
-  // New Form states
   const [hireType, setHireType] = useState("New");
   const [newHire, setNewHire] = useState({ name:"", email:"", role:"" });
   const [existingId, setExistingId] = useState("");
@@ -1636,18 +1678,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
     }
     const ob = {
       id: "ob"+Date.now(), hireType, name, email, role, doj,
-      state: {
-        // Phase 1: Pre-Joining
-        offerSent: false, offerSigned: false, docsCollected: false, idVerified: false, 
-        // Phase 2: System Access
-        inviteSent: false, emailCreated: false, slackJoined: false, jiraAccess: false,
-        // Phase 3: Hardware & IT
-        laptopAssigned: false, monitorProvided: false, securityKey: false, badgeIssued: false,
-        // Phase 4: Role & Org
-        managerAssign: false, buddyAssign: false, addedOrg: false, trainingPlan: false,
-        // Phase 5: Finance & Legal
-        salarySet: false, bankSet: false, policySigned: false, apptLetterSent: false
-      }
+      checklist: JSON.parse(JSON.stringify(ONBOARD_DEFAULT_STEPS))
     };
     setObs([ob, ...obs]);
     setShowNew(false);
@@ -1655,59 +1686,110 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
     setNewHire({ name:"", email:"", role:"" }); setExistingId(""); setDoj(""); 
   };
 
-  const CheckboxRow = ({ label, checked, onChange, cta, onCtaClick }) => (
-    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background:checked ? "rgba(var(--p-rgb),0.05)" : C.surf, borderRadius:12, border:`1px solid ${checked ? C.p : C.bdr}`, marginBottom:10, transition:"all 0.2s" }}>
-      <label style={{ display:"flex", alignItems:"center", gap:12, cursor:"pointer", flex:1, minWidth:0, paddingRight:12 }}>
-        <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} style={{ transform:"scale(1.2)", accentColor:C.p, flexShrink:0 }} />
-        <span style={{ fontSize:14, color:C.txt, fontWeight: checked ? 600 : 400, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", transition:"color 0.2s" }}>{label}</span>
-      </label>
-      {cta && (
-        <Btn variant="outline" onClick={onCtaClick} style={{ padding:"6px 12px", fontSize:11, flexShrink:0 }}>{cta}</Btn>
-      )}
-    </div>
-  );
+  const toggleTask = (obId, taskIdx) => {
+    setObs(obs.map(o => {
+      if (o.id === obId) {
+        const newChecklist = [...o.checklist];
+        newChecklist[taskIdx].status = newChecklist[taskIdx].status === "Completed" ? "Pending" : "Completed";
+        return { ...o, checklist: newChecklist };
+      }
+      return o;
+    }));
+  };
+
+  const deleteStep = (obId, taskIdx) => {
+    setObs(obs.map(o => {
+      if (o.id === obId) {
+        const newChecklist = o.checklist.filter((_, i) => i !== taskIdx);
+        return { ...o, checklist: newChecklist };
+      }
+      return o;
+    }));
+  };
+
+  const updateStepName = (obId, taskIdx, newName) => {
+    setObs(obs.map(o => {
+      if (o.id === obId) {
+        const newChecklist = [...o.checklist];
+        newChecklist[taskIdx].name = newName;
+        return { ...o, checklist: newChecklist };
+      }
+      return o;
+    }));
+  };
+
+  const addStep = (obId) => {
+    setObs(obs.map(o => {
+      if (o.id === obId) {
+        return { ...o, checklist: [...o.checklist, { name: "New Milestone", status: "Pending", group: "Custom" }] };
+      }
+      return o;
+    }));
+  };
+
+  const CheckboxRow = ({ item, onToggle, onEdit, onDelete, isEditMode, cta, onCtaClick }) => {
+    const checked = item.status === "Completed";
+    return (
+      <div style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 16px", background:checked ? "rgba(var(--p-rgb),0.02)" : C.surf, borderRadius:12, border:`1px solid ${checked ? C.p : C.bdr}`, marginBottom:8, transition:"all 0.2s" }}>
+        {!isEditMode && (
+          <div onClick={onToggle} style={{ width:18, height:18, borderRadius:5, border:`1.5px solid ${checked ? C.p : C.bdr}`, background:checked ? C.p : "transparent", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", transition:"all 0.2s", flexShrink:0 }}>
+            {checked && <IconCheck color="#fff" size={10} />}
+          </div>
+        )}
+        <div style={{ flex:1, minWidth:0 }}>
+          {isEditMode ? (
+            <input value={item.name} onChange={(e) => onEdit(e.target.value)} style={{ width:"100%", border:"none", background:"transparent", fontSize:14, color:C.txt, outline:"none", borderBottom:`1px solid ${C.bdr}` }} />
+          ) : (
+            <span style={{ fontSize:14, color:C.txt, fontWeight: checked ? 600 : 400 }}>{item.name}</span>
+          )}
+        </div>
+        {cta && !isEditMode && (
+          <Btn variant="outline" onClick={onCtaClick} style={{ padding:"4px 10px", fontSize:10, flexShrink:0 }}>
+            {cta} <IconExternal size={10} style={{ marginLeft:4 }} />
+          </Btn>
+        )}
+        {isEditMode && (
+          <button onClick={onDelete} style={{ background:"none", border:"none", cursor:"pointer", color:C.p }}>
+            <IconTrash size={14} />
+          </button>
+        )}
+      </div>
+    );
+  };
 
   if (showNew) {
     return (
       <div style={{ maxWidth:600, margin:"0 auto", width:"100%", animation:"fadeIn 0.3s" }}>
         <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
-          <button onClick={() => setShowNew(false)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:20 }}>←</button>
-          <h2 style={{ fontSize:20, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>Start New Onboarding</h2>
+          <button onClick={() => setShowNew(false)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub }}><IconChevronLeft /></button>
+          <h2 style={{ fontSize:20, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>Start Onboarding</h2>
         </div>
-        <Card>
-          <div style={{ display:"flex", gap:16, marginBottom:24, flexWrap:"wrap" }}>
-            <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:`2px solid ${hireType === "New" ? C.p : C.surf}`, background:hireType === "New" ? `rgba(var(--p-rgb),0.03)` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
-              <input type="radio" checked={hireType === "New"} onChange={() => setHireType("New")} style={{ transform:"scale(1.2)", accentColor:C.p }} />
-              <div style={{ display:"flex", flexDirection:"column" }}>
-                <span style={{ fontWeight:700, fontSize:15, color:C.txt }}>New Hire</span>
-                <span style={{ fontSize:11, color:C.sub }}>Candidate outside the system</span>
-              </div>
+        <Card style={{ padding:32 }}>
+          <div style={{ display:"flex", gap:16, marginBottom:24 }}>
+            <label style={{ flex:1, padding:16, borderRadius:12, background:C.surf, border:`2px solid ${hireType==="New"?C.p:"transparent"}`, cursor:"pointer", display:"flex", alignItems:"center", gap:12 }}>
+              <input type="radio" checked={hireType==="New"} onChange={()=>setHireType("New")} />
+              <div><div style={{ fontWeight:700, color:C.txt }}>New Hire</div><div style={{ fontSize:10, color:C.sub }}>Outside candidate</div></div>
             </label>
-            <label style={{ flex:1, minWidth:200, padding:"16px", borderRadius:12, border:`2px solid ${hireType === "Existing" ? C.p : C.surf}`, background:hireType === "Existing" ? `rgba(var(--p-rgb),0.03)` : C.surf, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s" }}>
-              <input type="radio" checked={hireType === "Existing"} onChange={() => setHireType("Existing")} style={{ transform:"scale(1.2)", accentColor:C.p }} />
-              <div style={{ display:"flex", flexDirection:"column" }}>
-                <span style={{ fontWeight:700, fontSize:15, color:C.txt }}>Internal Invite</span>
-                <span style={{ fontSize:11, color:C.sub }}>Convert candidate to employee</span>
-              </div>
+            <label style={{ flex:1, padding:16, borderRadius:12, background:C.surf, border:`2px solid ${hireType==="Existing"?C.p:"transparent"}`, cursor:"pointer", display:"flex", alignItems:"center", gap:12 }}>
+              <input type="radio" checked={hireType==="Existing"} onChange={()=>setHireType("Existing")} />
+              <div><div style={{ fontWeight:700, color:C.txt }}>Internal</div><div style={{ fontSize:10, color:C.sub }}>Convert existing</div></div>
             </label>
           </div>
-          
-          {hireType === "New" ? (
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"16px 20px" }}>
-              <Inp label="Full Name" value={newHire.name} onChange={e=>setNewHire({...newHire, name:e.target.value})} placeholder="e.g. Rahul Dravid" />
-              <Inp label="Email" type="email" value={newHire.email} onChange={e=>setNewHire({...newHire, email:e.target.value})} placeholder="rahul@example.com" />
-              <Inp label="Role" value={newHire.role} onChange={e=>setNewHire({...newHire, role:e.target.value})} placeholder="e.g. Design Lead" />
-              <Inp label="Date of Joining" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
-            </div>
-          ) : (
-            <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:16 }}>
-              <Inp label="Select Employee" value={existingId} onChange={e=>setExistingId(e.target.value)} opts={["Select teammate...", ...employees.map(e=>e.name)]} />
-              <Inp label="Proposed DOJ" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
-            </div>
-          )}
-          
-          <div style={{ display:"flex", justifyContent:"flex-end", marginTop:32 }}>
-            <Btn onClick={handleCreate} disabled={!(doj && (hireType==="New" ? (newHire.name && newHire.email) : (existingId && existingId!=="Select teammate...")))} style={{ padding:"12px 24px" }}>Launch Journey 🚀</Btn>
+          <div style={{ display:"grid", gap:16 }}>
+            {hireType === "New" ? (
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
+                <Inp label="Name" value={newHire.name} onChange={e=>setNewHire({...newHire, name:e.target.value})} />
+                <Inp label="Email" value={newHire.email} onChange={e=>setNewHire({...newHire, email:e.target.value})} />
+                <Inp label="Role" value={newHire.role} onChange={e=>setNewHire({...newHire, role:e.target.value})} />
+                <Inp label="Joining Date" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
+              </div>
+            ) : (
+              <div style={{ display:"grid", gap:16 }}>
+                <Inp label="Teammate" value={existingId} onChange={e=>setExistingId(e.target.value)} opts={["Select...", ...employees.map(e=>e.name)]} />
+                <Inp label="Joining Date" type="date" value={doj} onChange={e=>setDoj(e.target.value)} />
+              </div>
+            )}
+            <Btn onClick={handleCreate} disabled={!doj} style={{ padding:"12px", marginTop:16 }}>Launch Journey</Btn>
           </div>
         </Card>
       </div>
@@ -1717,73 +1799,43 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
   if (activeId) {
     const ob = obs.find(o => o.id === activeId);
     if (!ob) return null;
-    const s = ob.state;
-    const setS = (k, v) => setObs(obs.map(o => o.id === activeId ? { ...o, state:{ ...o.state, [k]: v } } : o));
-
-    const total = 20;
-    const done = Object.values(s).filter(Boolean).length;
-    const progress = Math.round((done / total) * 100);
+    const checklist = ob.checklist;
+    const done = checklist.filter(c => c.status === "Completed").length;
+    const progress = Math.round((done / checklist.length) * 100);
 
     return (
       <div style={{ maxWidth:800, margin:"0 auto", width:"100%", animation:"fadeIn 0.3s" }}>
         <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
-          <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:20 }}>←</button>
+          <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub }}><IconChevronLeft /></button>
           <div style={{ flex:1 }}>
             <h2 style={{ fontSize:22, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{ob.name}</h2>
-            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>Onboarding: {ob.role} · Target: {ob.doj}</div>
+            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>{ob.role} · Target: {ob.doj}</div>
           </div>
-          <div style={{ textAlign:"right" }}>
-            <div style={{ fontSize:14, fontWeight:700, color:progress===100?"#22c55e":C.p }}>{progress}% Complete</div>
-            <div style={{ fontSize:11, color:C.sub, marginTop:4, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5 }}>{done} of {total} milestones</div>
-          </div>
+          <button onClick={() => setIsEditingSteps(!isEditingSteps)} style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 14px", borderRadius:10, border:`1px solid ${C.bdr}`, background:"transparent", color:C.sub, fontSize:12, fontWeight:700, cursor:"pointer" }}>
+            <IconSettings size={14} /> {isEditingSteps ? "Save Steps" : "Manage Steps"}
+          </button>
         </div>
-        
-        <div style={{ height:10, background:C.surf, borderRadius:5, overflow:"hidden", marginBottom:32, border:`1px solid ${C.bdr}` }}>
-          <div style={{ height:"100%", background:progress===100?"#22c55e":`linear-gradient(90deg, ${C.p} 0%, #ec4899 100%)`, width:`${progress}%`, transition:"width 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }} />
+        <div style={{ height:8, background:C.surf, borderRadius:4, overflow:"hidden", marginBottom:32, border:`1px solid ${C.bdr}` }}>
+          <div style={{ height:"100%", background:`linear-gradient(90deg, ${C.p} 0%, #ec4899 100%)`, width:`${progress}%`, transition:"width 0.4s" }} />
         </div>
-
-        <div style={{ display:"grid", gap:24 }}>
+        <div style={{ display:"grid", gap:32 }}>
           <section>
-            <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 1: Pre-Joining & Paperwork</h3>
-            <CheckboxRow label="Offer Letter Sent" checked={s.offerSent} onChange={v=>setS("offerSent",v)} cta="Paperwork Hub" onCtaClick={()=>setPage("Paperwork Hub")} />
-            <CheckboxRow label="Offer Letter Signed" checked={s.offerSigned} onChange={v=>setS("offerSigned",v)} />
-            <CheckboxRow label="Verification Documents Collected" checked={s.docsCollected} onChange={v=>setS("docsCollected",v)} />
-            <CheckboxRow label="Background Verification Complete" checked={s.idVerified} onChange={v=>setS("idVerified",v)} />
-          </section>
-
-          <section>
-            <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 2: Digital Identity</h3>
-            <CheckboxRow label="Company Email Created" checked={s.emailCreated} onChange={v=>setS("emailCreated",v)} />
-            <CheckboxRow label="Slack / Teams Set up" checked={s.slackJoined} onChange={v=>setS("slackJoined",v)} />
-            <CheckboxRow label="Jira / Key Tools Provisioned" checked={s.jiraAccess} onChange={v=>setS("jiraAccess",v)} />
-            <CheckboxRow label="HRMS Invite Sent" checked={s.inviteSent} onChange={v=>setS("inviteSent",v)} cta="Directory" onCtaClick={()=>setPage("Employees")} />
-          </section>
-
-          <section>
-            <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 3: IT Hardware & Access</h3>
-            <CheckboxRow label="Main Laptop / Desktop Assigned" checked={s.laptopAssigned} onChange={v=>setS("laptopAssigned",v)} />
-            <CheckboxRow label="Peripherals (Monitor, Keyb) Provided" checked={s.monitorProvided} onChange={v=>setS("monitorProvided",v)} />
-            <CheckboxRow label="Security Keys / VPN Configured" checked={s.securityKey} onChange={v=>setS("securityKey",v)} />
-            <CheckboxRow label="Physical Office ID Badge Issued" checked={s.badgeIssued} onChange={v=>setS("badgeIssued",v)} />
-          </section>
-
-          <section>
-            <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 4: Cultural Integration</h3>
-            <CheckboxRow label="Manager One-on-One Booked" checked={s.managerAssign} onChange={v=>setS("managerAssign",v)} />
-            <CheckboxRow label="Onboarding Buddy Assigned" checked={s.buddyAssign} onChange={v=>setS("buddyAssign",v)} />
-            <CheckboxRow label="Added to Org Chart & Groups" checked={s.addedOrg} onChange={v=>setS("addedOrg",v)} />
-            <CheckboxRow label="30-60-90 Day Training Plan Shared" checked={s.trainingPlan} onChange={v=>setS("trainingPlan",v)} />
-          </section>
-
-          <section>
-             <h3 style={{ fontSize:11, fontWeight:700, margin:"0 0 16px", color:C.sub, textTransform:"uppercase", letterSpacing:1 }}>Phase 5: Compliance & Finance</h3>
-             <CheckboxRow label="Salary Structure & Tax Setup" checked={s.salarySet} onChange={v=>setS("salarySet",v)} cta="Setup Pay" onCtaClick={()=>setPage("Paydays")} />
-             <CheckboxRow label="Bank Account Details Verified" checked={s.bankSet} onChange={v=>setS("bankSet",v)} />
-             <CheckboxRow label="Policy Manual Acknowledged" checked={s.policySigned} onChange={v=>setS("policySigned",v)} />
-             <CheckboxRow label="Final Appointment Letter Issued" checked={s.apptLetterSent} onChange={v=>setS("apptLetterSent",v)} />
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+               <h3 style={{ fontSize:11, fontWeight:700, margin:0, color:C.sub, textTransform:"uppercase", letterSpacing:1.5 }}>Checklist Items</h3>
+               {isEditingSteps && <button onClick={()=>addStep(ob.id)} style={{ fontSize:11, color:C.p, fontWeight:700, background:"none", border:"none", cursor:"pointer" }}>+ Add Step</button>}
+            </div>
+            {checklist.map((item, idx) => (
+              <CheckboxRow 
+                key={idx} item={item} isEditMode={isEditingSteps}
+                onToggle={() => toggleTask(ob.id, idx)}
+                onEdit={(val) => updateStepName(ob.id, idx, val)}
+                onDelete={() => deleteStep(ob.id, idx)}
+                cta={item.name.includes("Offer") ? "Paperwork Hub" : null}
+                onCtaClick={() => setPage("Paperwork Hub")}
+              />
+            ))}
           </section>
         </div>
-        <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
       </div>
     );
   }
@@ -1791,49 +1843,26 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
   return (
     <div style={{ maxWidth:800, margin:"0 auto", width:"100%", animation:"fadeIn 0.3s" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
-        <div>
-          <h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Active Onboardings</h2>
-          <p style={{ color:C.sub, fontSize:15, margin:0 }}>Guided journey for new and transitioning teammates.</p>
-        </div>
-        <Btn onClick={() => setShowNew(true)} style={{ padding:"12px 20px" }}>+ New Onboarding</Btn>
+        <div><h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Active Onboardings</h2><p style={{ color:C.sub, fontSize:15, margin:0 }}>Guided journey for new teammates.</p></div>
+        <Btn onClick={() => setShowNew(true)} style={{ padding:"12px 24px" }}><IconPlus size={16} color="#fff" style={{ marginRight:8 }} /> New Onboarding</Btn>
       </div>
-
       {obs.length === 0 ? (
-        <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
-          <div style={{ fontSize:40, marginBottom:16 }}>🐣</div>
+        <div style={{ textAlign:"center", padding:80, background:C.surf, borderRadius:20, border:`1px dashed ${C.bdr}` }}>
+          <div style={{ marginBottom:16, display:"flex", justifyContent:"center" }}><IconBox /></div>
           <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Empty Nest</h3>
-          <p style={{ color:C.sub, fontSize:14 }}>No one is being onboarded right now. Click "New" to start a journey.</p>
+          <p style={{ color:C.sub, fontSize:14 }}>No one is being onboarded right now.</p>
         </div>
       ) : (
-        <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
-          {obs.map(o => {
-            const done = Object.values(o.state).filter(Boolean).length;
-            const progress = Math.round((done / 20) * 100);
-            return (
-              <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:"24px", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.p; e.currentTarget.style.transform="translateY(-2px)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr; e.currentTarget.style.transform="none";}}>
-                <div style={{ width:48, height:48, borderRadius:"50%", background:`rgba(var(--p-rgb),0.1)`, border:`1px solid rgba(var(--p-rgb), 0.2)`, display:"flex", alignItems:"center", justifyContent:"center", color:C.p, fontSize:18, fontWeight:700 }}>
-                  {o.name.charAt(0)}
-                </div>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontSize:16, fontWeight:700, color:C.txt, marginBottom:4 }}>{o.name}</div>
-                  <div style={{ fontSize:13, color:C.sub }}>{o.role} · Target: {o.doj}</div>
-                </div>
-                <div style={{ width:180 }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, color:C.sub, marginBottom:6, fontWeight:600 }}>
-                    <span style={{ textTransform:"uppercase", letterSpacing:0.5 }}>{done}/20 Tasks</span>
-                    <span>{progress}%</span>
-                  </div>
-                  <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden" }}>
-                    <div style={{ height:"100%", background: progress === 100 ? "#22c55e" : C.p, width:`${progress}%`, transition:"width 0.3s" }} />
-                  </div>
-                </div>
-                <div style={{ color:C.sub, fontSize:20, opacity:0.3 }}>→</div>
-              </Card>
-            );
-          })}
+        <div style={{ display:"grid", gap:16 }}>
+          {obs.map(o => (
+            <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:24, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.p} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
+              <div style={{ width:48, height:48, borderRadius:12, background:`rgba(var(--p-rgb),0.1)`, display:"flex", alignItems:"center", justifyContent:"center", color:C.p, fontSize:18, fontWeight:700 }}>{o.name.charAt(0)}</div>
+              <div style={{ flex:1 }}><h4 style={{ fontSize:17, fontWeight:700, margin:0, color:C.txt }}>{o.name}</h4><div style={{ fontSize:12, color:C.sub, marginTop:4 }}>{o.role} · Target: {o.doj}</div></div>
+              <div style={{ textAlign:"right" }}><div style={{ fontSize:14, fontWeight:700, color:C.p }}>{Math.round((o.checklist.filter(c=>c.status==="Completed").length / o.checklist.length) * 100)}%</div><div style={{ fontSize:10, color:C.sub, textTransform:"uppercase", fontWeight:700 }}>Complete</div></div>
+            </Card>
+          ))}
         </div>
       )}
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 };
@@ -1841,6 +1870,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
 const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmin, setPage, employees, papers, setPapers, addNotif, toast }) => {
   const [activeId, setActiveId] = useState(null);
   const [showInitiate, setShowInitiate] = useState(false);
+  const [isEditingSteps, setIsEditingSteps] = useState(false);
   const [form, setForm] = useState({ empId:"", reason:"Resignation", lastDate:"" });
 
   const toggleOffboardTask = (itemId, taskIndex) => {
@@ -1849,20 +1879,26 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
       const nextChecklist = [...item.checklist];
       const cur = nextChecklist[taskIndex].status;
       const nextStatus = cur === "Pending" ? "In Progress" : cur === "In Progress" ? "Completed" : "Pending";
-      nextChecklist[taskIndex] = { 
-        ...nextChecklist[taskIndex], 
-        status: nextStatus,
-        date: nextStatus === "Completed" ? new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short" }) : (nextStatus === "Pending" ? "-" : "Today")
-      };
+      nextChecklist[taskIndex] = { ...nextChecklist[taskIndex], status: nextStatus };
       const completed = nextChecklist.filter(c => c.status === "Completed").length;
-      const newProgress = Math.round((completed / nextChecklist.length) * 100);
-      return { 
-        ...item, 
-        checklist: nextChecklist, 
-        progress: newProgress,
-        status: newProgress === 100 ? "Completed" : "In Progress",
-        lastAction: `Checklist update: ${nextChecklist[taskIndex].name} → ${nextStatus}`
-      };
+      return { ...item, checklist: nextChecklist, progress: Math.round((completed / nextChecklist.length) * 100) };
+    }));
+  };
+
+  const addOffboardStep = (itemId) => {
+    setOffboardingItems(prev => prev.map(item => item.id === itemId ? { ...item, checklist: [...item.checklist, { name: "New Step", status: "Pending" }] } : item));
+  };
+
+  const deleteOffboardStep = (itemId, taskIndex) => {
+    setOffboardingItems(prev => prev.map(item => item.id === itemId ? { ...item, checklist: item.checklist.filter((_, i) => i !== taskIndex) } : item));
+  };
+
+  const updateOffboardStepName = (itemId, taskIndex, newName) => {
+    setOffboardingItems(prev => prev.map(item => {
+      if (item.id !== itemId) return item;
+      const nextChecklist = [...item.checklist];
+      nextChecklist[taskIndex].name = newName;
+      return { ...item, checklist: nextChecklist };
     }));
   };
 
@@ -1871,45 +1907,30 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
   };
 
   const handleStart = () => {
-    if (!form.empId || form.empId === "Pick person..." || !form.lastDate) return toast("Please select a teammate and provide a last date");
+    if (!form.empId || form.empId === "Pick person..." || !form.lastDate) return toast("Select teammate & last date");
     const emp = employees.find(e => e.id === Number(form.empId));
     const newItem = {
       id: Date.now(),
       empId: Number(form.empId),
       name: emp?.name || "Unknown",
       status: "In Progress",
-      progress: 20,
-      lastAction: `Exit initiated (${form.reason}). LWD: ${form.lastDate}`,
+      progress: 0,
+      lastAction: `LWD: ${form.lastDate}`,
       checklist: [
-        { name: "Resignation/Exit email shared", status: "Completed", date: "Today" },
-        { name: "Notice Period discussed and finalized", status: "In Progress", date: "-" },
-        { name: "Started KT sessions", status: "Pending", date: "-" },
-        { name: "Initiated replacement hiring", status: "Pending", date: "-" },
-        { name: "Documents shared from company side", status: "Pending", date: "-" },
-        { name: "Exit Feedback conducted", status: "Pending", date: "-" },
-        { name: "Devices/Property returned", status: "Pending", date: "-" },
-        { name: "Taken off of Workspace (Slack + Gmail)", status: "Pending", date: "-" },
-        { name: "F&F Settlement", status: "Pending", date: "-" }
+        { name: "Resignation sharing email", status: "Pending" },
+        { name: "Notice Period finalized", status: "Pending" },
+        { name: "KT Sessions started", status: "Pending" },
+        { name: "Replacement hiring initiated", status: "Pending" },
+        { name: "Company documents shared", status: "Pending" },
+        { name: "Exit Feedback conducted", status: "Pending" },
+        { name: "Property returned", status: "Pending" },
+        { name: "Workspace removal", status: "Pending" },
+        { name: "F&F Settlement", status: "Pending" }
       ]
     };
     setOffboardingItems([newItem, ...offboardingItems]);
-
-    // Auto-generate doc
-    const newDoc = {
-      id: Date.now() + 1,
-      name: `${form.reason} Docket - ${emp?.name}`,
-      empId: Number(form.empId),
-      type: "Other",
-      status: "Generated",
-      date: new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }),
-      url: "#"
-    };
-    setPapers([newDoc, ...papers]);
-
     setShowInitiate(false);
-    setForm({ empId:"", reason:"Resignation", lastDate:"" });
-    toast(`Off-boarding Journey and Official Docket created for ${emp?.name} ✓`);
-    addNotif({ title:"Exit Journey Started", body:`${emp?.name} is leaving. View journey for checklist.`, icon:"🚪" });
+    toast(`Journey started for ${emp?.name}`);
   };
 
   if (activeId) {
@@ -1918,88 +1939,64 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
     return (
       <div style={{ animation:"fadeIn 0.3s" }}>
         <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
-          <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:20 }}>←</button>
+          <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub }}><IconChevronLeft /></button>
           <div style={{ flex:1 }}>
             <h2 style={{ fontSize:22, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{item.name}</h2>
-            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>Exit Lifecycle · Last Working Day: {item.lastAction.split("LWD: ")[1] || "TBD"}</div>
+            <div style={{ fontSize:13, color:C.sub, marginTop:4 }}>{item.lastAction}</div>
           </div>
-          <div style={{ textAlign:"right" }}>
-            <div style={{ fontSize:14, fontWeight:700, color:item.progress===100?"#22c55e":C.p }}>{item.progress}% Milestone Progress</div>
-            <div style={{ fontSize:11, color:C.sub, marginTop:4, fontWeight:600 }}>{item.status.toUpperCase()}</div>
-          </div>
+          <button onClick={() => setIsEditingSteps(!isEditingSteps)} style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 14px", borderRadius:10, border:`1px solid ${C.bdr}`, background:"transparent", color:C.sub, fontSize:12, fontWeight:700, cursor:"pointer" }}>
+            <IconSettings size={14} /> {isEditingSteps ? "Save Steps" : "Manage Steps"}
+          </button>
         </div>
-        <div style={{ height:10, background:C.surf, borderRadius:5, overflow:"hidden", marginBottom:32, border:`1px solid ${C.bdr}` }}>
-          <div style={{ height:"100%", background:item.progress===100?"#22c55e":"#ec4899", width:`${item.progress}%`, transition:"width 0.4s" }} />
+        <div style={{ height:8, background:C.surf, borderRadius:4, overflow:"hidden", marginBottom:32, border:`1px solid ${C.bdr}` }}>
+          <div style={{ height:"100%", background:C.p, width:`${item.progress}%`, transition:"width 0.4s" }} />
         </div>
         
-        <section style={{ display:"grid", gap:20 }}>
+        <div style={{ display:"grid", gap:20 }}>
           <Card style={{ padding:28 }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-               <h3 style={{ fontSize:12, fontWeight:700, margin:0, color:C.p, textTransform:"uppercase", letterSpacing:1 }}>Separation Checklist</h3>
-               <span style={{ fontSize:11, color:C.sub }}>Click task to update status</span>
+               <h3 style={{ fontSize:11, fontWeight:700, color:C.sub, textTransform:"uppercase", letterSpacing:1.5 }}>Offboarding Checklist</h3>
+               {isEditingSteps && <button onClick={()=>addOffboardStep(item.id)} style={{ fontSize:11, color:C.p, fontWeight:700, background:"none", border:"none", cursor:"pointer" }}>+ Add Step</button>}
             </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-              {item.checklist.map((c, i) => (
-                <div key={i} style={{ padding:"14px 18px", borderRadius:12, border:`1px solid ${c.status==="Completed"?C.p:(c.status==="In Progress"?"#f59e0b":C.bdr)}`, background:c.status==="Completed"?"rgba(var(--p-rgb),0.02)":C.surf, transition:"all 0.2s" }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", cursor: isAdmin ? "pointer" : "default" }} onClick={() => isAdmin && toggleOffboardTask(item.id, i)}>
-                    <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-                      <div style={{ width:22, height:22, borderRadius:"50%", background: c.status==="Completed"?"#22c55e":c.status==="In Progress"?"#f59e0b":"transparent", border:c.status==="Pending"?`1.5px solid ${C.bdr}`:"none", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:11 }}>
-                        {c.status==="Completed"?"✓":c.status==="In Progress"?"⋯":""}
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+              {item.checklist.map((c, i) => {
+                const checked = c.status === "Completed";
+                return (
+                  <div key={i} style={{ padding:"12px 16px", borderRadius:12, border:`1px solid ${checked?C.p:C.bdr}`, background:checked?"rgba(var(--p-rgb),0.02)":C.surf, display:"flex", alignItems:"center", gap:12 }}>
+                    {!isEditingSteps && (
+                      <div onClick={() => toggleOffboardTask(item.id, i)} style={{ width:18, height:18, borderRadius:5, border:`1.5px solid ${checked?C.p:C.bdr}`, background:checked?C.p:"transparent", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer" }}>
+                        {checked && <IconCheck color="#fff" size={10} />}
                       </div>
-                      <span style={{ fontSize:14, fontWeight:600, color:C.txt }}>{c.name}</span>
+                    )}
+                    <div style={{ flex:1 }}>
+                       {isEditingSteps ? (
+                         <input value={c.name} onChange={(e)=>updateOffboardStepName(item.id, i, e.target.value)} style={{ width:"100%", border:"none", background:"transparent", fontSize:14, color:C.txt, outline:"none", borderBottom:`1px solid ${C.bdr}` }} />
+                       ) : (
+                         <span style={{ fontSize:14, color:C.txt, fontWeight:checked?600:400 }}>{c.name}</span>
+                       )}
                     </div>
-                    <span style={{ fontSize:11, color:C.sub, fontWeight:700 }}>{c.date}</span>
+                    {isEditingSteps && (
+                      <button onClick={()=>deleteOffboardStep(item.id, i)} style={{ background:"none", border:"none", cursor:"pointer", color:C.p }}><IconTrash size={14} /></button>
+                    )}
+                    {(c.name.includes("email") || c.name.includes("documents")) && !isEditingSteps && (
+                      <Btn variant="outline" onClick={()=>setPage("Paperwork Hub")} style={{ fontSize:10, padding:"4px 10px" }}>Paperwork Hub <IconExternal size={10} style={{ marginLeft:4 }} /></Btn>
+                    )}
                   </div>
-
-                  {/* Contextual Actions & Inputs */}
-                  {(c.name.includes("email shared") || c.name.includes("Documents shared")) && (
-                    <div style={{ marginTop: 12, paddingLeft: 36 }}>
-                      <Btn variant="outline" onClick={(e) => { e.stopPropagation(); setPage("Paperwork Hub"); }} style={{ fontSize: 10, padding: "5px 12px", borderStyle: "dashed" }}>
-                        Paperwork Hub 📄
-                      </Btn>
-                    </div>
-                  )}
-
-                  {c.name.includes("Notice Period") && (
-                    <div style={{ marginTop: 12, paddingLeft: 36, display: "flex", gap: 10, flexWrap: "wrap" }}>
-                      <div style={{ flex: 1, minWidth: 100 }}>
-                        <label style={{ fontSize: 9, fontWeight: 700, color: C.sub, display: "block", marginBottom: 4, textTransform: "uppercase" }}>Notice Length (Days)</label>
-                        <input 
-                          type="number" 
-                          placeholder="e.g. 30"
-                          value={item.noticeLength || ""}
-                          onChange={(e) => updateOffboardMeta(item.id, 'noticeLength', e.target.value)}
-                          onClick={(e) => e.stopPropagation()}
-                          style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: `1px solid ${C.bdr}`, fontSize: 12, background: C.wht, color: C.txt, outline: "none" }}
-                        />
-                      </div>
-                      <div style={{ flex: 1, minWidth: 140 }}>
-                        <label style={{ fontSize: 9, fontWeight: 700, color: C.sub, display: "block", marginBottom: 4, textTransform: "uppercase" }}>Notice End Date</label>
-                        <input 
-                          type="date" 
-                          value={item.noticeEnd || ""}
-                          onChange={(e) => updateOffboardMeta(item.id, 'noticeEnd', e.target.value)}
-                          onClick={(e) => e.stopPropagation()}
-                          style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: `1px solid ${C.bdr}`, fontSize: 12, background: C.wht, color: C.txt, outline: "none" }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
+            {item.checklist.some(c=>c.name.includes("Notice Period")) && !isEditingSteps && (
+              <div style={{ marginTop:24, paddingTop:24, borderTop:`1px solid ${C.bdr}`, display:"flex", gap:16 }}>
+                 <div style={{ flex:1 }}><label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:6 }}>NOTICE LENGTH (DAYS)</label>
+                   <input type="number" value={item.noticeLength||""} onChange={(e)=>updateOffboardMeta(item.id, 'noticeLength', e.target.value)} style={{ width:"100%", padding:10, borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13 }} placeholder="e.g. 30" />
+                 </div>
+                 <div style={{ flex:1 }}><label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:6 }}>END DATE</label>
+                   <input type="date" value={item.noticeEnd||""} onChange={(e)=>updateOffboardMeta(item.id, 'noticeEnd', e.target.value)} style={{ width:"100%", padding:10, borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13 }} />
+                 </div>
+              </div>
+            )}
           </Card>
-          
-          <Card style={{ padding:24, background:`linear-gradient(145deg, rgba(var(--p-rgb),0.03) 0%, ${C.surf} 100%)`, border:`1px dashed ${C.p}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-             <div>
-               <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:4 }}>RELIEVING DOCUMENTS</div>
-               <div style={{ fontSize:14, fontWeight:600, color:C.txt }}>Exit Docket & F&F Statement</div>
-               <div style={{ fontSize:11, color:C.sub, marginTop:4 }}>Auto-generated in Document Centre</div>
-             </div>
-             <Btn variant="outline" onClick={() => setPage("Paperwork Hub")} style={{ fontSize:11 }}>Go to Paperwork Hub</Btn>
-          </Card>
-        </section>
-        <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+        </div>
       </div>
     );
   }
@@ -2007,35 +2004,25 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
   return (
     <div style={{ animation:"fadeIn 0.3s" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
-        <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, fontSize:13, fontWeight:600 }}>← Back to Menu</button>
-        <Btn onClick={() => setShowInitiate(true)} style={{ padding:"12px 24px", fontSize:12 }}>+ Initiate Transition</Btn>
+        <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, display:"flex", alignItems:"center", gap:8 }}><IconChevronLeft /> Back</button>
+        <Btn onClick={() => setShowInitiate(true)} style={{ padding:"12px 24px" }}><IconPlus size={16} color="#fff" style={{ marginRight:8 }} /> Initiate Transition</Btn>
       </div>
       <h2 style={{ fontSize:28, fontWeight:700, color:C.txt, margin:"0 0 8px", fontFamily:"Georgia,serif" }}>Active Offboardings</h2>
-      <p style={{ color:C.sub, fontSize:15, margin:"0 0 32px" }}>Managing the lifecycle for teammates moving to their next chapter.</p>
+      <p style={{ color:C.sub, fontSize:15, margin:"0 0 32px" }}>Managing teammates moving to their next chapter.</p>
       
       {offboardingItems.length === 0 ? (
-        <div style={{ textAlign:"center", padding:"60px 20px", background:C.surf, borderRadius:16, border:`1px dashed ${C.bdr}` }}>
-          <div style={{ fontSize:40, marginBottom:16 }}>📦</div>
+        <div style={{ textAlign:"center", padding:80, background:C.surf, borderRadius:20, border:`1px dashed ${C.bdr}` }}>
+          <div style={{ marginBottom:16, display:"flex", justifyContent:"center" }}><IconBox /></div>
           <h3 style={{ fontSize:18, fontWeight:700, color:C.txt, margin:"0 0 8px" }}>Cloudless Sky</h3>
-          <p style={{ color:C.sub, fontSize:14 }}>No departures currently in the workflow. Good vibes!</p>
+          <p style={{ color:C.sub, fontSize:14 }}>No departures currently in the workflow.</p>
         </div>
       ) : (
-        <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+        <div style={{ display:"grid", gap:16 }}>
           {offboardingItems.map(o => (
-            <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:"24px", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>{e.currentTarget.style.borderColor="#ec4899"; e.currentTarget.style.transform="translateY(-2px)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr; e.currentTarget.style.transform="none";}}>
-              <div style={{ width:48, height:48, borderRadius:"50%", background:`#fdf2f8`, border:`1px solid #fbcfe8`, display:"flex", alignItems:"center", justifyContent:"center", color:"#be185d", fontSize:18, fontWeight:700 }}>
-                {o.name.charAt(0)}
-              </div>
-              <div style={{ flex:1 }}>
-                <div style={{ fontSize:16, fontWeight:700, color:C.txt, marginBottom:4 }}>{o.name}</div>
-                <div style={{ fontSize:12, color:C.sub }}>Status: {o.status} · Progress: {o.progress}%</div>
-              </div>
-              <div style={{ width:180 }}>
-                <div style={{ height:6, background:C.bg, borderRadius:3, overflow:"hidden", boxShadow:`inset 0 1px 2px rgba(var(--shadow-rgb),0.05)` }}>
-                  <div style={{ height:"100%", background: o.progress === 100 ? "#22c55e" : "#ec4899", width:`${o.progress}%`, transition:"width 0.3s" }} />
-                </div>
-              </div>
-              <div style={{ color:C.sub, fontSize:20, opacity:0.3 }}>→</div>
+            <Card key={o.id} onClick={() => setActiveId(o.id)} style={{ padding:24, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", gap:20, border:`1px solid ${C.bdr}` }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.p} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
+              <div style={{ width:48, height:48, borderRadius:12, background:`rgba(var(--p-rgb),0.1)`, display:"flex", alignItems:"center", justifyContent:"center", color:C.p, fontSize:18, fontWeight:700 }}>{o.name.charAt(0)}</div>
+              <div style={{ flex:1 }}><h4 style={{ fontSize:17, fontWeight:700, margin:0, color:C.txt }}>{o.name}</h4><div style={{ fontSize:12, color:C.sub, marginTop:4 }}>{o.lastAction}</div></div>
+              <div style={{ textAlign:"right" }}><div style={{ fontSize:14, fontWeight:700, color:C.p }}>{o.progress || 0}%</div><div style={{ fontSize:10, color:C.sub, textTransform:"uppercase", fontWeight:700 }}>Complete</div></div>
             </Card>
           ))}
         </div>
@@ -2043,22 +2030,13 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
 
       {showInitiate && (
         <Modal title="Initiate Transition" onClose={() => setShowInitiate(false)} width={450}>
-           <div style={{ marginBottom:20 }}>
-             <p style={{ fontSize:13, color:C.sub, lineHeight:1.55 }}>Launching an exit journey will notify IT, Finance, and Legal. It also generates an official exit docket in the Document Hub.</p>
-           </div>
            <div style={{ display:"grid", gap:16 }}>
              <Inp label="Teammate" value={form.empId} onChange={e=>setForm({...form, empId:e.target.value})} opts={["Pick person...", ...employees.map(e=>({label:e.name, value:String(e.id)}))]} />
-             <Inp label="Separation Reason" value={form.reason} onChange={e=>setForm({...form, reason:e.target.value})} opts={["Resignation", "Termination", "Contract End", "Retirement"]} />
-             <Inp label="Last Working Date" type="date" value={form.lastDate} onChange={e=>setForm({...form, lastDate:e.target.value})} />
-           </div>
-           <div style={{ display:"flex", justifyContent:"flex-end", gap:12, marginTop:32, paddingTop:24, borderTop:`1px solid ${C.surf}` }}>
-             <Btn variant="ghost" onClick={() => setShowInitiate(false)}>Discard</Btn>
-             <Btn onClick={handleStart} style={{ padding:"10px 24px" }}>Start Journey 🚪</Btn>
+             <Inp label="Last Date" type="date" value={form.lastDate} onChange={e=>setForm({...form, lastDate:e.target.value})} />
+             <div style={{ display:"flex", justifyContent:"flex-end", gap:12, marginTop:24 }}><Btn variant="ghost" onClick={()=>setShowInitiate(false)}>Discard</Btn><Btn onClick={handleStart}>Start Journey</Btn></div>
            </div>
         </Modal>
       )}
-
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 };
