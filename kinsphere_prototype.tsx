@@ -1964,7 +1964,7 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
           <button onClick={() => setActiveId(null)} style={{ background:"none", border:"none", cursor:"pointer", color:C.sub, marginTop:4, display:"flex" }}><IconChevronLeft /></button>
           <div style={{ flex:1 }}>
             <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-              <div style={{ width:40, height:40, borderRadius:10, background:`linear-gradient(135deg,#f43f5e,#ec4899)`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:16, fontWeight:800 }}>{item.name.charAt(0)}</div>
+              <div style={{ width:40, height:40, borderRadius:10, background:`linear-gradient(135deg,${C.p},${C.p2||"#818cf8"})`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:16, fontWeight:800 }}>{item.name.charAt(0)}</div>
               <div>
                 <h2 style={{ fontSize:20, fontWeight:700, margin:0, color:C.txt, fontFamily:"Georgia,serif" }}>{item.name}</h2>
                 <div style={{ fontSize:12, color:C.sub, marginTop:2 }}>{item.reason || "Exit"} &nbsp;�&nbsp; {item.lastAction}</div>
@@ -1978,13 +1978,13 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
 
         <div style={{ display:"flex", gap:10, marginBottom:24 }}>
           <KpiPill label="Completed" value={done} color="#22c55e" />
-          <KpiPill label="Remaining" value={total - done} color="#f43f5e" />
+          <KpiPill label="Remaining" value={total - done} color={C.p} />
           <KpiPill label="Total Steps" value={total} />
-          <KpiPill label="Progress" value={`${progress}%`} color={progress === 100 ? "#22c55e" : "#f43f5e"} />
+          <KpiPill label="Progress" value={`${progress}%`} color={progress === 100 ? "#22c55e" : C.p} />
         </div>
 
         <div style={{ height:6, background:C.surf, borderRadius:99, overflow:"hidden", marginBottom:24, border:`1px solid ${C.bdr}` }}>
-          <div style={{ height:"100%", background: progress === 100 ? "#22c55e" : `linear-gradient(90deg,#f43f5e,#ec4899)`, width:`${progress}%`, transition:"width 0.5s cubic-bezier(0.4,0,0.2,1)", borderRadius:99 }} />
+          <div style={{ height:"100%", background: progress === 100 ? "#22c55e" : `linear-gradient(90deg,${C.p},${C.p2||"#818cf8"})`, width:`${progress}%`, transition:"width 0.5s cubic-bezier(0.4,0,0.2,1)", borderRadius:99 }} />
         </div>
 
         <div style={{ display:"flex", gap:12, marginBottom:28 }}>
@@ -2058,17 +2058,17 @@ const OffboardingFlow = ({ onBack, offboardingItems, setOffboardingItems, isAdmi
           {offboardingItems.map(o => {
             const pct = o.progress || 0;
             return (
-              <div key={o.id} onClick={() => setActiveId(o.id)} style={{ display:"flex", alignItems:"center", gap:18, padding:"18px 22px", borderRadius:14, background:C.wht, border:`1px solid ${C.bdr}`, cursor:"pointer", transition:"all 0.18s" }} onMouseEnter={e=>{e.currentTarget.style.borderColor="#f43f5e";e.currentTarget.style.transform="translateY(-1px)";e.currentTarget.style.boxShadow="0 4px 20px rgba(244,63,94,0.08)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr;e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";}}>
-                <div style={{ width:44, height:44, borderRadius:12, background:`linear-gradient(135deg,#f43f5e,#ec4899)`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:17, fontWeight:800, flexShrink:0 }}>{o.name.charAt(0)}</div>
+              <div key={o.id} onClick={() => setActiveId(o.id)} style={{ display:"flex", alignItems:"center", gap:18, padding:"18px 22px", borderRadius:14, background:C.wht, border:`1px solid ${C.bdr}`, cursor:"pointer", transition:"all 0.18s" }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.p;e.currentTarget.style.transform="translateY(-1px)";e.currentTarget.style.boxShadow=`0 4px 20px rgba(var(--p-rgb),0.08)`;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr;e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";}}>
+                <div style={{ width:44, height:44, borderRadius:12, background:`linear-gradient(135deg,${C.p},${C.p2||"#818cf8"})`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:17, fontWeight:800, flexShrink:0 }}>{o.name.charAt(0)}</div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontSize:15, fontWeight:700, color:C.txt }}>{o.name}</div>
                   <div style={{ fontSize:12, color:C.sub, marginTop:3 }}>{o.reason || "Exit"} &nbsp;�&nbsp; {o.lastAction}</div>
                   <div style={{ marginTop:8, height:4, background:C.surf, borderRadius:99, overflow:"hidden", maxWidth:240 }}>
-                    <div style={{ height:"100%", background: pct===100 ? "#22c55e" : `linear-gradient(90deg,#f43f5e,#ec4899)`, width:`${pct}%`, borderRadius:99 }} />
+                    <div style={{ height:"100%", background: pct===100 ? "#22c55e" : `linear-gradient(90deg,${C.p},${C.p2||"#818cf8"})`, width:`${pct}%`, borderRadius:99 }} />
                   </div>
                 </div>
                 <div style={{ textAlign:"right", flexShrink:0 }}>
-                  <div style={{ fontSize:18, fontWeight:800, color: pct===100 ? "#22c55e" : "#f43f5e" }}>{pct}%</div>
+                  <div style={{ fontSize:18, fontWeight:800, color: pct===100 ? "#22c55e" : C.p }}>{pct}%</div>
                   <div style={{ fontSize:10, fontWeight:700, color:C.sub, textTransform:"uppercase", letterSpacing:0.5, marginTop:2 }}>{o.checklist?.filter(c=>c.status==="Completed").length||0}/{o.checklist?.length||0} done</div>
                 </div>
               </div>
