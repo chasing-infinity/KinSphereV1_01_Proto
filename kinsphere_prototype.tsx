@@ -6120,38 +6120,47 @@ export default function App() {
                               </div>
                             )}
 
-                            {/* Mark existing profile docs as submitted — for docs already in employee profile not yet linked to a requirement */}
-                            {(() => {
-                              const profileOnlyDocs = latestDocs.filter(d =>
-                                missing.some(r => {
-                                  const key = r.name.toLowerCase().split('/')[0].trim();
-                                  return d.n.toLowerCase().includes(key);
-                                })
-                              );
-                              if (profileOnlyDocs.length === 0) return null;
-                              return (
-                                <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:"12px 14px", marginBottom:14 }}>
-                                  <div style={{ fontSize:11, fontWeight:700, color:"#92400e", marginBottom:8, letterSpacing:.4 }}>ALREADY IN PROFILE — MARK AS SUBMITTED</div>
-                                  {profileOnlyDocs.map((d,i) => (
-                                    <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-                                      <div>
-                                        <div style={{ fontWeight:600, fontSize:13 }}>{d.n}</div>
-                                        <div style={{ fontSize:11, color:"#92400e" }}>{d.v ? "Verified" : "Pending verification"}</div>
-                                      </div>
+                            {/* ── Link existing profile docs to missing requirements ── */}
+                            {latestDocs.length > 0 && missing.length > 0 && (
+                              <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:"14px 16px", marginBottom:16 }}>
+                                <div style={{ fontSize:11, fontWeight:700, color:"#92400e", marginBottom:12, letterSpacing:.4 }}>MARK FROM PROFILE DOCUMENTS</div>
+                                <div style={{ fontSize:12, color:"#78350f", marginBottom:12, lineHeight:1.5 }}>
+                                  {emp.name.split(" ")[0]} has {latestDocs.length} document{latestDocs.length > 1 ? "s" : ""} in their profile. Select which one satisfies each missing requirement.
+                                </div>
+                                {missing.map(r => (
+                                  <div key={r.id} style={{ marginBottom:10 }}>
+                                    <div style={{ fontSize:12, fontWeight:600, color:"#92400e", marginBottom:5 }}>{r.name}</div>
+                                    <div style={{ display:"flex", gap:8 }}>
+                                      <select id={`link-${r.id}`} defaultValue=""
+                                        style={{ flex:1, padding:"8px 10px", borderRadius:8, border:"1px solid #fde68a", background:"#fff", fontSize:12 }}>
+                                        <option value="">— select a profile document —</option>
+                                        {latestDocs.map((d,i) => (
+                                          <option key={i} value={d.n}>{d.n}{d.v ? " ✓" : " (pending)"}</option>
+                                        ))}
+                                      </select>
                                       <button onClick={() => {
+                                        const sel = (document.getElementById(`link-${r.id}`) as HTMLSelectElement)?.value;
+                                        if (!sel) return toast("Select a document first");
+                                        // Rename the existing doc entry to the requirement's canonical name so matching logic picks it up
                                         setEmployees(prev => prev.map(e => e.id === emp.id
-                                          ? { ...e, documents: e.documents.map(doc => doc.n === d.n ? { ...doc, v: true } : doc) }
+                                          ? {
+                                              ...e,
+                                              documents: e.documents.map(d =>
+                                                d.n === sel ? { ...d, n: r.name.split('/')[0].trim(), v: true } : d
+                                              )
+                                            }
                                           : e
                                         ));
-                                        toast(`"${d.n}" marked as submitted ✓`);
-                                      }} style={{ fontSize:11, fontWeight:700, padding:"5px 12px", background:"#d97706", color:"#fff", border:"none", borderRadius:6, cursor:"pointer", flexShrink:0 }}>
-                                        Mark Submitted
+                                        toast(`"${sel}" marked as ${r.name} ✓`);
+                                      }} style={{ padding:"8px 14px", background:"#d97706", color:"#fff", border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
+                                        Mark
                                       </button>
                                     </div>
-                                  ))}
-                                </div>
-                              );
-                            })()}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
 
                             {/* Add Document for this Employee */}
                             <div style={{ borderTop:`1px solid ${C.bdr}`, paddingTop:16 }}>
