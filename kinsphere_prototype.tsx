@@ -617,6 +617,7 @@ const ICONS = {
   Presence: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
   "Vibe Check": <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M9 14h6"/></svg>,
   "Reports & Analytics": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+  "Level Up": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
 };
 
 const NAV = [
@@ -631,6 +632,7 @@ const NAV = [
   { key:"Org Chart" },
   { key:"Listening Room" },
   { key:"Vibe Check" },
+  { key:"Level Up" },
   { key:"Reports & Analytics" },
   { key:"Settings" },
 ];
@@ -697,6 +699,25 @@ const RECOGS = [
     isPrivate: false, 
     comments: [] 
   },
+];
+
+const INIT_GOALS = [
+  { id: 1, title: "Modernise Design System", ownerId: 3, owner: "Priya Sharma", type: "Individual", progress: 65, status: "In Progress", due: "2026-06-30", desc: "Update all core components to use the new tokens." },
+  { id: 2, title: "Q2 Product Roadmap", ownerId: 1, owner: "Arjun Mehta", type: "Team", progress: 20, status: "In Progress", due: "2026-05-15", desc: "Finalize the roadmap for the upcoming quarter." },
+];
+
+const INIT_REVIEW_CYCLES = [
+  { id: 1, name: "Q1 Review 2026", start: "2026-01-01", end: "2026-03-31" },
+  { id: 2, name: "Mid-Year Review 2026", start: "2026-06-01", end: "2026-06-30" },
+];
+
+const INIT_REVIEWS = [
+  { id: 1, cycleId: 1, empId: 3, selfRating: 4, selfFeedback: "I completed most projects ahead of time.", challenges: "Balancing multiple tasks.", managerRating: 5, feedback: "Priya delivered exceptional work this quarter.", status: "Completed" },
+  { id: 2, cycleId: 1, empId: 2, selfRating: 0, selfFeedback: "", challenges: "", managerRating: 0, feedback: "", status: "Not Started" },
+];
+
+const INIT_QUICK_FEEDBACK = [
+  { id: 1, from: "Arjun Mehta", fromIni: "AM", to: "Priya Sharma", toIni: "PS", msg: "Loved the new goal UI mocks!", rating: 5, time: "2d ago" },
 ];
 
 const THEMED_AV_COLORS = [
@@ -3297,6 +3318,368 @@ const VibeCheckModule = ({
   );
 };
 
+const LevelUp = ({ 
+  goals, setGoals, 
+  reviewCycles, setReviewCycles, 
+  reviews, setReviews, 
+  quickFeedback, setQuickFeedback, 
+  employees, role, me, toast, 
+  pad, padBottom, heroPadStd, narrow 
+}) => {
+  const [activeTab, setActiveTab ] = useState("Goals");
+  const [showGoalModal, setShowGoalModal] = useState(false);
+  const [newGoal, setNewGoal] = useState({ title: "", ownerId: "", type: "Individual", due: "", desc: "" });
+  const [showProgressModal, setShowProgressModal] = useState<any>(null);
+  const [showCycleModal, setShowCycleModal] = useState(false);
+  const [newCycle, setNewCycle] = useState({ name: "", start: "", end: "" });
+  const [reviewFlow, setReviewFlow] = useState<any>(null); // Current review being filled
+
+  const isSA = role === "Super Admin";
+  const isAdmin = role === "Admin" || role === "Super Admin";
+
+  const visibleGoals = goals.filter(g => {
+    if (isSA) return true;
+    if (role === "Admin") return g.type === "Team" || g.ownerId === me.id;
+    return g.ownerId === me.id;
+  });
+
+  const handleAddGoal = () => {
+    if (!newGoal.title || !newGoal.ownerId || !newGoal.due) return toast("Please fill in all required fields.");
+    const owner = employees.find(e => e.id === Number(newGoal.ownerId))?.name || "Unknown";
+    const g = { 
+      ...newGoal, 
+      id: Date.now(), 
+      ownerId: Number(newGoal.ownerId),
+      owner,
+      progress: 0, 
+      status: "Not Started" 
+    };
+    setGoals(prev => [g, ...prev]);
+    setShowGoalModal(false);
+    setNewGoal({ title: "", ownerId: "", type: "Individual", due: "", desc: "" });
+    toast("Goal created ✓");
+  };
+
+  const updateGoalProgress = (goalId, val, note) => {
+    setGoals(prev => prev.map(g => {
+      if (g.id === goalId) {
+        const nextProg = Math.min(100, Math.max(0, val));
+        return { 
+          ...g, 
+          progress: nextProg, 
+          status: nextProg === 100 ? "Completed" : nextProg > 0 ? "In Progress" : "Not Started" 
+        };
+      }
+      return g;
+    }));
+    toast("Progress updated ✓");
+    setShowProgressModal(null);
+  };
+
+  const handleCreateCycle = () => {
+    if (!newCycle.name || !newCycle.start || !newCycle.end) return toast("Fill all fields.");
+    setReviewCycles(prev => [{ ...newCycle, id: Date.now(), status: "Not Started" }, ...prev]);
+    setShowCycleModal(false);
+    toast("Review cycle created ✓");
+  };
+
+  const stats = {
+    avgRating: reviews.filter(r => r.status === "Completed").length 
+      ? (reviews.reduce((acc, r) => acc + (r.managerRating || 0), 0) / reviews.filter(r => r.status === "Completed").length).toFixed(1)
+      : "—",
+    completed: goals.filter(g => g.status === "Completed").length,
+    total: goals.length,
+    needingAttention: employees.length - reviews.filter(r => r.status === "Completed").length
+  };
+
+  return (
+    <div style={{ padding: `0 ${pad}px ${padBottom}px`, width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
+      {/* Hero */}
+      <div style={{
+        position: "relative",
+        margin: `0 ${-pad}px 28px`,
+        padding: heroPadStd,
+        background: `linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
+        borderBottom: `1px solid ${C.bdr}`,
+        overflow: "hidden",
+      }}>
+        <div style={{
+          position: "absolute", right: -40, top: -30, width: 220, height: 220,
+          borderRadius: "50%", background: `radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`,
+          pointerEvents: "none",
+        }} />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 720 }}>
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 10,
+            padding: "5px 12px", borderRadius: 999, background: "rgba(var(--wht-rgb),.65)", border: `1px solid ${C.bdr}`,
+            fontSize: 10, fontWeight: 700, letterSpacing: .85, color: C.p, textTransform: "uppercase",
+          }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Performance & Growth
+          </div>
+          <h1 style={{
+            fontFamily: "Georgia,serif", fontSize: "clamp(26px, 3.5vw, 32px)", color: C.txt, margin: 0, fontWeight: 700, lineHeight: 1.12,
+            letterSpacing: "-.02em",
+          }}>Level Up</h1>
+          <p style={{ color: C.sub, fontSize: 13, margin: "10px 0 0", lineHeight: 1.55, maxWidth: 560 }}>
+            Nurture talent, set ambitious goals, and build a culture of continuous feedback and recognition.
+          </p>
+        </div>
+      </div>
+
+      <TabBar tabs={["Goals", "Reviews", "Insights"]} active={activeTab} setActive={setActiveTab} />
+
+      {/* --- GOALS --- */}
+      {activeTab === "Goals" && (
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.sub, letterSpacing: 1 }}>ACTIVE GOALS ({visibleGoals.length})</div>
+            {isAdmin && <Btn onClick={() => setShowGoalModal(true)} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <IconPlus size={14} /> Create Goal
+            </Btn>}
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
+            {visibleGoals.map(g => (
+              <Card key={g.id} style={{ position: "relative", cursor: "default", transition: "transform 0.2s" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: C.p, letterSpacing: 0.5 }}>{g.type.toUpperCase()}</div>
+                  <Badge s={g.status === "In Progress" ? "pending" : g.status === "Completed" ? "approved" : "rejected"} />
+                </div>
+                <h3 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: C.txt }}>{g.title}</h3>
+                <p style={{ margin: "0 0 16px", fontSize: 12, color: C.sub, lineHeight: 1.5 }}>{g.desc}</p>
+                
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 6 }}>
+                    <span style={{ color: C.sub }}>Progress</span>
+                    <span style={{ fontWeight: 700, color: C.p }}>{g.progress}%</span>
+                  </div>
+                  <ProgressBar progress={g.progress} />
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 14, borderTop: `1px solid ${C.surf}` }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <Av ini={g.owner.split(" ").map(n => n[0]).join("")} sz={24} />
+                    <div style={{ fontSize: 11, fontWeight: 600, color: C.txt }}>{g.owner}</div>
+                  </div>
+                  <div style={{ fontSize: 10, color: C.sub }}>Due {g.due}</div>
+                </div>
+
+                {(g.ownerId === me.id || isSA) && (
+                  <button 
+                    onClick={() => setShowProgressModal(g)}
+                    style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", opacity: 0.4 }}
+                  >
+                    <IconEdit size={14} />
+                  </button>
+                )}
+              </Card>
+            ))}
+          </div>
+
+          {visibleGoals.length === 0 && (
+            <div style={{ textAlign: "center", padding: 60, background: C.bg, borderRadius: 20, border: `1px dashed ${C.bdr}`, color: C.sub }}>
+               No goals assigned yet.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* --- REVIEWS --- */}
+      {activeTab === "Reviews" && (
+        <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr" : "1fr 340px", gap: 28, alignItems: "flex-start" }}>
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: C.sub, letterSpacing: 1 }}>REVIEWS</div>
+              {isSA && <Btn variant="outline" onClick={() => setShowCycleModal(true)}>New Cycle</Btn>}
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {reviewCycles.map(cycle => {
+                const cycleReviews = reviews.filter(r => r.cycleId === cycle.id);
+                return (
+                  <Card key={cycle.id}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>{cycle.name}</h3>
+                      <div style={{ fontSize: 11, color: C.sub }}>{cycle.start} — {cycle.end}</div>
+                    </div>
+                    
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {employees.filter(e => isSA || e.id === me.id || e.managerId === me.id).map(emp => {
+                        const rev = cycleReviews.find(r => r.empId === emp.id);
+                        const status = rev?.status || "Not Started";
+                        return (
+                          <div key={emp.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: C.surf, borderRadius: 10, border: `1px solid ${C.bdr}` }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                              <Av ini={emp.ini} sz={28} />
+                              <div>
+                                <div style={{ fontSize: 13, fontWeight: 600 }}>{emp.name}</div>
+                                <div style={{ fontSize: 10, color: C.sub }}>{emp.designation}</div>
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                              <Badge s={status === "Completed" ? "approved" : status === "In Progress" ? "pending" : "rejected"} />
+                              {(emp.id === me.id || (isAdmin && status !== "Completed")) && (
+                                <button 
+                                  onClick={() => setReviewFlow({ cycle, emp, rev })}
+                                  style={{ background: C.p, color: "#fff", border: "none", borderRadius: 6, fontSize: 10, fontWeight: 700, padding: "5px 10px", cursor: "pointer" }}
+                                >
+                                  {emp.id === me.id ? (status === "Completed" ? "View" : "Self Review") : "Manager Review"}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Quick Feedback Card */}
+          <Card style={{ position: "sticky", top: 20 }}>
+            <SectionTitle>Quick Feedback</SectionTitle>
+            <p style={{ fontSize: 12, color: C.sub, marginBottom: 16 }}>Lightweight recognition for everyday wins.</p>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
+              {quickFeedback.map(f => (
+                <div key={f.id} style={{ padding: 12, borderRadius: 12, background: C.bg, border: `1px solid ${C.bdr}` }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                      <Av ini={f.fromIni} sz={18} />
+                      <span style={{ fontSize: 11, fontWeight: 700 }}>{f.from}</span>
+                    </div>
+                    <span style={{ fontSize: 10, color: C.sub }}>{f.time}</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 12, color: C.txt }}>{f.msg}</p>
+                </div>
+              ))}
+            </div>
+
+            <Btn onClick={() => toast("Feedback form coming soon...")} style={{ width: "100%" }}>Give Feedback</Btn>
+          </Card>
+        </div>
+      )}
+
+      {/* --- INSIGHTS --- */}
+      {activeTab === "Insights" && (
+        <div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20, marginBottom: 28 }}>
+            {[
+              { label: "AVG RATING", val: stats.avgRating, icon: "⭐" },
+              { label: "GOALS DONE", val: `${stats.completed}/${stats.total}`, icon: "🎯" },
+              { label: "NEEDING ATTENTION", val: stats.needingAttention, icon: "👀" },
+            ].map(s => (
+              <Card key={s.label} style={{ textAlign: "center", padding: "24px 20px" }}>
+                <div style={{ fontSize: 24, marginBottom: 8 }}>{s.icon}</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: C.txt, marginBottom: 4 }}>{s.val}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: C.sub, letterSpacing: 1 }}>{s.label}</div>
+              </Card>
+            ))}
+          </div>
+
+          <div style={{ position: "relative", background: C.surf, borderRadius: 16, border: `1px solid ${C.bdr}`, padding: "20px 24px", overflow: "hidden" }}>
+             <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 4, background: C.p }} />
+             <div style={{ fontSize: 14, fontStyle: "italic", color: C.txt }}>
+               “Goal completion is strong this cycle. Most individual contributors are ahead of schedule on their core KPIs.”
+             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modals Implementation */}
+      {showGoalModal && (
+        <Modal title="Create New Goal" onClose={() => setShowGoalModal(false)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <Inp label="Goal Title" value={newGoal.title} onChange={e => setNewGoal({ ...newGoal, title: e.target.value })} placeholder="e.g. Redesign Onboarding Flow" />
+            <Inp label="Description" type="textarea" value={newGoal.desc} onChange={e => setNewGoal({ ...newGoal, desc: e.target.value })} placeholder="What does success look like?" />
+            <Inp label="Owner" opts={employees.map(e => ({ label: e.name, value: e.id }))} value={newGoal.ownerId} onChange={e => setNewGoal({ ...newGoal, ownerId: e.target.value })} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <Inp label="Type" opts={["Individual", "Team"]} value={newGoal.type} onChange={e => setNewGoal({ ...newGoal, type: e.target.value })} />
+              <Inp label="Due Date" type="date" value={newGoal.due} onChange={e => setNewGoal({ ...newGoal, due: e.target.value })} />
+            </div>
+            <Btn onClick={handleAddGoal} style={{ width: "100%", padding: 12 }}>Create Goal</Btn>
+          </div>
+        </Modal>
+      )}
+
+      {showProgressModal && (
+        <Modal title="Update Progress" onClose={() => setShowProgressModal(null)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: C.sub, marginBottom: 8, display: "block" }}>PROGRESS (%)</label>
+              <input 
+                type="range" min="0" max="100" 
+                value={showProgressModal.progress} 
+                onChange={e => setShowProgressModal({ ...showProgressModal, progress: Number(e.target.value) })}
+                style={{ width: "100%", accentColor: C.p }}
+              />
+              <div style={{ textAlign: "center", fontSize: 24, fontWeight: 800, color: C.p, marginTop: 8 }}>{showProgressModal.progress}%</div>
+            </div>
+            <Inp label="Short Note" type="textarea" placeholder="What's the latest update?" />
+            <Btn onClick={() => updateGoalProgress(showProgressModal.id, showProgressModal.progress, "")} style={{ width: "100%", padding: 12 }}>Save Update</Btn>
+          </div>
+        </Modal>
+      )}
+
+      {showCycleModal && (
+        <Modal title="New Review Cycle" onClose={() => setShowCycleModal(false)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+             <Inp label="Cycle Name" value={newCycle.name} onChange={e => setNewCycle({ ...newCycle, name: e.target.value })} placeholder="e.g. Quarterly Review Q2" />
+             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+               <Inp label="Start Date" type="date" value={newCycle.start} onChange={e => setNewCycle({ ...newCycle, start: e.target.value })} />
+               <Inp label="End Date" type="date" value={newCycle.end} onChange={e => setNewCycle({ ...newCycle, end: e.target.value })} />
+             </div>
+             <Btn onClick={handleCreateCycle} style={{ width: "100%", padding: 12 }}>Launch Cycle</Btn>
+          </div>
+        </Modal>
+      )}
+
+      {reviewFlow && (
+        <Modal title={`Review: ${reviewFlow.emp.name}`} onClose={() => setReviewFlow(null)} width={540}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {reviewFlow.emp.id === me.id ? (
+              <>
+                <Inp label="What went well?" type="textarea" value={reviewFlow.rev?.selfFeedback || ""} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, selfFeedback: e.target.value } })} />
+                <Inp label="What was challenging?" type="textarea" value={reviewFlow.rev?.challenges || ""} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, challenges: e.target.value } })} />
+                <Inp label="Self Rating (1-5)" type="number" value={reviewFlow.rev?.selfRating || 0} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, selfRating: Number(e.target.value) } })} />
+              </>
+            ) : (
+              <>
+                <div style={{ background: C.bg, padding: 16, borderRadius: 12, border: `1px solid ${C.bdr}` }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: C.p, marginBottom: 8 }}>EMPLOYEE SELF-REVIEW</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.5 }}>"{reviewFlow.rev?.selfFeedback || "No self-review submitted yet."}"</div>
+                </div>
+                <Inp label="Manager Feedback" type="textarea" value={reviewFlow.rev?.feedback || ""} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, feedback: e.target.value } })} />
+                <Inp label="Manager Rating (1-5)" type="number" value={reviewFlow.rev?.managerRating || 0} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, managerRating: Number(e.target.value) } })} />
+              </>
+            )}
+            <Btn onClick={() => {
+              setReviews(prev => {
+                const existing = prev.find(r => r.cycleId === reviewFlow.cycle.id && r.empId === reviewFlow.emp.id);
+                if (existing) {
+                  return prev.map(r => (r.id === existing.id ? { ...r, ...reviewFlow.rev, status: reviewFlow.emp.id === me.id ? "In Progress" : "Completed" } : r));
+                }
+                return [...prev, { ...reviewFlow.rev, id: Date.now(), cycleId: reviewFlow.cycle.id, empId: reviewFlow.emp.id, status: "In Progress" }];
+              });
+              setReviewFlow(null);
+              toast("Review saved ✓");
+            }}>Submit Review</Btn>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
+
+const ProgressBar = ({ progress, height = 8, color = C.p }) => (
+  <div style={{ width: "100%", height, background: "rgba(var(--p-rgb), 0.12)", borderRadius: 10, overflow: "hidden" }}>
+    <div style={{ width: `${progress}%`, height: "100%", background: color, transition: "width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)" }} />
+  </div>
+);
+
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [page,       setPage]     = useState("Dashboard");
@@ -3424,6 +3807,13 @@ export default function App() {
   const [tplSearch, setTplSearch] = useState("");
   const [viewingDoc, setViewingDoc] = useState(null); // Document object for preview
   const [shareDocAccess, setShareDocAccess] = useState(null); // Document object being shared
+
+  // ─── Level Up ─────────────────────────────────────────────────────────────
+  const [goals, setGoals] = useState(INIT_GOALS);
+  const [reviewCycles, setReviewCycles] = useState(INIT_REVIEW_CYCLES);
+  const [reviews, setReviews] = useState(INIT_REVIEWS);
+  const [quickFeedback, setQuickFeedback] = useState(INIT_QUICK_FEEDBACK);
+  const [levelUpTab, setLevelUpTab] = useState("Goals"); // Goals, Reviews, Insights
 
   // ─── Compliance Tab ───────────────────────────────────────────────────────
   const [complianceReqs, setComplianceReqs] = useState([
@@ -6976,6 +7366,25 @@ export default function App() {
                   </div>
                 )}
              </div>
+        )}
+
+
+        {/* ─ LEVEL UP ─ */}
+        {page === "Level Up" && (
+          <LevelUp 
+            goals={goals} setGoals={setGoals}
+            reviewCycles={reviewCycles} setReviewCycles={setReviewCycles}
+            reviews={reviews} setReviews={setReviews}
+            quickFeedback={quickFeedback} setQuickFeedback={setQuickFeedback}
+            employees={employees}
+            role={role}
+            me={me}
+            toast={toast}
+            pad={pad}
+            padBottom={padBottom}
+            heroPadStd={heroPadStd}
+            narrow={narrow}
+          />
         )}
 
         {/* ─ SETTINGS ─ */}
