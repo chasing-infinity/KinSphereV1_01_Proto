@@ -3434,7 +3434,7 @@ export default function App() {
   const [showComplianceSetup, setShowComplianceSetup] = useState(false);
   const [complianceSetupForm, setComplianceSetupForm] = useState({ name:"", cat:"Identity" });
   const [complianceEmpDetail, setComplianceEmpDetail] = useState(null); // { emp, mode: "overview"|"add" }
-  const [complianceAddDocForm, setComplianceAddDocForm] = useState({ reqId:"", verified: true });
+  const [complianceAddDocForm, setComplianceAddDocForm] = useState({ reqId:"", verified: true, fileName:"", customName:"" });
   const [complianceDocFilter, setComplianceDocFilter] = useState(null); // { emp, type: "submitted"|"missing" }
 
   // Step 3: E-Signature Flow
@@ -5734,9 +5734,7 @@ export default function App() {
                                 <div style={{ display:"flex", gap:8, justifyContent:"flex-end" }}>
                                   {isSigned ? (
                                     <>
-                                      {canGenerate && <button onClick={() => setShareDocAccess(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 10px", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer", display:"flex", gap:6, alignItems:"center" }} title="Give someone access to this document">{IconLink}</button>}
-                                      {canGenerate && <button onClick={() => setShareDocAccess(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 10px", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer", display:"flex", gap:6, alignItems:"center" }} title="Give someone access to this document">{IconLink}</button>}
-                                      {canGenerate && <button onClick={() => setShareDocAccess(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 10px", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer", display:"flex", gap:6, alignItems:"center" }} title="Give someone access to this document">{IconLink}</button>}
+                                      {canGenerate && <button onClick={() => setShareDocAccess(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 10px", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer", display:"flex", gap:6, alignItems:"center" }} title="Grant access to a team member">{IconLink} Add Access</button>}
                                       <button onClick={() => setViewingDoc(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 12px", fontSize:11, fontWeight:600, color:C.txt, cursor:"pointer", display:"flex", gap:6, alignItems:"center" }}>{IconEye} View</button>
                                       <button onClick={() => { toast(`Downloading ${doc.name}.pdf...`); }} style={{ background:`rgba(var(--p-rgb),.05)`, border:`1px solid rgba(var(--p-rgb),.2)`, borderRadius:8, padding:"6px 12px", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer" }}>↓ Download</button>
                                     </>
@@ -6122,15 +6120,48 @@ export default function App() {
                               </div>
                             )}
 
+                            {/* Mark existing profile docs as submitted — for docs already in employee profile not yet linked to a requirement */}
+                            {(() => {
+                              const profileOnlyDocs = latestDocs.filter(d =>
+                                missing.some(r => {
+                                  const key = r.name.toLowerCase().split('/')[0].trim();
+                                  return d.n.toLowerCase().includes(key);
+                                })
+                              );
+                              if (profileOnlyDocs.length === 0) return null;
+                              return (
+                                <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:"12px 14px", marginBottom:14 }}>
+                                  <div style={{ fontSize:11, fontWeight:700, color:"#92400e", marginBottom:8, letterSpacing:.4 }}>ALREADY IN PROFILE — MARK AS SUBMITTED</div>
+                                  {profileOnlyDocs.map((d,i) => (
+                                    <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+                                      <div>
+                                        <div style={{ fontWeight:600, fontSize:13 }}>{d.n}</div>
+                                        <div style={{ fontSize:11, color:"#92400e" }}>{d.v ? "Verified" : "Pending verification"}</div>
+                                      </div>
+                                      <button onClick={() => {
+                                        setEmployees(prev => prev.map(e => e.id === emp.id
+                                          ? { ...e, documents: e.documents.map(doc => doc.n === d.n ? { ...doc, v: true } : doc) }
+                                          : e
+                                        ));
+                                        toast(`"${d.n}" marked as submitted ✓`);
+                                      }} style={{ fontSize:11, fontWeight:700, padding:"5px 12px", background:"#d97706", color:"#fff", border:"none", borderRadius:6, cursor:"pointer", flexShrink:0 }}>
+                                        Mark Submitted
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              );
+                            })()}
+
                             {/* Add Document for this Employee */}
                             <div style={{ borderTop:`1px solid ${C.bdr}`, paddingTop:16 }}>
-                              <div style={{ fontSize:12, fontWeight:700, color:C.sub, marginBottom:12 }}>ADD DOCUMENT FOR {emp.name.split(" ")[0].toUpperCase()}</div>
+                              <div style={{ fontSize:12, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:14 }}>ADD DOCUMENT FOR {emp.name.split(" ")[0].toUpperCase()}</div>
                               <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                                 <select value={complianceAddDocForm.reqId} onChange={e=>setComplianceAddDocForm(f=>({...f, reqId:e.target.value}))}
                                   style={{ width:"100%", padding:"10px 12px", borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13 }}>
                                   <option value="">-- Select document type --</option>
                                   {missing.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
-                                  <option value="custom">Other (custom name)</option>
+                                  <option value="custom">Other (custom)</option>
                                 </select>
                                 {complianceAddDocForm.reqId === "custom" && (
                                   <input placeholder="Custom document name..."
@@ -6138,6 +6169,29 @@ export default function App() {
                                     onChange={e=>setComplianceAddDocForm(f=>({...f, customName:e.target.value}))}
                                     style={{ width:"100%", padding:"10px 12px", borderRadius:8, border:`1px solid ${C.bdr}`, background:C.wht, fontSize:13, boxSizing:"border-box" }} />
                                 )}
+                                {/* File upload drop zone */}
+                                <div>
+                                  <label style={{ fontSize:11, fontWeight:700, color:C.sub, display:"block", marginBottom:6, letterSpacing:.4 }}>ATTACH FILE</label>
+                                  <div style={{ position:"relative", border:`2px dashed ${complianceAddDocForm.fileName ? C.p : C.bdr}`, borderRadius:10, padding:"20px 16px", textAlign:"center", background: complianceAddDocForm.fileName ? `rgba(var(--p-rgb),.04)` : C.surf, transition:"all .2s", cursor:"pointer" }}>
+                                    <input type="file" onChange={e => {
+                                      const f = e.target.files?.[0];
+                                      if (f) setComplianceAddDocForm(prev => ({ ...prev, fileName: f.name }));
+                                    }} style={{ position:"absolute", inset:0, opacity:0, cursor:"pointer", width:"100%", height:"100%" }} />
+                                    {complianceAddDocForm.fileName ? (
+                                      <>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.p} strokeWidth="2" style={{ marginBottom:4 }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+                                        <div style={{ fontSize:12, fontWeight:600, color:C.p }}>{complianceAddDocForm.fileName}</div>
+                                        <div style={{ fontSize:11, color:C.sub }}>Click to change</div>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={C.sub} strokeWidth="1.5" style={{ marginBottom:6 }}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        <div style={{ fontSize:12, color:C.sub }}>Click to upload a file</div>
+                                        <div style={{ fontSize:11, color:C.bdr, marginTop:2 }}>PDF, PNG, JPG accepted</div>
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
                                 <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px", background:C.surf, borderRadius:8 }}>
                                   <input type="checkbox" id="verifiedCheck" checked={complianceAddDocForm.verified}
                                     onChange={e=>setComplianceAddDocForm(f=>({...f, verified:e.target.checked}))} />
@@ -6148,12 +6202,13 @@ export default function App() {
                                     ? { name: complianceAddDocForm.customName || "Document" }
                                     : complianceReqs.find(r => r.id === complianceAddDocForm.reqId);
                                   if (!selReq || !selReq.name) return toast("Select a document type first");
+                                  if (!complianceAddDocForm.fileName) return toast("Please attach a file first");
                                   const docName = selReq.name.split('/')[0].trim();
                                   setEmployees(prev => prev.map(e => e.id === emp.id
-                                    ? { ...e, documents: [...(e.documents||[]), { n: docName, v: complianceAddDocForm.verified }] }
+                                    ? { ...e, documents: [...(e.documents||[]), { n: docName, v: complianceAddDocForm.verified, fileName: complianceAddDocForm.fileName }] }
                                     : e
                                   ));
-                                  setComplianceAddDocForm({ reqId:"", verified:true });
+                                  setComplianceAddDocForm({ reqId:"", verified:true, fileName:"", customName:"" });
                                   toast(`"${docName}" added for ${emp.name} ✓`);
                                 }}>Add Document</Btn>
                               </div>
