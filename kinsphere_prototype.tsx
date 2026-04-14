@@ -5652,7 +5652,7 @@ export default function App() {
                       <button key={t} onClick={() => { setPaperTab(t); if(t==="Templates") setGenStep(1); }} 
                         style={{ padding:"8px 16px", borderRadius:9, border:"none", cursor:"pointer", fontSize:12, fontWeight: (currentTab===t || (t==="Templates" && currentTab==="Generate"))?700:500,
                         background: (currentTab===t || (t==="Templates" && currentTab==="Generate")) ? C.p : "transparent",
-                        color: (currentTab===t || (t==="Templates" && currentTab==="Generate")) ? "#fff" : C.sub,
+                        color: (currentTab===t || (t==="Templates" && currentTab==="Generate")) ? C.wht : C.sub,
                         transition:"all .2s" }}>
                         {t}
                       </button>
@@ -5718,11 +5718,11 @@ export default function App() {
                               </td>
                               <td style={{ padding:"14px 16px" }}>
                                 {isSigned ? (
-                                  <span style={{ fontSize:11, fontWeight:700, color:"#15803d", background:"#dcfce7", padding:"4px 10px", borderRadius:99, display:"inline-flex", gap:4, alignItems:"center" }}>
+                                  <span style={{ fontSize:11, fontWeight:700, color:C.p, background:`rgba(var(--p-rgb),.12)`, padding:"4px 10px", borderRadius:99, display:"inline-flex", gap:4, alignItems:"center" }}>
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg> SIGNED
                                   </span>
                                 ) : isSent ? (
-                                  <span style={{ fontSize:11, fontWeight:700, color:C.p, background:`rgba(var(--p-rgb),.1)`, padding:"4px 10px", borderRadius:99 }}>SENT</span>
+                                  <span style={{ fontSize:11, fontWeight:700, color:C.p, background:`rgba(var(--p-rgb),.1)`, padding:"4px 12px", borderRadius:99, letterSpacing:.3 }}>SENT</span>
                                 ) : (
                                   <span style={{ fontSize:11, fontWeight:700, color:C.sub, background:C.surf, padding:"4px 10px", borderRadius:99, border:`1px solid ${C.bdr}` }}>DRAFT</span>
                                 )}
@@ -5930,14 +5930,14 @@ export default function App() {
                         <div style={{ fontSize:32, fontWeight:700, marginTop:6, color:C.txt }}>{compRows.filter(r=>r.stat==="Complete").length}</div>
                         <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>of {employees.length} employees</div>
                       </Card>
-                      <Card style={{ padding:20, borderLeft:`4px solid #f59e0b` }}>
+                      <Card style={{ padding:20, borderLeft:"4px solid #a07840" }}>
                         <div style={{ fontSize:11, color:C.sub, fontWeight:700, textTransform:"uppercase", letterSpacing:.5 }}>Documents Missing</div>
-                        <div style={{ fontSize:32, fontWeight:700, marginTop:6, color:"#d97706" }}>{compRows.reduce((acc,r)=>acc+r.missing.length,0)}</div>
+                        <div style={{ fontSize:32, fontWeight:700, marginTop:6, color:"#8a6530" }}>{compRows.reduce((acc,r)=>acc+r.missing.length,0)}</div>
                         <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>across all employees</div>
                       </Card>
-                      <Card style={{ padding:20, borderLeft:`4px solid #dc2626` }}>
+                      <Card style={{ padding:20, borderLeft:"4px solid #c0392b" }}>
                         <div style={{ fontSize:11, color:C.sub, fontWeight:700, textTransform:"uppercase", letterSpacing:.5 }}>Overdue (0 docs)</div>
-                        <div style={{ fontSize:32, fontWeight:700, marginTop:6, color:"#dc2626" }}>{compRows.filter(r=>r.stat==="Overdue").length}</div>
+                        <div style={{ fontSize:32, fontWeight:700, marginTop:6, color:"#c0392b" }}>{compRows.filter(r=>r.stat==="Overdue").length}</div>
                         <div style={{ fontSize:11, color:C.sub, marginTop:2 }}>employees</div>
                       </Card>
                     </div>
@@ -5980,23 +5980,23 @@ export default function App() {
                               </td>
                               <td style={{ padding:"14px 20px" }}>
                                 <button onClick={ev=>{ ev.stopPropagation(); setComplianceDocFilter({ emp: row.emp, type:"submitted" }); }}
-                                  style={{ fontWeight:700, color:"#15803d", background:"#dcfce7", border:"none", borderRadius:6, padding:"3px 10px", cursor:"pointer", fontSize:13 }}>
+                                  style={{ fontWeight:700, color:C.p, background:`rgba(var(--p-rgb),.12)`, border:"none", borderRadius:6, padding:"3px 10px", cursor:"pointer", fontSize:13 }}>
                                   {row.submitted.length}
                                 </button>
                               </td>
                               <td style={{ padding:"14px 20px" }}>
                                 <button onClick={ev=>{ ev.stopPropagation(); setComplianceDocFilter({ emp: row.emp, type:"missing" }); }}
-                                  style={{ fontWeight:700, color: row.missing.length>0?"#dc2626":C.sub, background: row.missing.length>0?"#fee2e2":C.surf, border:"none", borderRadius:6, padding:"3px 10px", cursor: row.missing.length>0?"pointer":"default", fontSize:13 }}>
+                                  style={{ fontWeight:700, color: row.missing.length>0?"$2":C.sub, background: row.missing.length>0?"`rgba(192,57,43,.1)`":C.surf, border:"none", borderRadius:6, padding:"3px 10px", cursor: row.missing.length>0?"pointer":"default", fontSize:13 }}>
                                   {row.missing.length}
                                 </button>
                               </td>
                               <td style={{ padding:"14px 20px" }}>
                                 {row.stat === "Complete" ? (
-                                  <span style={{ fontSize:11, fontWeight:700, color:"#15803d", background:"#dcfce7", padding:"4px 12px", borderRadius:99 }}>COMPLETE</span>
+                                  <span style={{ fontSize:11, fontWeight:700, color:C.p, background:`rgba(var(--p-rgb),.12)`, padding:"4px 12px", borderRadius:99 }}>COMPLETE</span>
                                 ) : row.stat === "Overdue" ? (
-                                  <span style={{ fontSize:11, fontWeight:700, color:"#dc2626", background:"#fee2e2", padding:"4px 12px", borderRadius:99 }}>OVERDUE</span>
+                                  <span style={{ fontSize:11, fontWeight:700, color:"$2", background:`rgba(192,57,43,.1)`, padding:"4px 12px", borderRadius:99 }}>OVERDUE</span>
                                 ) : (
-                                  <span style={{ fontSize:11, fontWeight:700, color:"#d97706", background:"#fef3c7", padding:"4px 12px", borderRadius:99 }}>PENDING</span>
+                                  <span style={{ fontSize:11, fontWeight:700, color:"$2", background:`rgba(160,120,64,.1)`, padding:"4px 12px", borderRadius:99 }}>PENDING</span>
                                 )}
                               </td>
                               <td style={{ padding:"14px 20px", textAlign:"right" }}>
@@ -6026,7 +6026,7 @@ export default function App() {
                                   <div style={{ fontSize:11, color:C.sub }}>{req.cat}</div>
                                 </div>
                                 <button onClick={() => setComplianceReqs(prev => prev.filter(r => r.id !== req.id))}
-                                  style={{ background:"none", border:`1px solid rgba(220,38,38,.25)`, borderRadius:6, padding:"4px 10px", fontSize:11, fontWeight:600, color:"#dc2626", cursor:"pointer" }}>
+                                  style={{ background:"none", border:`1px solid rgba(220,38,38,.25)`, borderRadius:6, padding:"4px 10px", fontSize:11, fontWeight:600, color:"$2", cursor:"pointer" }}>
                                   Remove
                                 </button>
                               </div>
@@ -6089,17 +6089,29 @@ export default function App() {
                               ) : submitted.map(r => {
                                 const docEntry = latestDocs.find(d => d.n.toLowerCase().includes(r.name.toLowerCase().split('/')[0].trim()));
                                 return (
-                                  <div key={r.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px", background:"#f0fdf4", borderRadius:8, border:"1px solid #bbf7d0", marginBottom:6 }}>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                  <div key={r.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px", background:`rgba(var(--p-rgb),.06)`, borderRadius:8, border:"1px solid `rgba(var(--p-rgb),.25)`", marginBottom:6 }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="C.p" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                                     <div style={{ flex:1 }}>
                                       <div style={{ fontWeight:600, fontSize:13 }}>{r.name}</div>
-                                      <div style={{ fontSize:11, color:"#15803d" }}>{docEntry?.v ? "Verified" : "Uploaded — Pending Verification"}</div>
+                                      <div style={{ fontSize:11, color:C.p }}>{docEntry?.v ? "Verified" : "Uploaded — Pending Verification"}{docEntry?.fileName ? ` · ${docEntry.fileName}` : ""}</div>
                                     </div>
+                                    {/* Eye icon — view document */}
+                                    <button onClick={() => setViewingDoc({
+                                      id: `comp-${emp.id}-${r.id}`,
+                                      name: r.name,
+                                      type: r.cat,
+                                      status: docEntry?.v ? "signed" : "draft",
+                                      date: "On file",
+                                      empId: emp.id,
+                                      filledBody: `Document: ${r.name}\nEmployee: ${emp.name} (${emp.dept})\nStatus: ${docEntry?.v ? "Verified ✓" : "Pending verification"}\nFile: ${docEntry?.fileName || "Uploaded via profile"}\n\nThis document has been submitted as part of compliance requirements.`
+                                    })} style={{ background:"none", border:`1px solid rgba(var(--p-rgb),.3)`, borderRadius:7, padding:"5px 8px", cursor:"pointer", display:"flex", alignItems:"center", color:C.p }} title="View document">
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </button>
                                     {!docEntry?.v && (
                                       <button onClick={() => {
                                         setEmployees(prev => prev.map(e => e.id === emp.id ? { ...e, documents: e.documents.map(d => d.n === docEntry.n ? {...d, v:true} : d) } : e));
                                         toast("Document verified ✓");
-                                      }} style={{ fontSize:11, fontWeight:700, padding:"4px 10px", background:"#15803d", color:"#fff", border:"none", borderRadius:6, cursor:"pointer" }}>Verify</button>
+                                      }} style={{ fontSize:11, fontWeight:700, padding:"5px 10px", background:C.p, color:"#fff", border:"none", borderRadius:6, cursor:"pointer" }}>Verify</button>
                                     )}
                                   </div>
                                 );
@@ -6111,10 +6123,10 @@ export default function App() {
                               <div style={{ marginBottom:20 }}>
                                 <div style={{ fontSize:11, fontWeight:700, color:C.sub, letterSpacing:.5, marginBottom:10 }}>MISSING DOCUMENTS ({missing.length})</div>
                                 {missing.map(r => (
-                                  <div key={r.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px", background:"#fff7ed", borderRadius:8, border:"1px solid #fed7aa", marginBottom:6 }}>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                                    <div style={{ flex:1, fontWeight:600, fontSize:13, color:"#92400e" }}>{r.name}</div>
-                                    <span style={{ fontSize:11, color:"#d97706" }}>{r.cat}</span>
+                                  <div key={r.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px", background:`rgba(160,120,64,.06)`, borderRadius:8, border:"1px solid `rgba(160,120,64,.22)`", marginBottom:6 }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="$2" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                    <div style={{ flex:1, fontWeight:600, fontSize:13, color:"$2" }}>{r.name}</div>
+                                    <span style={{ fontSize:11, color:"$2" }}>{r.cat}</span>
                                   </div>
                                 ))}
                               </div>
@@ -6122,17 +6134,17 @@ export default function App() {
 
                             {/* ── Link existing profile docs to missing requirements ── */}
                             {latestDocs.length > 0 && missing.length > 0 && (
-                              <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:10, padding:"14px 16px", marginBottom:16 }}>
-                                <div style={{ fontSize:11, fontWeight:700, color:"#92400e", marginBottom:12, letterSpacing:.4 }}>MARK FROM PROFILE DOCUMENTS</div>
-                                <div style={{ fontSize:12, color:"#78350f", marginBottom:12, lineHeight:1.5 }}>
+                              <div style={{ background:`rgba(160,120,64,.06)`, border:"1px solid `rgba(160,120,64,.25)`", borderRadius:10, padding:"14px 16px", marginBottom:16 }}>
+                                <div style={{ fontSize:11, fontWeight:700, color:"$2", marginBottom:12, letterSpacing:.4 }}>MARK FROM PROFILE DOCUMENTS</div>
+                                <div style={{ fontSize:12, color:"$2", marginBottom:12, lineHeight:1.5 }}>
                                   {emp.name.split(" ")[0]} has {latestDocs.length} document{latestDocs.length > 1 ? "s" : ""} in their profile. Select which one satisfies each missing requirement.
                                 </div>
                                 {missing.map(r => (
                                   <div key={r.id} style={{ marginBottom:10 }}>
-                                    <div style={{ fontSize:12, fontWeight:600, color:"#92400e", marginBottom:5 }}>{r.name}</div>
+                                    <div style={{ fontSize:12, fontWeight:600, color:"$2", marginBottom:5 }}>{r.name}</div>
                                     <div style={{ display:"flex", gap:8 }}>
                                       <select id={`link-${r.id}`} defaultValue=""
-                                        style={{ flex:1, padding:"8px 10px", borderRadius:8, border:"1px solid #fde68a", background:"#fff", fontSize:12 }}>
+                                        style={{ flex:1, padding:"8px 10px", borderRadius:8, border:"1px solid `rgba(160,120,64,.25)`", background:C.wht, fontSize:12 }}>
                                         <option value="">— select a profile document —</option>
                                         {latestDocs.map((d,i) => (
                                           <option key={i} value={d.n}>{d.n}{d.v ? " ✓" : " (pending)"}</option>
@@ -6152,7 +6164,7 @@ export default function App() {
                                           : e
                                         ));
                                         toast(`"${sel}" marked as ${r.name} ✓`);
-                                      }} style={{ padding:"8px 14px", background:"#d97706", color:"#fff", border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
+                                      }} style={{ padding:"8px 14px", background:"$2", color:C.wht, border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
                                         Mark
                                       </button>
                                     </div>
@@ -6247,13 +6259,13 @@ export default function App() {
                             ) : docs.map(r => (
                               <div key={r.id} style={{
                                 display:"flex", alignItems:"center", gap:12, padding:"12px 16px",
-                                background: type==="submitted" ? "#f0fdf4" : "#fff7ed",
-                                border: `1px solid ${type==="submitted" ? "#bbf7d0" : "#fed7aa"}`,
+                                background: type==="submitted" ? "`rgba(var(--p-rgb),.06)`" : "`rgba(160,120,64,.06)`",
+                                border: `1px solid ${type==="submitted" ? "`rgba(var(--p-rgb),.25)`" : "`rgba(160,120,64,.22)`"}`,
                                 borderRadius:10, marginBottom:8
                               }}>
                                 {type === "submitted"
-                                  ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                                  : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                  ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="C.p" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                  : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="$2" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                                 }
                                 <div>
                                   <div style={{ fontWeight:600, fontSize:13 }}>{r.name}</div>
@@ -6319,13 +6331,13 @@ export default function App() {
                           <span>Recipient: <strong style={{ color:C.txt }}>{viewingDoc.empId ? employees.find(e=>e.id===viewingDoc.empId)?.name : "External"}</strong></span>
                         </div>
                       </div>
-                      <span style={{ fontSize:12, fontWeight:700, color: viewingDoc.status==="signed" ? "#15803d" : C.wht, background: viewingDoc.status==="signed" ? "#dcfce7" : C.txt, padding:"6px 14px", borderRadius:99 }}>
+                      <span style={{ fontSize:12, fontWeight:700, color: viewingDoc.status==="signed" ? "C.p" : C.wht, background: viewingDoc.status==="signed" ? "`rgba(var(--p-rgb),.12)`" : C.txt, padding:"6px 14px", borderRadius:99 }}>
                         {viewingDoc.status.toUpperCase()}
                       </span>
                     </div>
 
-                    <div style={{ background:`#f8fafc`, padding:40, borderRadius:12, border:`1px solid ${C.bdr}`, minHeight:400, boxShadow:"inset 0 2px 10px rgba(0,0,0,0.02)" }}>
-                      <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia, serif", fontSize:15, lineHeight:1.9, color:"#1e293b", margin:0, maxWidth:640, marginInline:"auto" }}>
+                    <div style={{ background:`C.surf`, padding:40, borderRadius:12, border:`1px solid ${C.bdr}`, minHeight:400, boxShadow:"inset 0 2px 10px rgba(0,0,0,0.02)" }}>
+                      <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia, serif", fontSize:15, lineHeight:1.9, color:C.txt, margin:0, maxWidth:640, marginInline:"auto" }}>
                         {viewingDoc.filledBody || "This document content is securely stored. In a production environment, rendering actual PDF here."}
                       </pre>
                     </div>
