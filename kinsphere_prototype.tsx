@@ -3423,6 +3423,7 @@ export default function App() {
   const [tplViewPdf, setTplViewPdf] = useState(null); // url string
   const [tplSearch, setTplSearch] = useState("");
   const [viewingDoc, setViewingDoc] = useState(null); // Document object for preview
+  const [shareDocAccess, setShareDocAccess] = useState(null); // Document object being shared
 
   // Step 3: E-Signature Flow
   const [signId, setSignId] = useState(null); // Document ID being signed
@@ -5589,7 +5590,7 @@ export default function App() {
           const canSeeAll   = isSA;
           const currentTab = ["Documents", "Templates", "Compliance", "Generate"].includes(paperTab) ? paperTab : "Documents";
 
-          const visiblePapers = canSeeAll ? papers : papers.filter(d => d.empId === ME_ID);
+          const visiblePapers = canSeeAll ? papers : papers.filter(d => d.empId === ME_ID || (d.sharedWith && d.sharedWith.includes(ME_ID)));
           const filteredPapers = paperFilter === "All" ? visiblePapers : visiblePapers.filter(d => d.type === paperFilter);
           const srchPapers = filteredPapers.filter(d => d.name.toLowerCase().includes(empSearch.toLowerCase()) || 
              (d.empId && employees.find(e=>e.id===d.empId)?.name.toLowerCase().includes(empSearch.toLowerCase())));
@@ -5612,6 +5613,7 @@ export default function App() {
           const IconSend = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>;
           const IconEye = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
           const IconTpl = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>;
+          const IconLink = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>;
           const IconShield = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
           const IconClock = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
 
@@ -5720,6 +5722,9 @@ export default function App() {
                                 <div style={{ display:"flex", gap:8, justifyContent:"flex-end" }}>
                                   {isSigned ? (
                                     <>
+                                      {canGenerate && <button onClick={() => setShareDocAccess(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 10px", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer", display:"flex", gap:6, alignItems:"center" }} title="Give someone access to this document">{IconLink}</button>}
+                                      {canGenerate && <button onClick={() => setShareDocAccess(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 10px", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer", display:"flex", gap:6, alignItems:"center" }} title="Give someone access to this document">{IconLink}</button>}
+                                      {canGenerate && <button onClick={() => setShareDocAccess(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 10px", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer", display:"flex", gap:6, alignItems:"center" }} title="Give someone access to this document">{IconLink}</button>}
                                       <button onClick={() => setViewingDoc(doc)} style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 12px", fontSize:11, fontWeight:600, color:C.txt, cursor:"pointer", display:"flex", gap:6, alignItems:"center" }}>{IconEye} View</button>
                                       <button onClick={() => { toast(`Downloading ${doc.name}.pdf...`); }} style={{ background:`rgba(var(--p-rgb),.05)`, border:`1px solid rgba(var(--p-rgb),.2)`, borderRadius:8, padding:"6px 12px", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer" }}>↓ Download</button>
                                     </>
@@ -5952,6 +5957,43 @@ export default function App() {
                     </table>
                   </div>
                 </div>
+              )}
+
+              {/* Add Access Modal */}
+              {shareDocAccess && (
+                <Modal title="Give Access" onClose={() => setShareDocAccess(null)} width={400}>
+                  <div style={{ padding:24 }}>
+                    <p style={{ margin:"0 0 16px", fontSize:14, color:C.sub, lineHeight:1.5 }}>
+                      Select an employee to give them viewing access to <strong style={{ color:C.txt }}>{shareDocAccess.name}</strong>.
+                    </p>
+                    <div style={{ marginBottom:20 }}>
+                      <label style={{ fontSize:11, fontWeight:700, color:C.sub, display:"block", marginBottom:8 }}>SELECT EMPLOYEE</label>
+                      <select id="shareEmpSelect" style={{ width:"100%", padding:10, borderRadius:8, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:13 }}>
+                        {employees.map(e => <option key={e.id} value={e.id}>{e.name} ({e.dept})</option>)}
+                      </select>
+                    </div>
+                    <div style={{ display:"flex", justifyContent:"flex-end", gap:12 }}>
+                      <Btn variant="outline" onClick={() => setShareDocAccess(null)}>Cancel</Btn>
+                      <Btn onClick={() => {
+                        const sel = document.getElementById("shareEmpSelect").value;
+                        if(sel) {
+                          const numId = Number(sel);
+                          setPapers(papers.map(p => {
+                            if (p.id === shareDocAccess.id) {
+                              const existingShares = p.sharedWith || [];
+                              if (!existingShares.includes(numId)) {
+                                return { ...p, sharedWith: [...existingShares, numId] };
+                              }
+                            }
+                            return p;
+                          }));
+                          toast(`Access granted successfully`);
+                          setShareDocAccess(null);
+                        }
+                      }}>Grant Access</Btn>
+                    </div>
+                  </div>
+                </Modal>
               )}
 
               {/* Preview Modal */}
