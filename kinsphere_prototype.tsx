@@ -3388,26 +3388,31 @@ const LevelUp = ({
     return Math.round((completedCount / markers.length) * 100);
   };
 
-  const handleAddGoal = () => {
-    if (!newGoal.title || (newGoal.ownerIds?.length || 0) === 0 || !newGoal.due) return toast("Please fill required fields.");
-    const validMarkers = newGoal.markers.filter(m => m.title.trim() !== "");
+    const selectedOwners = newGoal.ownerIds || [];
+    const validOwners = newGoal.type === "Individual" 
+      ? [Number(selectedOwners[0])].filter(n => !isNaN(n))
+      : selectedOwners.map(Number).filter(n => !isNaN(n));
+
+    if (!newGoal.title || validOwners.length === 0 || !newGoal.due) return toast("Please fill required fields.");
+    
+    const validMarkers = (newGoal.markers || []).filter(m => m.title && m.title.trim() !== "");
     const g = { 
       ...newGoal, 
       id: Date.now(), 
       markers: validMarkers.map(m => ({ ...m, status: "Not Started", notes: [], creatorId: me.id })),
       status: "Not Started",
-      ownerIds: newGoal.type === "Individual" ? [Number(newGoal.ownerIds[0])] : newGoal.ownerIds.map(Number)
+      ownerIds: validOwners
     };
-    setGoals(prev => [g, ...prev]);
+    setGoals(prev => [g, ...(prev || [])]);
     setShowGoalModal(false);
     setNewGoal({ title: "", desc: "", type: "Individual", ownerIds: [], start: "", due: "", markers: [{ id: Date.now(), title: "", weight: 0 }] });
     toast("Goal creation successful ✓");
   };
 
   const updateMarkerStatus = (goalId, markerId, status) => {
-    setGoals(prev => prev.map(g => {
+    setGoals(prev => (prev || []).map(g => {
       if (g.id === goalId) {
-        const nextMarkers = g.markers.map(m => m.id === markerId ? { ...m, status } : m);
+        const nextMarkers = (g.markers || []).map(m => m.id === markerId ? { ...m, status } : m);
         const prog = calcGoalProgress(nextMarkers);
         return { 
           ...g, 
@@ -3451,12 +3456,12 @@ const LevelUp = ({
   };
 
   const stats = {
-    avgRating: reviews.filter(r => r.status === "Completed").length 
-      ? (reviews.reduce((acc, r) => acc + (r.managerRating || 0), 0) / reviews.filter(r => r.status === "Completed").length).toFixed(1)
+    avgRating: (reviews || []).filter(r => r.status === "Completed").length 
+      ? ((reviews || []).reduce((acc, r) => acc + (r.managerRating || 0), 0) / (reviews || []).filter(r => r.status === "Completed").length).toFixed(1)
       : "—",
-    completed: goals.filter(g => g.status === "Completed").length,
-    total: goals.length,
-    needingAttention: employees.length - reviews.filter(r => r.status === "Completed").length
+    completed: (goals || []).filter(g => g.status === "Completed").length,
+    total: (goals || []).length,
+    needingAttention: (employees || []).length - (reviews || []).filter(r => r.status === "Completed").length
   };
 
   return (
@@ -3532,12 +3537,12 @@ const LevelUp = ({
                   </div>
 
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 14, borderTop: `1px solid ${C.surf}` }}>
-                    <div style={{ display: "flex", gap: -8 }}>
-                      {g.ownerIds.slice(0, 3).map(uid => {
+                    <div style={{ display: "flex" }}>
+                      {(g.ownerIds || []).slice(0, 3).map((uid, i) => {
                         const emp = employees.find(e => e.id === uid);
-                        return <Av key={uid} ini={emp?.ini || "?"} sz={24} style={{ border:`2px solid ${C.wht}` }} />
+                        return <Av key={uid} ini={emp?.ini || "?"} sz={24} style={{ border:`2px solid ${C.wht}`, marginLeft: i > 0 ? -8 : 0 }} />
                       })}
-                      {g.ownerIds.length > 3 && <div style={{ width:24, height:24, borderRadius:99, background:C.surf, border:`2px solid ${C.wht}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:700 }}>+{g.ownerIds.length-3}</div>}
+                      {(g.ownerIds?.length || 0) > 3 && <div style={{ width:24, height:24, borderRadius:99, background:C.surf, border:`2px solid ${C.wht}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:700, marginLeft:-8 }}>+{(g.ownerIds?.length || 0)-3}</div>}
                     </div>
                     <div style={{ fontSize: 10, color: C.sub }}>Due {g.due}</div>
                   </div>
@@ -3732,10 +3737,15 @@ const LevelUp = ({
             
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Inp label="Type" opts={["Individual", "Team"]} value={newGoal.type} onChange={e => setNewGoal({ ...newGoal, type: e.target.value })} />
-              <Inp label="Owner(s)" multiple={newGoal.type === "Team"} opts={employees.map(e => ({ label: e.name, value: e.id }))} 
-                value={newGoal.ownerIds} 
+              <Inp label="Owner(s)" multiple={newGoal.type === "Team"} opts={(employees || []).map(e => ({ label: e.name, value: e.id }))} 
+                value={newGoal.ownerIds || []} 
                 onChange={e => {
-                  const values = Array.from((e.target as HTMLSelectElement).selectedOptions, option => Number(option.value));
+                  const sel = e.target;
+                  const opts = sel.options;
+                  const values = [];
+                  for (let i = 0; i < opts.length; i++) {
+                    if (opts[i].selected) values.push(Number(opts[i].value));
+                  }
                   setNewGoal({ ...newGoal, ownerIds: values });
                 }} 
               />
@@ -3753,15 +3763,17 @@ const LevelUp = ({
                   <div key={m.id} style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
                     <div style={{ flex:1 }}>
                        <Inp placeholder="Marker Title (e.g. Logic Design)" value={m.title} onChange={v => {
-                         const next = [...newGoal.markers];
-                         next[idx].title = v.target.value;
+                         const next = (newGoal.markers || []).map((marker, i) => 
+                           i === idx ? { ...marker, title: v.target.value } : marker
+                         );
                          setNewGoal({...newGoal, markers:next});
                        }} />
                     </div>
                     <div style={{ width:80 }}>
                        <Inp type="number" placeholder="Wt %" value={m.weight} onChange={v => {
-                         const next = [...newGoal.markers];
-                         next[idx].weight = v.target.value;
+                         const next = (newGoal.markers || []).map((marker, i) => 
+                           i === idx ? { ...marker, weight: v.target.value } : marker
+                         );
                          setNewGoal({...newGoal, markers:next});
                        }} />
                     </div>
@@ -3802,7 +3814,7 @@ const LevelUp = ({
 
             <SectionTitle>Markers List</SectionTitle>
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-              {goals.find(g => g.id === viewingGoal.id).markers.map(m => {
+              {(goals.find(g => g.id === viewingGoal.id)?.markers || []).map(m => {
                 const canEdit = (viewingGoal.ownerIds || []).includes(me.id) || isAdmin;
                 return (
                   <div key={m.id} style={{ background:C.wht, border:`1px solid ${C.bdr}`, borderRadius:16, padding:16 }}>
