@@ -3331,8 +3331,11 @@ const LevelUp = ({
   const [newGoal, setNewGoal] = useState({ title: "", ownerId: "", type: "Individual", due: "", desc: "" });
   const [showProgressModal, setShowProgressModal] = useState<any>(null);
   const [showCycleModal, setShowCycleModal] = useState(false);
-  const [newCycle, setNewCycle] = useState({ name: "", start: "", end: "" });
-  const [reviewFlow, setReviewFlow] = useState<any>(null); // Current review being filled
+  const [newCycle, setNewCycle] = useState({ 
+    name: "", start: "", end: "", baseOnGoals: false, 
+    assignments: [] // { empId: number, reviewerId: number }
+  });
+  const [reviewFlow, setReviewFlow] = useState<any>(null); // { cycle, emp, rev }
 
   const isSA = role === "Super Admin";
   const isAdmin = role === "Admin" || role === "Super Admin";
@@ -3378,9 +3381,37 @@ const LevelUp = ({
 
   const handleCreateCycle = () => {
     if (!newCycle.name || !newCycle.start || !newCycle.end) return toast("Fill all fields.");
-    setReviewCycles(prev => [{ ...newCycle, id: Date.now(), status: "Not Started" }, ...prev]);
+    if (newCycle.assignments.length === 0) return toast("Assign at least one employee.");
+    
+    const cycleId = Date.now();
+    const cycleObj = { 
+      id: cycleId, 
+      name: newCycle.name, 
+      start: newCycle.start, 
+      end: newCycle.end, 
+      baseOnGoals: newCycle.baseOnGoals 
+    };
+    
+    const newInits = newCycle.assignments.map(a => ({
+      id: Math.random() + Date.now(),
+      cycleId,
+      empId: a.empId,
+      reviewerId: a.reviewerId,
+      status: "Not Started",
+      selfFeedback: "",
+      challenges: "",
+      goalReflection: "",
+      selfRating: 0,
+      feedback: "",
+      managerRating: 0,
+      comments: ""
+    }));
+
+    setReviewCycles(prev => [cycleObj, ...prev]);
+    setReviews(prev => [...newInits, ...prev]);
     setShowCycleModal(false);
-    toast("Review cycle created ✓");
+    setNewCycle({ name: "", start: "", end: "", baseOnGoals: false, assignments: [] });
+    toast("Review cycle launched ✓");
   };
 
   const stats = {
@@ -3497,36 +3528,78 @@ const LevelUp = ({
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {reviewCycles.map(cycle => {
                 const cycleReviews = reviews.filter(r => r.cycleId === cycle.id);
+                // Filter visibility: SA sees all, Admin sees own + where they are reviewer, Emp sees own
+                const visibleReviews = cycleReviews.filter(r => {
+                  if (role === "Super Admin") return true;
+                  if (role === "Admin") return r.empId === me.id || r.reviewerId === me.id;
+                  return r.empId === me.id;
+                });
+
+                if (visibleReviews.length === 0 && !isSA) return null;
+
                 return (
                   <Card key={cycle.id}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>{cycle.name}</h3>
-                      <div style={{ fontSize: 11, color: C.sub }}>{cycle.start} — {cycle.end}</div>
+                      <div>
+                        <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>{cycle.name}</h3>
+                        {cycle.baseOnGoals && <div style={{ fontSize: 10, color: C.p, fontWeight: 700, marginTop: 2 }}>🎯 GOAL-BASED</div>}
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: 11, color: C.sub }}>{cycle.start} — {cycle.end}</div>
+                        {isSA && (
+                          <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                            <button onClick={() => toast("Summary download started...")} style={{ background: "none", border: "none", color: C.p, fontSize: 10, cursor: "pointer", padding: 0 }}>Download Summary</button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      {employees.filter(e => isSA || e.id === me.id || e.managerId === me.id).map(emp => {
-                        const rev = cycleReviews.find(r => r.empId === emp.id);
-                        const status = rev?.status || "Not Started";
+                      {visibleReviews.map(rev => {
+                        const emp = employees.find(e => e.id === rev.empId);
+                        if (!emp) return null;
+                        const status = rev.status;
+                        const isMyReview = rev.empId === me.id;
+                        const amIReviewer = rev.reviewerId === me.id;
+                        
                         return (
-                          <div key={emp.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: C.surf, borderRadius: 10, border: `1px solid ${C.bdr}` }}>
+                          <div key={rev.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: C.surf, borderRadius: 10, border: `1px solid ${C.bdr}` }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                               <Av ini={emp.ini} sz={28} />
                               <div>
                                 <div style={{ fontSize: 13, fontWeight: 600 }}>{emp.name}</div>
-                                <div style={{ fontSize: 10, color: C.sub }}>{emp.designation}</div>
+                                <div style={{ fontSize: 10, color: C.sub }}>
+                                  {isMyReview ? "Your Review" : `Reviewer: ${employees.find(e => e.id === rev.reviewerId)?.name || 'Admin'}`}
+                                </div>
                               </div>
                             </div>
                             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                              <Badge s={status === "Completed" ? "approved" : status === "In Progress" ? "pending" : "rejected"} />
-                              {(emp.id === me.id || (isAdmin && status !== "Completed")) && (
-                                <button 
-                                  onClick={() => setReviewFlow({ cycle, emp, rev })}
-                                  style={{ background: C.p, color: "#fff", border: "none", borderRadius: 6, fontSize: 10, fontWeight: 700, padding: "5px 10px", cursor: "pointer" }}
-                                >
-                                  {emp.id === me.id ? (status === "Completed" ? "View" : "Self Review") : "Manager Review"}
-                                </button>
-                              )}
+                              <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end" }}>
+                                <Badge s={status === "Completed" ? "approved" : (status === "Not Started" ? "rejected" : "pending")} />
+                                {status === "Self Review Submitted" && amIReviewer && <div style={{ fontSize: 9, color: C.p, fontWeight: 700, marginTop: 4 }}>REVIEW PENDING</div>}
+                                {status === "Not Started" && isMyReview && <div style={{ fontSize: 9, color: C.p, fontWeight: 700, marginTop: 4 }}>PENDING</div>}
+                              </div>
+                              <div style={{ display:"flex", gap:6 }}>
+                                {(isMyReview || amIReviewer || isSA) && (
+                                  <button 
+                                    onClick={() => setReviewFlow({ cycle, emp, rev })}
+                                    style={{ background: C.p, color: "#fff", border: "none", borderRadius: 6, fontSize: 10, fontWeight: 700, padding: "5px 10px", cursor: "pointer" }}
+                                  >
+                                    {status === "Completed" ? "View" : (isMyReview ? (status === "Not Started" ? "Continue Form" : "View Submission") : "Review")}
+                                  </button>
+                                )}
+                                {isSA && status === "Completed" && (
+                                  <button 
+                                    onClick={() => {
+                                      setReviews(prev => prev.map(r => r.id === rev.id ? { ...r, status: "Manager Review Pending" } : r));
+                                      toast("Review reopened ✓");
+                                    }}
+                                    style={{ background: "none", border: `1px solid ${C.bdr}`, borderRadius: 6, fontSize: 10, fontWeight: 700, padding: "5px 10px", cursor: "pointer", color: C.sub }}
+                                  >
+                                    Reopen
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </div>
                         );
@@ -3625,48 +3698,163 @@ const LevelUp = ({
       )}
 
       {showCycleModal && (
-        <Modal title="New Review Cycle" onClose={() => setShowCycleModal(false)}>
+        <Modal title="Create Review Cycle" onClose={() => setShowCycleModal(false)} width={600}>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-             <Inp label="Cycle Name" value={newCycle.name} onChange={e => setNewCycle({ ...newCycle, name: e.target.value })} placeholder="e.g. Quarterly Review Q2" />
+             <Inp label="Cycle Name" value={newCycle.name} onChange={e => setNewCycle({ ...newCycle, name: e.target.value })} placeholder="e.g. Q1 Performance Review" />
              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                <Inp label="Start Date" type="date" value={newCycle.start} onChange={e => setNewCycle({ ...newCycle, start: e.target.value })} />
                <Inp label="End Date" type="date" value={newCycle.end} onChange={e => setNewCycle({ ...newCycle, end: e.target.value })} />
              </div>
-             <Btn onClick={handleCreateCycle} style={{ width: "100%", padding: 12 }}>Launch Cycle</Btn>
+             
+             <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 0" }}>
+               <input type="checkbox" checked={newCycle.baseOnGoals} onChange={e => setNewCycle({...newCycle, baseOnGoals: e.target.checked})} />
+               <label style={{ fontSize:13, fontWeight:600 }}>Base reviews on goals</label>
+             </div>
+
+             <div style={{ borderTop:`1px solid ${C.bdr}`, paddingTop:16 }}>
+               <label style={{ fontSize:11, fontWeight:700, color:C.sub, display:"block", marginBottom:12 }}>ASSIGNMENTS ({newCycle.assignments.length})</label>
+               <div style={{ display:"flex", flexDirection:"column", gap:8, maxHeight:200, overflowY:"auto", paddingRight:6 }}>
+                 {employees.map(emp => {
+                   const ass = newCycle.assignments.find(a => a.empId === emp.id);
+                   return (
+                     <div key={emp.id} style={{ display:"flex", alignItems:"center", gap:12, padding:10, background:C.surf, borderRadius:12 }}>
+                       <input 
+                         type="checkbox" 
+                         checked={!!ass} 
+                         onChange={() => {
+                           if (ass) {
+                             setNewCycle({...newCycle, assignments: newCycle.assignments.filter(a => a.empId !== emp.id)});
+                           } else {
+                             setNewCycle({...newCycle, assignments: [...newCycle.assignments, { empId: emp.id, reviewerId: emp.managerId || employees[0].id }]});
+                           }
+                         }} 
+                       />
+                       <Av ini={emp.ini} sz={24} />
+                       <span style={{ fontSize:12, fontWeight:600, flex:1 }}>{emp.name}</span>
+                       {ass && (
+                         <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                           <span style={{ fontSize:10, color:C.sub }}>Reviewer:</span>
+                           <select 
+                             value={ass.reviewerId} 
+                             onChange={e => setNewCycle({
+                               ...newCycle, 
+                               assignments: newCycle.assignments.map(a => a.empId === emp.id ? {...a, reviewerId: Number(e.target.value)} : a)
+                             })}
+                             style={{ fontSize:11, background:C.wht, border:`1px solid ${C.bdr}`, borderRadius:6, padding:"2px 4px" }}
+                           >
+                             {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                           </select>
+                         </div>
+                       )}
+                     </div>
+                   );
+                 })}
+               </div>
+             </div>
+
+             <Btn onClick={handleCreateCycle} style={{ width: "100%", padding: 12, marginTop:8 }}>Launch Cycle</Btn>
           </div>
         </Modal>
       )}
 
       {reviewFlow && (
-        <Modal title={`Review: ${reviewFlow.emp.name}`} onClose={() => setReviewFlow(null)} width={540}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            {reviewFlow.emp.id === me.id ? (
-              <>
-                <Inp label="What went well?" type="textarea" value={reviewFlow.rev?.selfFeedback || ""} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, selfFeedback: e.target.value } })} />
-                <Inp label="What was challenging?" type="textarea" value={reviewFlow.rev?.challenges || ""} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, challenges: e.target.value } })} />
-                <Inp label="Self Rating (1-5)" type="number" value={reviewFlow.rev?.selfRating || 0} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, selfRating: Number(e.target.value) } })} />
-              </>
-            ) : (
-              <>
-                <div style={{ background: C.bg, padding: 16, borderRadius: 12, border: `1px solid ${C.bdr}` }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: C.p, marginBottom: 8 }}>EMPLOYEE SELF-REVIEW</div>
-                  <div style={{ fontSize: 13, lineHeight: 1.5 }}>"{reviewFlow.rev?.selfFeedback || "No self-review submitted yet."}"</div>
+        <Modal title={`Review: ${reviewFlow.emp.name}`} onClose={() => setReviewFlow(null)} width={580}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+            
+            {/* Goal-based section */}
+            {reviewFlow.cycle.baseOnGoals && (
+              <div style={{ padding:16, background:`rgba(var(--p-rgb), 0.04)`, borderRadius:16, border:`1px solid rgba(var(--p-rgb), 0.1)` }}>
+                <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1, marginBottom:12 }}>GOAL-BASED REFLECTION</div>
+                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                  {goals.filter(g => g.ownerId === reviewFlow.emp.id).map(g => (
+                    <div key={g.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", background:C.wht, padding:"8px 12px", borderRadius:10 }}>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:12, fontWeight:700 }}>{g.title}</div>
+                        <div style={{ fontSize:10, color:C.sub }}>{g.desc}</div>
+                      </div>
+                      <div style={{ textAlign:"right", minWidth:60 }}>
+                        <div style={{ fontSize:11, fontWeight:700, color:C.p }}>{g.progress}%</div>
+                        <ProgressBar progress={g.progress} height={4} />
+                      </div>
+                    </div>
+                  ))}
+                  {goals.filter(g => g.ownerId === reviewFlow.emp.id).length === 0 && (
+                     <div style={{ fontSize:12, color:C.sub, fontStyle:"italic" }}>No active goals found for this employee.</div>
+                  )}
                 </div>
-                <Inp label="Manager Feedback" type="textarea" value={reviewFlow.rev?.feedback || ""} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, feedback: e.target.value } })} />
-                <Inp label="Manager Rating (1-5)" type="number" value={reviewFlow.rev?.managerRating || 0} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, managerRating: Number(e.target.value) } })} />
-              </>
+              </div>
             )}
-            <Btn onClick={() => {
-              setReviews(prev => {
-                const existing = prev.find(r => r.cycleId === reviewFlow.cycle.id && r.empId === reviewFlow.emp.id);
-                if (existing) {
-                  return prev.map(r => (r.id === existing.id ? { ...r, ...reviewFlow.rev, status: reviewFlow.emp.id === me.id ? "In Progress" : "Completed" } : r));
-                }
-                return [...prev, { ...reviewFlow.rev, id: Date.now(), cycleId: reviewFlow.cycle.id, empId: reviewFlow.emp.id, status: "In Progress" }];
-              });
-              setReviewFlow(null);
-              toast("Review saved ✓");
-            }}>Submit Review</Btn>
+
+            {/* Self Review Part */}
+            <div>
+              <div style={{ fontSize:11, fontWeight:700, color:C.sub, marginBottom:12 }}>EMPLOYEE SELF-REVIEW</div>
+              {reviewFlow.emp.id === me.id && reviewFlow.rev.status !== "Completed" ? (
+                <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+                  <Inp label="What went well?" type="textarea" value={reviewFlow.rev.selfFeedback} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, selfFeedback: e.target.value } })} />
+                  <Inp label="What didn't go well?" type="textarea" value={reviewFlow.rev.challenges} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, challenges: e.target.value } })} />
+                  {reviewFlow.cycle.baseOnGoals && (
+                    <Inp label="Goal-based reflection" type="textarea" value={reviewFlow.rev.goalReflection} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, goalReflection: e.target.value } })} />
+                  )}
+                  <Inp label="How do you rate your performance? (1-5)" type="number" value={reviewFlow.rev.selfRating} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, selfRating: Number(e.target.value) } })} />
+                  <Btn onClick={() => {
+                    setReviews(prev => prev.map(r => r.id === reviewFlow.rev.id ? { ...reviewFlow.rev, status: "Self Review Submitted" } : r));
+                    toast("Self review submitted ✓");
+                    setReviewFlow(null);
+                  }}>Submit My Review</Btn>
+                </div>
+              ) : (
+                <div style={{ background:C.bg, padding:16, borderRadius:12, border:`1px solid ${C.bdr}` }}>
+                  <div style={{ marginBottom:12 }}>
+                     <label style={{ fontSize:10, fontWeight:700, color:C.sub }}>WINS</label>
+                     <p style={{ margin:0, fontSize:13 }}>{reviewFlow.rev.selfFeedback || "—"}</p>
+                  </div>
+                  <div style={{ marginBottom:12 }}>
+                     <label style={{ fontSize:10, fontWeight:700, color:C.sub }}>CHALLENGES</label>
+                     <p style={{ margin:0, fontSize:13 }}>{reviewFlow.rev.challenges || "—"}</p>
+                  </div>
+                  {reviewFlow.cycle.baseOnGoals && (
+                    <div style={{ marginBottom:12 }}>
+                      <label style={{ fontSize:10, fontWeight:700, color:C.sub }}>GOAL REFLECTION</label>
+                      <p style={{ margin:0, fontSize:13 }}>{reviewFlow.rev.goalReflection || "—"}</p>
+                    </div>
+                  )}
+                  <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                    <label style={{ fontSize:10, fontWeight:700, color:C.sub }}>SELF RATING:</label>
+                    <span style={{ fontSize:13, fontWeight:700, color:C.p }}>{reviewFlow.rev.selfRating || "—"} / 5</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Manager Review Part */}
+            {(reviewFlow.rev.reviewerId === me.id || isSA || reviewFlow.rev.status === "Completed" || reviewFlow.rev.status === "Manager Review Pending") && (
+              <div style={{ borderTop:`1px solid ${C.bdr}`, paddingTop:24 }}>
+                <div style={{ fontSize:11, fontWeight:700, color:C.sub, marginBottom:12 }}>MANAGER EVALUATION</div>
+                {reviewFlow.rev.reviewerId === me.id && reviewFlow.rev.status !== "Completed" ? (
+                  <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+                    <Inp label="Reviewer Feedback" type="textarea" value={reviewFlow.rev.feedback} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, feedback: e.target.value } })} />
+                    <Inp label="Rating (1-5)" type="number" value={reviewFlow.rev.managerRating} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, managerRating: Number(e.target.value) } })} />
+                    <Inp label="Additional Comments" type="textarea" value={reviewFlow.rev.comments} onChange={e => setReviewFlow({ ...reviewFlow, rev: { ...reviewFlow.rev, comments: e.target.value } })} />
+                    <Btn onClick={() => {
+                      setReviews(prev => prev.map(r => r.id === reviewFlow.rev.id ? { ...reviewFlow.rev, status: "Completed" } : r));
+                      toast("Review completed ✓");
+                      setReviewFlow(null);
+                    }}>Complete Review</Btn>
+                  </div>
+                ) : (
+                  <div style={{ background:C.bg, padding:16, borderRadius:12, border:`1px solid ${C.bdr}` }}>
+                    <div style={{ marginBottom:12 }}>
+                       <label style={{ fontSize:10, fontWeight:700, color:C.sub }}>FEEDBACK</label>
+                       <p style={{ margin:0, fontSize:13 }}>{reviewFlow.rev.feedback || "Pending manager feedback..."}</p>
+                    </div>
+                    <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                      <label style={{ fontSize:10, fontWeight:700, color:C.sub }}>MANAGER RATING:</label>
+                      <span style={{ fontSize:13, fontWeight:700, color:C.p }}>{reviewFlow.rev.managerRating || "—"} / 5</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </Modal>
       )}
