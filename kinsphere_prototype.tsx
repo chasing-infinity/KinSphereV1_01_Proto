@@ -4609,7 +4609,7 @@ export default function App() {
   const saPayslipRows = saPayslips.filter(p =>
     p.year === payYear && (payMonthFilter === null || p.month === payMonthFilter)
   ).sort((a, b) => a.month - b.month || a.name.localeCompare(b.name));
-  const myPayslipRows = saPayslips.filter(p => p.empId === ME_ID && p.year === payYear)
+  const myPayslipRows = saPayslips.filter(p => p.empId === ME_ID && p.year === payYear && p.released)
     .sort((a, b) => b.month - a.month);
   const onEmpProfilePage = page === "Employees" || page === "My Profile";
 
@@ -6214,14 +6214,30 @@ export default function App() {
                           <td style={{ padding:"13px 14px", color:C.txt }}>{p.gross}</td>
                           <td style={{ padding:"13px 14px", fontWeight:700, color:C.p }}>{editedSalaries[p.id] || p.net}</td>
                           <td style={{ padding:"13px 14px" }}>
-                            {processedPayments[p.id] ? (
-                              <span style={{ fontSize:10, fontWeight:700, color:"#16a34a", background:"#dcfce7", padding:"3px 8px", borderRadius:4 }}>PAID</span>
-                            ) : (
-                              <span style={{ fontSize:10, fontWeight:700, color:C.sub, background:C.surf, padding:"3px 8px", borderRadius:4 }}>UNPAID</span>
-                            )}
+                            <div style={{ display:"flex", gap:6, alignItems:"center" }}>
+                              {!p.released && <span style={{ fontSize:9, fontWeight:800, color:C.sub, border:`1px solid ${C.bdr}`, padding:"2px 6px", borderRadius:4 }}>DRAFT</span>}
+                              {processedPayments[p.id] ? (
+                                <span style={{ fontSize:10, fontWeight:700, color:"#16a34a", background:"#dcfce7", padding:"3px 8px", borderRadius:4 }}>PAID</span>
+                              ) : (
+                                <span style={{ fontSize:10, fontWeight:700, color:C.sub, background:C.surf, padding:"3px 8px", borderRadius:4 }}>UNPAID</span>
+                              )}
+                            </div>
                           </td>
                           <td style={{ padding:"13px 14px", textAlign:"right" }}>
-                            <Btn variant="ghost" style={{ padding:"4px 10px", fontSize:10 }} onClick={()=>setPayslipPreview(p)}>PDF</Btn>
+                            <div style={{ display:"flex", gap:6, justifyContent:"flex-end" }}>
+                              <Btn variant="ghost" style={{ padding:"4px 10px", fontSize:10 }} onClick={()=>setPayslipPreview(p)}>PDF</Btn>
+                              {p.released && !processedPayments[p.id] && (
+                                <button 
+                                  onClick={() => {
+                                    setSaPayslips(prev => prev.map(x => x.id === p.id ? { ...x, released: false } : x));
+                                    toast(`Payslip for ${p.name} unreleased ✓`);
+                                  }}
+                                  style={{ background:"none", border:`1px solid ${C.bdr}`, borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:700, cursor:"pointer", color:C.txt }}
+                                >
+                                  Unrelease
+                                </button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))}
