@@ -702,8 +702,23 @@ const RECOGS = [
 ];
 
 const INIT_GOALS = [
-  { id: 1, title: "Modernise Design System", ownerId: 3, owner: "Priya Sharma", type: "Individual", progress: 65, status: "In Progress", due: "2026-06-30", desc: "Update all core components to use the new tokens." },
-  { id: 2, title: "Q2 Product Roadmap", ownerId: 1, owner: "Arjun Mehta", type: "Team", progress: 20, status: "In Progress", due: "2026-05-15", desc: "Finalize the roadmap for the upcoming quarter." },
+  { 
+    id: 1, title: "Modernise Design System", desc: "Update all core components to use the new tokens.",
+    type: "Individual", ownerIds: [3], status: "In Progress", due: "2026-06-30", start: "2026-04-01",
+    markers: [
+      { id: 11, title: "Audit existing components", status: "Completed", weight: 20, notes: [] },
+      { id: 12, title: "Define color & typography tokens", status: "Completed", weight: 30, notes: [] },
+      { id: 13, title: "Implement core layout engine", status: "In Progress", weight: 50, notes: [{ msg: "Flexbox structures are done.", time: "1d ago", user: "Priya" }] },
+    ]
+  },
+  { 
+    id: 2, title: "Q2 Product Roadmap", desc: "Finalize the roadmap for the upcoming quarter.",
+    type: "Team", ownerIds: [1, 2], status: "In Progress", due: "2026-05-15", start: "2026-04-10",
+    markers: [
+      { id: 21, title: "Stakeholder interviews", status: "Completed", weight: 0, notes: [] },
+      { id: 22, title: "Resource planning", status: "Not Started", weight: 0, notes: [] },
+    ]
+  },
 ];
 
 const INIT_REVIEW_CYCLES = [
@@ -3341,8 +3356,11 @@ const LevelUp = ({
 }) => {
   const [activeTab, setActiveTab ] = useState("Goals");
   const [showGoalModal, setShowGoalModal] = useState(false);
-  const [newGoal, setNewGoal] = useState({ title: "", ownerId: "", type: "Individual", due: "", desc: "" });
-  const [showProgressModal, setShowProgressModal] = useState<any>(null);
+  const [newGoal, setNewGoal] = useState({ 
+    title: "", desc: "", type: "Individual", ownerIds: [], start: "", due: "", 
+    markers: [{ id: Date.now(), title: "", weight: 0 }] 
+  });
+  const [viewingGoal, setViewingGoal] = useState<any>(null); // Detail view modal
   const [showCycleModal, setShowCycleModal] = useState(false);
   const [newCycle, setNewCycle] = useState({ 
     name: "", start: "", end: "", baseOnGoals: false, 
@@ -3350,81 +3368,82 @@ const LevelUp = ({
   });
   const [reviewFlow, setReviewFlow] = useState<any>(null); // { cycle, emp, rev }
 
-  const isSA = role === "Super Admin";
-  const isAdmin = role === "Admin" || role === "Super Admin";
-
   const visibleGoals = goals.filter(g => {
     if (isSA) return true;
-    if (role === "Admin") return g.type === "Team" || g.ownerId === me.id;
-    return g.ownerId === me.id;
+    if (role === "Admin") return g.type === "Team" || g.ownerIds.includes(me.id);
+    return g.ownerIds.includes(me.id);
   });
 
+  const calcGoalProgress = (markers) => {
+    if (!markers || markers.length === 0) return 0;
+    const totalWeight = markers.reduce((acc, m) => acc + (Number(m.weight) || 0), 0);
+    if (totalWeight > 0) {
+      const completedWeight = markers.reduce((acc, m) => m.status === "Completed" ? acc + (Number(m.weight) || 0) : acc, 0);
+      return Math.round((completedWeight / totalWeight) * 100);
+    }
+    const completedCount = markers.filter(m => m.status === "Completed").length;
+    return Math.round((completedCount / markers.length) * 100);
+  };
+
   const handleAddGoal = () => {
-    if (!newGoal.title || !newGoal.ownerId || !newGoal.due) return toast("Please fill in all required fields.");
-    const owner = employees.find(e => e.id === Number(newGoal.ownerId))?.name || "Unknown";
+    if (!newGoal.title || newGoal.ownerIds.length === 0 || !newGoal.due) return toast("Please fill required fields.");
+    const validMarkers = newGoal.markers.filter(m => m.title.trim() !== "");
     const g = { 
       ...newGoal, 
       id: Date.now(), 
-      ownerId: Number(newGoal.ownerId),
-      owner,
-      progress: 0, 
+      markers: validMarkers.map(m => ({ ...m, status: "Not Started", notes: [], creatorId: me.id })),
       status: "Not Started" 
     };
     setGoals(prev => [g, ...prev]);
     setShowGoalModal(false);
-    setNewGoal({ title: "", ownerId: "", type: "Individual", due: "", desc: "" });
-    toast("Goal created ✓");
+    setNewGoal({ title: "", desc: "", type: "Individual", ownerIds: [], start: "", due: "", markers: [{ id: Date.now(), title: "", weight: 0 }] });
+    toast("Goal creation successful ✓");
   };
 
-  const updateGoalProgress = (goalId, val, note) => {
+  const updateMarkerStatus = (goalId, markerId, status) => {
     setGoals(prev => prev.map(g => {
       if (g.id === goalId) {
-        const nextProg = Math.min(100, Math.max(0, val));
+        const nextMarkers = g.markers.map(m => m.id === markerId ? { ...m, status } : m);
+        const prog = calcGoalProgress(nextMarkers);
         return { 
           ...g, 
-          progress: nextProg, 
-          status: nextProg === 100 ? "Completed" : nextProg > 0 ? "In Progress" : "Not Started" 
+          markers: nextMarkers,
+          status: prog === 100 ? "Completed" : prog > 0 ? "In Progress" : "Not Started"
         };
       }
       return g;
     }));
-    toast("Progress updated ✓");
-    setShowProgressModal(null);
+    toast(`Marker marked as ${status} ✓`);
   };
 
-  const handleCreateCycle = () => {
-    if (!newCycle.name || !newCycle.start || !newCycle.end) return toast("Fill all fields.");
-    if (newCycle.assignments.length === 0) return toast("Assign at least one employee.");
-    
-    const cycleId = Date.now();
-    const cycleObj = { 
-      id: cycleId, 
-      name: newCycle.name, 
-      start: newCycle.start, 
-      end: newCycle.end, 
-      baseOnGoals: newCycle.baseOnGoals 
-    };
-    
-    const newInits = newCycle.assignments.map(a => ({
-      id: Math.random() + Date.now(),
-      cycleId,
-      empId: a.empId,
-      reviewerId: a.reviewerId,
-      status: "Not Started",
-      selfFeedback: "",
-      challenges: "",
-      goalReflection: "",
-      selfRating: 0,
-      feedback: "",
-      managerRating: 0,
-      comments: ""
+  const addMarkerNote = (goalId, markerId, msg) => {
+    if (!msg.trim()) return;
+    setGoals(prev => prev.map(g => {
+      if (g.id === goalId) {
+        return {
+          ...g,
+          markers: g.markers.map(m => m.id === markerId ? { 
+            ...m, 
+            notes: [...m.notes, { msg, time: "Just now", user: me.name }] 
+          } : m)
+        };
+      }
+      return g;
     }));
+    toast("Note added ✓");
+  };
 
-    setReviewCycles(prev => [cycleObj, ...prev]);
-    setReviews(prev => [...newInits, ...prev]);
-    setShowCycleModal(false);
-    setNewCycle({ name: "", start: "", end: "", baseOnGoals: false, assignments: [] });
-    toast("Review cycle launched ✓");
+  const addNewMarker = (goalId, markerData) => {
+     setGoals(prev => prev.map(g => {
+       if (g.id === goalId) {
+         return {
+           ...g,
+           markers: [...g.markers, { ...markerData, id: Date.now(), status: "Not Started", notes: [], creatorId: me.id }]
+         };
+       }
+       return g;
+     }));
+     toast("New marker added ✓");
   };
 
   const stats = {
@@ -3484,41 +3503,43 @@ const LevelUp = ({
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
-            {visibleGoals.map(g => (
-              <Card key={g.id} style={{ position: "relative", cursor: "default", transition: "transform 0.2s" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: C.p, letterSpacing: 0.5 }}>{g.type.toUpperCase()}</div>
-                  <Badge s={g.status === "In Progress" ? "pending" : g.status === "Completed" ? "approved" : "rejected"} />
-                </div>
-                <h3 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: C.txt }}>{g.title}</h3>
-                <p style={{ margin: "0 0 16px", fontSize: 12, color: C.sub, lineHeight: 1.5 }}>{g.desc}</p>
-                
-                <div style={{ marginBottom: 16 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 6 }}>
-                    <span style={{ color: C.sub }}>Progress</span>
-                    <span style={{ fontWeight: 700, color: C.p }}>{g.progress}%</span>
+            {visibleGoals.map(g => {
+              const progress = calcGoalProgress(g.markers);
+              const completedMarkers = g.markers.filter(m => m.status === "Completed").length;
+              return (
+                <Card 
+                  key={g.id} 
+                  style={{ position: "relative", cursor: "pointer", transition: "transform 0.2s" }}
+                  onClick={() => setViewingGoal(g)}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: C.p, letterSpacing: 0.5 }}>{g.type.toUpperCase()}</div>
+                    <Badge s={g.status === "In Progress" ? "pending" : g.status === "Completed" ? "approved" : "rejected"} />
                   </div>
-                  <ProgressBar progress={g.progress} />
-                </div>
-
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 14, borderTop: `1px solid ${C.surf}` }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <Av ini={g.owner.split(" ").map(n => n[0]).join("")} sz={24} />
-                    <div style={{ fontSize: 11, fontWeight: 600, color: C.txt }}>{g.owner}</div>
+                  <h3 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: C.txt }}>{g.title}</h3>
+                  <p style={{ margin: "0 0 16px", fontSize: 12, color: C.sub, lineHeight: 1.5, height:36, overflow:"hidden" }}>{g.desc}</p>
+                  
+                  <div style={{ marginBottom: 16 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 6 }}>
+                      <span style={{ fontWeight: 700, color: C.p }}>{progress}%</span>
+                      <span style={{ color: C.sub }}>{completedMarkers} / {g.markers.length} markers</span>
+                    </div>
+                    <ProgressBar progress={progress} />
                   </div>
-                  <div style={{ fontSize: 10, color: C.sub }}>Due {g.due}</div>
-                </div>
 
-                {(g.ownerId === me.id || isSA) && (
-                  <button 
-                    onClick={() => setShowProgressModal(g)}
-                    style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", opacity: 0.4 }}
-                  >
-                    <IconEdit size={14} />
-                  </button>
-                )}
-              </Card>
-            ))}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 14, borderTop: `1px solid ${C.surf}` }}>
+                    <div style={{ display: "flex", gap: -8 }}>
+                      {g.ownerIds.slice(0, 3).map(uid => {
+                        const emp = employees.find(e => e.id === uid);
+                        return <Av key={uid} ini={emp?.ini || "?"} sz={24} style={{ border:`2px solid ${C.wht}` }} />
+                      })}
+                      {g.ownerIds.length > 3 && <div style={{ width:24, height:24, borderRadius:99, background:C.surf, border:`2px solid ${C.wht}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:700 }}>+{g.ownerIds.length-3}</div>}
+                    </div>
+                    <div style={{ fontSize: 10, color: C.sub }}>Due {g.due}</div>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
 
           {visibleGoals.length === 0 && (
@@ -3699,37 +3720,145 @@ const LevelUp = ({
         </div>
       )}
 
-      {/* Modals Implementation */}
       {showGoalModal && (
-        <Modal title="Create New Goal" onClose={() => setShowGoalModal(false)}>
+        <Modal title="Create Professional Goal" onClose={() => setShowGoalModal(false)} width={640}>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <Inp label="Goal Title" value={newGoal.title} onChange={e => setNewGoal({ ...newGoal, title: e.target.value })} placeholder="e.g. Redesign Onboarding Flow" />
-            <Inp label="Description" type="textarea" value={newGoal.desc} onChange={e => setNewGoal({ ...newGoal, desc: e.target.value })} placeholder="What does success look like?" />
-            <Inp label="Owner" opts={employees.map(e => ({ label: e.name, value: e.id }))} value={newGoal.ownerId} onChange={e => setNewGoal({ ...newGoal, ownerId: e.target.value })} />
+            <Inp label="Goal Title" value={newGoal.title} onChange={e => setNewGoal({ ...newGoal, title: e.target.value })} placeholder="e.g. Master the New UI Library" />
+            <Inp label="Description" type="textarea" value={newGoal.desc} onChange={e => setNewGoal({ ...newGoal, desc: e.target.value })} placeholder="State the high-level objective..." />
+            
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Inp label="Type" opts={["Individual", "Team"]} value={newGoal.type} onChange={e => setNewGoal({ ...newGoal, type: e.target.value })} />
+              <Inp label="Owner(s)" multiple={newGoal.type === "Team"} opts={employees.map(e => ({ label: e.name, value: e.id }))} 
+                value={newGoal.type === "Individual" ? newGoal.ownerIds[0] : newGoal.ownerIds} 
+                onChange={e => {
+                  const val = Array.isArray(e.target.value) ? e.target.value : [Number(e.target.value)];
+                  setNewGoal({ ...newGoal, ownerIds: val });
+                }} 
+              />
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <Inp label="Start Date" type="date" value={newGoal.start} onChange={e => setNewGoal({ ...newGoal, start: e.target.value })} />
               <Inp label="Due Date" type="date" value={newGoal.due} onChange={e => setNewGoal({ ...newGoal, due: e.target.value })} />
             </div>
-            <Btn onClick={handleAddGoal} style={{ width: "100%", padding: 12 }}>Create Goal</Btn>
+
+            <div style={{ borderTop:`1px solid ${C.bdr}`, paddingTop:16 }}>
+              <SectionTitle>Markers (Milestones)</SectionTitle>
+              <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:12 }}>
+                {newGoal.markers.map((m, idx) => (
+                  <div key={m.id} style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
+                    <div style={{ flex:1 }}>
+                       <Inp placeholder="Marker Title (e.g. Logic Design)" value={m.title} onChange={v => {
+                         const next = [...newGoal.markers];
+                         next[idx].title = v.target.value;
+                         setNewGoal({...newGoal, markers:next});
+                       }} />
+                    </div>
+                    <div style={{ width:80 }}>
+                       <Inp type="number" placeholder="Wt %" value={m.weight} onChange={v => {
+                         const next = [...newGoal.markers];
+                         next[idx].weight = v.target.value;
+                         setNewGoal({...newGoal, markers:next});
+                       }} />
+                    </div>
+                    {newGoal.markers.length > 1 && (
+                      <button onClick={() => setNewGoal({...newGoal, markers: newGoal.markers.filter((_, i) => i !== idx)})} style={{ padding:10, background:"none", border:"none", color:C.sub, cursor:"pointer" }}>✕</button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <button 
+                onClick={() => setNewGoal({...newGoal, markers: [...newGoal.markers, { id: Date.now(), title: "", weight: 0 }]})}
+                style={{ fontSize:11, fontWeight:700, color:C.p, background:"none", border:"none", cursor:"pointer", padding:0 }}
+              >
+                + Add Another Marker
+              </button>
+            </div>
+
+            <Btn onClick={handleAddGoal} style={{ width: "100%", padding: 12, marginTop:8 }}>Launch Goal</Btn>
           </div>
         </Modal>
       )}
 
-      {showProgressModal && (
-        <Modal title="Update Progress" onClose={() => setShowProgressModal(null)}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: C.sub, marginBottom: 8, display: "block" }}>PROGRESS (%)</label>
-              <input 
-                type="range" min="0" max="100" 
-                value={showProgressModal.progress} 
-                onChange={e => setShowProgressModal({ ...showProgressModal, progress: Number(e.target.value) })}
-                style={{ width: "100%", accentColor: C.p }}
-              />
-              <div style={{ textAlign: "center", fontSize: 24, fontWeight: 800, color: C.p, marginTop: 8 }}>{showProgressModal.progress}%</div>
+      {viewingGoal && (
+        <Modal title="Goal Execution" onClose={() => setViewingGoal(null)} width={600}>
+          <div>
+            <div style={{ marginBottom:20 }}>
+              <h2 style={{ fontSize:20, fontWeight:800, margin:"0 0 6px" }}>{viewingGoal.title}</h2>
+              <p style={{ fontSize:13, color:C.sub, lineHeight:1.5 }}>{viewingGoal.desc}</p>
             </div>
-            <Inp label="Short Note" type="textarea" placeholder="What's the latest update?" />
-            <Btn onClick={() => updateGoalProgress(showProgressModal.id, showProgressModal.progress, "")} style={{ width: "100%", padding: 12 }}>Save Update</Btn>
+
+            <div style={{ background:C.surf, borderRadius:16, padding:20, border:`1px solid ${C.bdr}`, marginBottom:24 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:10 }}>
+                <div style={{ fontSize:11, fontWeight:700, color:C.sub }}>OVERALL EXECUTION</div>
+                <div style={{ fontSize:16, fontWeight:800, color:C.p }}>{calcGoalProgress(goals.find(g => g.id === viewingGoal.id).markers)}%</div>
+              </div>
+              <ProgressBar progress={calcGoalProgress(goals.find(g => g.id === viewingGoal.id).markers)} height={10} />
+            </div>
+
+            <SectionTitle>Markers List</SectionTitle>
+            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              {goals.find(g => g.id === viewingGoal.id).markers.map(m => {
+                const canEdit = viewingGoal.ownerIds.includes(me.id) || isAdmin;
+                return (
+                  <div key={m.id} style={{ background:C.wht, border:`1px solid ${C.bdr}`, borderRadius:16, padding:16 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:700 }}>{m.title}</div>
+                        {m.weight > 0 && <div style={{ fontSize:9, fontWeight:800, color:C.p, marginTop:2 }}>WEIGHT: {m.weight}%</div>}
+                      </div>
+                      <select 
+                        disabled={!canEdit}
+                        value={m.status} 
+                        onChange={e => updateMarkerStatus(viewingGoal.id, m.id, e.target.value)}
+                        style={{ fontSize:11, fontWeight:700, padding:"4px 8px", borderRadius:6, border:`1px solid ${C.bdr}`, background:C.bg }}
+                      >
+                        <option>Not Started</option>
+                        <option>In Progress</option>
+                        <option>Completed</option>
+                      </select>
+                    </div>
+
+                    {m.notes?.length > 0 && (
+                      <div style={{ marginTop:10, padding:10, background:C.bg, borderRadius:10 }}>
+                        {m.notes.map((n, i) => (
+                           <div key={i} style={{ fontSize:11, marginBottom:4 }}>
+                             <span style={{ fontWeight:700 }}>{n.user}:</span> {n.msg} <span style={{ opacity:0.5, fontSize:9 }}>({n.time})</span>
+                           </div>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {canEdit && (
+                       <div style={{ display:"flex", gap:8, marginTop:12 }}>
+                         <input 
+                           type="text" 
+                           placeholder="Add a quick note..." 
+                           style={{ flex:1, fontSize:12, padding:"6px 12px", borderRadius:8, border:`1px solid ${C.bdr}`, background:C.bg }} 
+                           onKeyDown={e => {
+                             if (e.key === 'Enter') {
+                               addMarkerNote(viewingGoal.id, m.id, e.currentTarget.value);
+                               e.currentTarget.value = "";
+                             }
+                           }}
+                         />
+                       </div>
+                    )}
+                  </div>
+                );
+              })}
+              {(viewingGoal.ownerIds.includes(me.id) || isAdmin) && (
+                <button 
+                  onClick={() => {
+                    const title = prompt("Marker Title?");
+                    if (title) addNewMarker(viewingGoal.id, { title, weight: 0 });
+                  }}
+                  style={{ padding:14, border:`1px dashed ${C.bdr}`, background:C.surf, borderRadius:16, color:C.p, fontSize:12, fontWeight:700, cursor:"pointer" }}
+                >
+                  + Add New Marker
+                </button>
+              )}
+            </div>
           </div>
         </Modal>
       )}
