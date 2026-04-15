@@ -3367,6 +3367,9 @@ const LevelUp = ({
     assignments: [] // { empId: number, reviewerId: number }
   });
   const [reviewFlow, setReviewFlow] = useState<any>(null); // { cycle, emp, rev }
+  
+  const isSA = role === "Super Admin";
+  const isAdmin = role === "Admin" || role === "Super Admin";
 
   const visibleGoals = goals.filter(g => {
     if (isSA) return true;
