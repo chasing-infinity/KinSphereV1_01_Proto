@@ -712,8 +712,21 @@ const INIT_REVIEW_CYCLES = [
 ];
 
 const INIT_REVIEWS = [
-  { id: 1, cycleId: 1, empId: 3, selfRating: 4, selfFeedback: "I completed most projects ahead of time.", challenges: "Balancing multiple tasks.", managerRating: 5, feedback: "Priya delivered exceptional work this quarter.", status: "Completed" },
-  { id: 2, cycleId: 1, empId: 2, selfRating: 0, selfFeedback: "", challenges: "", managerRating: 0, feedback: "", status: "Not Started" },
+  { 
+    id: 1, cycleId: 1, empId: 3, reviewerId: 1, 
+    selfRating: 4, selfFeedback: "I completed most projects ahead of time.", challenges: "Balancing multiple tasks.", goalReflection: "Exceeded design system goals.",
+    managerRating: 5, feedback: "Priya delivered exceptional work this quarter.", status: "Completed" 
+  },
+  { 
+    id: 2, cycleId: 1, empId: 2, reviewerId: 1, 
+    selfRating: 0, selfFeedback: "", challenges: "", goalReflection: "",
+    managerRating: 0, feedback: "", status: "Not Started" 
+  },
+  { 
+    id: 3, cycleId: 1, empId: 1, reviewerId: 2, 
+    selfRating: 0, selfFeedback: "", challenges: "", goalReflection: "",
+    managerRating: 0, feedback: "", status: "Not Started" 
+  },
 ];
 
 const INIT_QUICK_FEEDBACK = [
@@ -3522,10 +3535,32 @@ const LevelUp = ({
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: C.sub, letterSpacing: 1 }}>REVIEWS</div>
-              {isSA && <Btn variant="outline" onClick={() => setShowCycleModal(true)}>New Cycle</Btn>}
+              {isSA && <Btn variant="outline" onClick={() => setShowCycleModal(true)}>Create Review Cycle</Btn>}
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {/* Self Reviews Section */}
+            {reviews.filter(r => r.empId === me.id && r.status !== "Completed").length > 0 && (
+              <div style={{ marginBottom: 28 }}>
+                <SectionTitle>Your Self Reviews</SectionTitle>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {reviews.filter(r => r.empId === me.id && r.status !== "Completed").map(rev => {
+                    const cycle = reviewCycles.find(c => c.id === rev.cycleId);
+                    if (!cycle) return null;
+                    return (
+                      <div key={rev.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:20, background:`rgba(var(--p-rgb), 0.05)`, borderRadius:16, border:`1px solid rgba(var(--p-rgb), 0.1)` }}>
+                        <div>
+                          <div style={{ fontSize:14, fontWeight:700 }}>{cycle.name}</div>
+                          <div style={{ fontSize:11, color:C.p, fontWeight:700, marginTop:4 }}>YOUR REVIEW IS PENDING</div>
+                        </div>
+                        <Btn onClick={() => setReviewFlow({ cycle, emp: me, rev })}>Complete Self Review</Btn>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               {reviewCycles.map(cycle => {
                 const cycleReviews = reviews.filter(r => r.cycleId === cycle.id);
                 // Filter visibility: SA sees all, Admin sees own + where they are reviewer, Emp sees own
@@ -3537,73 +3572,75 @@ const LevelUp = ({
 
                 if (visibleReviews.length === 0 && !isSA) return null;
 
+                const teamReviews = visibleReviews.filter(r => r.empId !== me.id || role === "Super Admin");
+
                 return (
                   <Card key={cycle.id}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                       <div>
                         <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>{cycle.name}</h3>
-                        {cycle.baseOnGoals && <div style={{ fontSize: 10, color: C.p, fontWeight: 700, marginTop: 2 }}>🎯 GOAL-BASED</div>}
+                        <div style={{ display:"flex", gap:8, alignItems:"center", marginTop:4 }}>
+                          <span style={{ fontSize: 11, color: C.sub }}>{cycle.start} — {cycle.end}</span>
+                          {cycle.baseOnGoals && <div style={{ fontSize: 9, color: C.p, fontWeight: 800, padding:"2px 6px", background:"rgba(var(--p-rgb), 0.1)", borderRadius:4 }}>GOAL-BASED</div>}
+                        </div>
                       </div>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: 11, color: C.sub }}>{cycle.start} — {cycle.end}</div>
-                        {isSA && (
-                          <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                            <button onClick={() => toast("Summary download started...")} style={{ background: "none", border: "none", color: C.p, fontSize: 10, cursor: "pointer", padding: 0 }}>Download Summary</button>
-                          </div>
-                        )}
-                      </div>
+                      {isSA && (
+                         <button onClick={() => toast("Summary download started...")} style={{ background: "none", border: `1px solid ${C.bdr}`, borderRadius:6, padding:"6px 10px", color: C.txt, fontSize: 10, fontWeight:700, cursor: "pointer" }}>Download Report</button>
+                      )}
                     </div>
                     
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      {visibleReviews.map(rev => {
-                        const emp = employees.find(e => e.id === rev.empId);
-                        if (!emp) return null;
-                        const status = rev.status;
-                        const isMyReview = rev.empId === me.id;
-                        const amIReviewer = rev.reviewerId === me.id;
-                        
-                        return (
-                          <div key={rev.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: C.surf, borderRadius: 10, border: `1px solid ${C.bdr}` }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                              <Av ini={emp.ini} sz={28} />
-                              <div>
-                                <div style={{ fontSize: 13, fontWeight: 600 }}>{emp.name}</div>
-                                <div style={{ fontSize: 10, color: C.sub }}>
-                                  {isMyReview ? "Your Review" : `Reviewer: ${employees.find(e => e.id === rev.reviewerId)?.name || 'Admin'}`}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      <div style={{ fontSize:10, fontWeight:700, color:C.sub, letterSpacing:0.5, marginBottom:4 }}>TEAM REVIEWS</div>
+                      {teamReviews.length === 0 ? (
+                        <div style={{ fontSize:12, color:C.sub, fontStyle:"italic", padding:"10px 0" }}>No team reviews in this cycle.</div>
+                      ) : (
+                        teamReviews.map(rev => {
+                          const emp = employees.find(e => e.id === rev.empId);
+                          if (!emp) return null;
+                          const status = rev.status;
+                          const amIReviewer = rev.reviewerId === me.id;
+                          const isMyReview = rev.empId === me.id;
+                          
+                          return (
+                            <div key={rev.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", background: C.surf, borderRadius: 14, border: `1px solid ${C.bdr}` }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                <Av ini={emp.ini} sz={32} />
+                                <div>
+                                  <div style={{ fontSize: 13, fontWeight: 700 }}>{emp.name}</div>
+                                  <div style={{ fontSize: 10, color: C.sub }}>
+                                    {isMyReview ? "Your Review" : `Reviewer: ${employees.find(e => e.id === rev.reviewerId)?.name || 'Admin'}`}
+                                  </div>
+                                </div>
+                              </div>
+                              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                                <div style={{ textAlign:"right" }}>
+                                  <Badge s={status === "Completed" ? "approved" : (status === "Not Started" ? "rejected" : "pending")} />
+                                  {status === "Self Review Submitted" && amIReviewer && <div style={{ fontSize: 9, color: C.p, fontWeight: 800, marginTop: 4 }}>MANAGER REVIEW PENDING</div>}
+                                </div>
+                                <div style={{ display:"flex", gap:6 }}>
+                                  <button 
+                                    onClick={() => setReviewFlow({ cycle, emp, rev })}
+                                    style={{ background: C.p, color: "#fff", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, padding: "7px 14px", cursor: "pointer" }}
+                                  >
+                                    {status === "Completed" ? "View" : (amIReviewer ? "Evaluate" : "View")}
+                                  </button>
+                                  {isSA && status === "Completed" && (
+                                    <button 
+                                      onClick={() => {
+                                        setReviews(prev => prev.map(r => r.id === rev.id ? { ...r, status: "Manager Review Pending" } : r));
+                                        toast("Review reopened ✓");
+                                      }}
+                                      style={{ background: "none", border: `1px solid ${C.bdr}`, borderRadius: 8, fontSize: 11, fontWeight: 700, padding: "7px 14px", cursor: "pointer", color: C.sub }}
+                                    >
+                                      Reopen
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                              <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end" }}>
-                                <Badge s={status === "Completed" ? "approved" : (status === "Not Started" ? "rejected" : "pending")} />
-                                {status === "Self Review Submitted" && amIReviewer && <div style={{ fontSize: 9, color: C.p, fontWeight: 700, marginTop: 4 }}>REVIEW PENDING</div>}
-                                {status === "Not Started" && isMyReview && <div style={{ fontSize: 9, color: C.p, fontWeight: 700, marginTop: 4 }}>PENDING</div>}
-                              </div>
-                              <div style={{ display:"flex", gap:6 }}>
-                                {(isMyReview || amIReviewer || isSA) && (
-                                  <button 
-                                    onClick={() => setReviewFlow({ cycle, emp, rev })}
-                                    style={{ background: C.p, color: "#fff", border: "none", borderRadius: 6, fontSize: 10, fontWeight: 700, padding: "5px 10px", cursor: "pointer" }}
-                                  >
-                                    {status === "Completed" ? "View" : (isMyReview ? (status === "Not Started" ? "Continue Form" : "View Submission") : "Review")}
-                                  </button>
-                                )}
-                                {isSA && status === "Completed" && (
-                                  <button 
-                                    onClick={() => {
-                                      setReviews(prev => prev.map(r => r.id === rev.id ? { ...r, status: "Manager Review Pending" } : r));
-                                      toast("Review reopened ✓");
-                                    }}
-                                    style={{ background: "none", border: `1px solid ${C.bdr}`, borderRadius: 6, fontSize: 10, fontWeight: 700, padding: "5px 10px", cursor: "pointer", color: C.sub }}
-                                  >
-                                    Reopen
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })
+                      )}
                     </div>
                   </Card>
                 );
