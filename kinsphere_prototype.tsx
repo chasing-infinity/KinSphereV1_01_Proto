@@ -860,7 +860,7 @@ const SectionTitle = ({ children }) => (
 
 const Inp = ({ label, type="text", opts, ...rest }) => (
   <div style={{ marginBottom:13 }}>
-    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>{label.toUpperCase()}</label>
+    {label && <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>{label.toUpperCase()}</label>}
     {opts ? (
       <select style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }} {...rest}>
         {opts.map((o, idx) => {
@@ -880,7 +880,7 @@ const Inp = ({ label, type="text", opts, ...rest }) => (
 /** Label + input with fixed ₹ or % on the edge (salary modals). */
 const AffixField = ({ label, hint, prefix, suffix, type = "text", value, onChange, style: wrapStyle = {} }) => (
   <div style={{ marginBottom:0, ...wrapStyle }}>
-    <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:6, letterSpacing:.5 }}>{label.toUpperCase()}</label>
+    {label && <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:6, letterSpacing:.5 }}>{label.toUpperCase()}</label>}
     {hint ? <div style={{ fontSize:10, color:C.bdr, marginBottom:6, lineHeight:1.35 }}>{hint}</div> : null}
     <div style={{
       display:"flex", alignItems:"stretch", borderRadius:10, border:`1px solid ${C.bdr}`,
@@ -3373,8 +3373,8 @@ const LevelUp = ({
 
   const visibleGoals = goals.filter(g => {
     if (isSA) return true;
-    if (role === "Admin") return g.type === "Team" || g.ownerIds.includes(me.id);
-    return g.ownerIds.includes(me.id);
+    if (role === "Admin") return g.type === "Team" || g.ownerIds?.includes(me.id);
+    return g.ownerIds?.includes(me.id);
   });
 
   const calcGoalProgress = (markers) => {
@@ -3389,13 +3389,14 @@ const LevelUp = ({
   };
 
   const handleAddGoal = () => {
-    if (!newGoal.title || newGoal.ownerIds.length === 0 || !newGoal.due) return toast("Please fill required fields.");
+    if (!newGoal.title || (newGoal.ownerIds?.length || 0) === 0 || !newGoal.due) return toast("Please fill required fields.");
     const validMarkers = newGoal.markers.filter(m => m.title.trim() !== "");
     const g = { 
       ...newGoal, 
       id: Date.now(), 
       markers: validMarkers.map(m => ({ ...m, status: "Not Started", notes: [], creatorId: me.id })),
-      status: "Not Started" 
+      status: "Not Started",
+      ownerIds: newGoal.type === "Individual" ? [Number(newGoal.ownerIds[0])] : newGoal.ownerIds.map(Number)
     };
     setGoals(prev => [g, ...prev]);
     setShowGoalModal(false);
@@ -3732,10 +3733,10 @@ const LevelUp = ({
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Inp label="Type" opts={["Individual", "Team"]} value={newGoal.type} onChange={e => setNewGoal({ ...newGoal, type: e.target.value })} />
               <Inp label="Owner(s)" multiple={newGoal.type === "Team"} opts={employees.map(e => ({ label: e.name, value: e.id }))} 
-                value={newGoal.type === "Individual" ? newGoal.ownerIds[0] : newGoal.ownerIds} 
+                value={newGoal.ownerIds} 
                 onChange={e => {
-                  const val = Array.isArray(e.target.value) ? e.target.value : [Number(e.target.value)];
-                  setNewGoal({ ...newGoal, ownerIds: val });
+                  const values = Array.from((e.target as HTMLSelectElement).selectedOptions, option => Number(option.value));
+                  setNewGoal({ ...newGoal, ownerIds: values });
                 }} 
               />
             </div>
@@ -3802,7 +3803,7 @@ const LevelUp = ({
             <SectionTitle>Markers List</SectionTitle>
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               {goals.find(g => g.id === viewingGoal.id).markers.map(m => {
-                const canEdit = viewingGoal.ownerIds.includes(me.id) || isAdmin;
+                const canEdit = (viewingGoal.ownerIds || []).includes(me.id) || isAdmin;
                 return (
                   <div key={m.id} style={{ background:C.wht, border:`1px solid ${C.bdr}`, borderRadius:16, padding:16 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
@@ -3850,7 +3851,7 @@ const LevelUp = ({
                   </div>
                 );
               })}
-              {(viewingGoal.ownerIds.includes(me.id) || isAdmin) && (
+              {((viewingGoal.ownerIds || []).includes(me.id) || isAdmin) && (
                 <button 
                   onClick={() => {
                     const title = prompt("Marker Title?");
