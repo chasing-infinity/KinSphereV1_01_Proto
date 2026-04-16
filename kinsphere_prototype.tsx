@@ -861,17 +861,59 @@ const SectionTitle = ({ children }) => (
   <h3 style={{ margin:"0 0 14px", fontSize:14, fontWeight:700, color:C.txt, fontFamily:"Georgia,serif" }}>{children}</h3>
 );
 
+const MultiSelectInp = ({ opts, value = [], onChange, placeholder="Select..." }) => {
+  const [open, setOpen] = useState(false);
+  const toggle = (v) => {
+    let next;
+    if (value.includes(v)) next = value.filter(i => i !== v);
+    else next = [...value, v];
+    onChange({ target: { value: next } });
+  };
+  return (
+    <div style={{ position:"relative", width:"100%" }}>
+      <div 
+        onClick={() => setOpen(!open)}
+        style={{ padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <span>{value && value.length > 0 ? `${value.length} selected` : placeholder}</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      {open && (
+        <React.Fragment>
+          <div style={{ position:"fixed", inset:0, zIndex:9 }} onClick={() => setOpen(false)} />
+          <div style={{ position:"absolute", top:"100%", left:0, right:0, background:C.wht, border:`1px solid ${C.bdr}`, borderRadius:8, marginTop:4, maxHeight:200, overflowY:"auto", zIndex:10, boxShadow:"0 4px 12px rgba(0,0,0,0.1)" }}>
+            {opts.map((o, idx) => {
+               const l = typeof o === "object" ? o.label : o;
+               const v = typeof o === "object" ? o.value : o;
+               const isSel = value && value.includes(v);
+               return (
+                 <div key={idx} onClick={(e) => { e.stopPropagation(); toggle(v); }} style={{ padding:"8px 12px", fontSize:12, cursor:"pointer", display:"flex", alignItems:"center", gap:8, background: isSel ? `rgba(var(--p-rgb),.1)` : "transparent" }} onMouseEnter={e => !isSel && (e.currentTarget.style.background = C.surf)} onMouseLeave={e => !isSel && (e.currentTarget.style.background = "transparent")}>
+                   <input type="checkbox" checked={isSel || false} readOnly style={{ margin:0, pointerEvents:"none" }} />
+                   <span style={{ color: isSel ? C.p : C.txt }}>{l}</span>
+                 </div>
+               )
+            })}
+          </div>
+        </React.Fragment>
+      )}
+    </div>
+  )
+};
+
 const Inp = ({ label, type="text", opts, ...rest }) => (
   <div style={{ marginBottom:13 }}>
     {label && <label style={{ fontSize:10, fontWeight:700, color:C.sub, display:"block", marginBottom:5, letterSpacing:.5 }}>{label.toUpperCase()}</label>}
     {opts ? (
-      <select style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }} {...rest}>
-        {opts.map((o, idx) => {
-          const l = typeof o === 'object' ? o.label : o;
-          const v = typeof o === 'object' ? o.value : o;
-          return <option key={idx} value={v}>{l}</option>;
-        })}
-      </select>
+      rest.multiple ? (
+        <MultiSelectInp opts={opts} value={rest.value} onChange={rest.onChange} placeholder={rest.placeholder || "Select items..."} />
+      ) : (
+        <select style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, boxSizing:"border-box" }} {...rest}>
+          {opts.map((o, idx) => {
+            const l = typeof o === 'object' ? o.label : o;
+            const v = typeof o === 'object' ? o.value : o;
+            return <option key={idx} value={v}>{l}</option>;
+          })}
+        </select>
+      )
     ) : type==="textarea" ? (
       <textarea style={{ width:"100%", padding:"9px 11px", borderRadius:9, border:`1px solid ${C.bdr}`, background:C.surf, fontSize:12, color:C.txt, minHeight:70, boxSizing:"border-box", fontFamily:"sans-serif", resize:"vertical" }} {...rest} />
     ) : (
@@ -1962,7 +2004,7 @@ const OnboardingFlow = ({ setPage, onBack, employees }) => {
 };
 
 
-const ReportsAnalytics = ({ employees, leaves, saPayslips, offboardingItems, C }) => {
+const ReportsAnalytics = ({ employees, leaves, saPayslips, offboardingItems, C, pad=32, heroPadStd="24px 32px" }) => {
   const [activeSection, setActiveSection] = useState("overview");
 
   // ── derived data ─────────────────────────────────────────────────────
@@ -2085,23 +2127,31 @@ const ReportsAnalytics = ({ employees, leaves, saPayslips, offboardingItems, C }
   ];
 
   return (
-    <div style={{ padding:"0 32px 48px", maxWidth:900, margin:"0 auto", animation:"fadeIn 0.3s" }}>
-      {/* ── Header ── */}
-      <div style={{ padding:"40px 0 28px" }}>
-        <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:14,
-          padding:"5px 14px", borderRadius:999, background:C.surf, border:`1px solid ${C.bdr}`,
-          fontSize:11, fontWeight:700, letterSpacing:1, color:C.p, textTransform:"uppercase" }}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Executive View
+    <div style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", animation:"fadeIn 0.3s" }}>
+      {/* ── Hero ── */}
+      <div style={{
+        position:"relative", margin:`0 ${-pad}px 28px`, padding: heroPadStd,
+        background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
+        borderBottom:`1px solid ${C.bdr}`, overflow:"hidden",
+      }}>
+        <div style={{ position:"absolute", right:-40, top:-30, width:220, height:220, borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`, pointerEvents:"none" }} />
+        <div style={{ position:"relative", zIndex:1, maxWidth:900, margin:"0 auto" }}>
+           <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:14,
+             padding:"5px 14px", borderRadius:999, background:"rgba(var(--wht-rgb),.65)", border:`1px solid ${C.bdr}`,
+             fontSize:11, fontWeight:700, letterSpacing:1, color:C.p, textTransform:"uppercase" }}>
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+             Executive View
+           </div>
+           <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(24px, 3.5vw, 32px)", color:C.txt, margin:"0 0 8px", fontWeight:700, letterSpacing:"-0.02em" }}>Reports & Analytics</h1>
+           <p style={{ color:C.sub, fontSize:14, margin:0, lineHeight:1.6 }}>Workforce intelligence for leadership decisions. Updated in real-time.</p>
         </div>
-        <h1 style={{ fontFamily:"Georgia,serif", fontSize:30, color:C.txt, margin:"0 0 8px", fontWeight:700, letterSpacing:"-0.02em" }}>Reports & Analytics</h1>
-        <p style={{ color:C.sub, fontSize:14, margin:0, lineHeight:1.6 }}>Workforce intelligence for leadership decisions. Updated in real-time.</p>
       </div>
 
-      {/* ── Section tabs ── */}
-      <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:28, paddingBottom:20, borderBottom:`1px solid ${C.bdr}` }}>
-        {sections.map(s => <SectionBtn key={s.id} id={s.id} label={s.label} />)}
-      </div>
+      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        {/* ── Section tabs ── */}
+        <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:28, paddingBottom:20, borderBottom:`1px solid ${C.bdr}` }}>
+          {sections.map(s => <SectionBtn key={s.id} id={s.id} label={s.label} />)}
+        </div>
 
       {/* ══ WORKFORCE OVERVIEW ══════════════════════════════════════════ */}
       {activeSection === "overview" && (
@@ -2256,6 +2306,7 @@ const ReportsAnalytics = ({ employees, leaves, saPayslips, offboardingItems, C }
       )}
 
       <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}`}</style>
+        </div>
     </div>
   );
 };
@@ -4059,7 +4110,7 @@ const ProgressBar = ({ progress, height = 8, color = C.p }) => (
 const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBottom, narrow }) => {
   const isSA = role === "Super Admin";
   const [showModal, setShowModal] = useState(false);
-  const [newReq, setNewReq] = useState({ category: "Other", title: "", desc: "" });
+  const [newReq, setNewReq] = useState({ category: "Other", title: "", desc: "", tagged: [] });
   const [activeReqId, setActiveReqId] = useState(null);
   const [replyText, setReplyText] = useState("");
   
@@ -4077,6 +4128,7 @@ const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBo
       category: newReq.category,
       title: newReq.title,
       desc: newReq.desc,
+      tagged: newReq.tagged || [],
       status: "Open",
       assignedTo: null,
       timestamp: new Date().toLocaleString("en-IN", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit" }),
@@ -4084,7 +4136,7 @@ const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBo
     };
     setRequests(prev => [r, ...prev]);
     setShowModal(false);
-    setNewReq({ category: "Other", title: "", desc: "" });
+    setNewReq({ category: "Other", title: "", desc: "", tagged: [] });
     toast("Request submitted ✓");
   };
 
@@ -4124,17 +4176,27 @@ const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBo
   const activeReq = requests.find(r => r.id === activeReqId);
 
   return (
-    <div style={{ padding: `0 ${pad}px ${padBottom}px`, width: "100%", boxSizing: "border-box" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
-        <div>
-           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 8, padding: "4px 10px", borderRadius: 999, background: "rgba(var(--p-rgb),.1)", color: C.p, fontSize: 10, fontWeight: 700, letterSpacing: .5, textTransform: "uppercase" }}>
-             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg> Resolve Support
-           </div>
-           <h1 style={{ margin:0, fontSize:"clamp(24px, 3vw, 28px)", fontWeight:800, color:C.txt, letterSpacing:"-0.02em" }}>Resolve</h1>
-           <p style={{ margin:"6px 0 0", fontSize:13, color:C.sub }}>Track and resolve requests across the team</p>
+    <div style={{ padding: `0 ${pad}px ${padBottom}px`, width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
+      {/* ── Hero ── */}
+      <div style={{
+        position:"relative", margin:`0 ${-pad}px 28px`, padding: heroPadStd,
+        background:`linear-gradient(155deg, ${C.wht} 0%, ${C.surf} 38%, ${C.mid} 100%)`,
+        borderBottom:`1px solid ${C.bdr}`, overflow:"hidden",
+      }}>
+        <div style={{ position:"absolute", right:-40, top:-30, width:220, height:220, borderRadius:"50%", background:`radial-gradient(circle, rgba(var(--p-rgb),.25) 0%, transparent 70%)`, pointerEvents:"none" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
+          <div>
+             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 8, padding: "4px 10px", borderRadius: 999, background: "rgba(var(--wht-rgb),.65)", border: `1px solid ${C.bdr}`, fontSize: 10, fontWeight: 700, letterSpacing: .5, textTransform: "uppercase", color: C.p }}>
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg> Resolve Support
+             </div>
+             <h1 style={{ margin:0, fontFamily:"Georgia,serif", fontSize:"clamp(24px, 3.5vw, 32px)", fontWeight:800, color:C.txt, letterSpacing:"-0.02em" }}>Resolve</h1>
+             <p style={{ margin:"6px 0 0", fontSize:13, color:C.sub }}>Track and resolve requests across the team</p>
+          </div>
+          <Btn onClick={() => setShowModal(true)}>+ New Request</Btn>
         </div>
-        <Btn onClick={() => setShowModal(true)}>+ New Request</Btn>
       </div>
+      
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
 
       {isSA && (
          <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
@@ -4197,6 +4259,7 @@ const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBo
             <Inp label="Category" opts={cats} value={newReq.category} onChange={e => setNewReq({ ...newReq, category: e.target.value })} />
             <Inp label="Title" placeholder="Brief issue explanation" value={newReq.title} onChange={e => setNewReq({ ...newReq, title: e.target.value })} />
             <Inp label="Description" type="textarea" placeholder="Detail the issue..." value={newReq.desc} onChange={e => setNewReq({ ...newReq, desc: e.target.value })} />
+            <Inp label="Tag People" multiple={true} opts={employees.map(e => ({ label: e.name, value: e.id }))} value={newReq.tagged || []} onChange={e => setNewReq({ ...newReq, tagged: e.target.value })} placeholder="Mention cross-functional team members..." />
             
             <div>
               <label style={{ fontSize: 10, fontWeight: 700, color: C.sub }}>ATTACHMENTS (OPTIONAL)</label>
@@ -4226,7 +4289,16 @@ const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBo
                  
                  <div style={{ background: C.wht, padding: 16, borderRadius: 12, border: `1px solid ${C.bdr}`, fontSize: 13, lineHeight: 1.5 }}>
                    <div style={{ fontSize: 10, fontWeight: 700, color: C.sub, marginBottom: 8, letterSpacing: 0.5 }}>ORIGINAL REQUEST</div>
-                   {activeReq.desc}
+                   <div style={{ marginBottom: (activeReq.tagged && activeReq.tagged.length > 0) ? 12 : 0 }}>{activeReq.desc}</div>
+                   {activeReq.tagged && activeReq.tagged.length > 0 && (
+                     <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginTop:8, paddingTop:12, borderTop:`1px dashed ${C.bdr}` }}>
+                       {activeReq.tagged.map(tid => {
+                         const tEmp = employees.find(e => e.id === tid);
+                         if(!tEmp) return null;
+                         return <span key={tid} style={{ fontSize:11, background:`rgba(var(--p-rgb),.1)`, color:C.p, padding:"2px 8px", borderRadius:99, fontWeight:600 }}>@{tEmp.name}</span>
+                       })}
+                     </div>
+                   )}
                  </div>
               </div>
 
@@ -4281,6 +4353,7 @@ const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBo
           </div>
         </Modal>
       )}
+      </div>
     </div>
   );
 };
@@ -7935,6 +8008,8 @@ export default function App() {
               saPayslips={saPayslips}
               offboardingItems={offboardingItems}
               C={C}
+              pad={pad}
+              heroPadStd={heroPadStd}
             />
           </div>
         )}
