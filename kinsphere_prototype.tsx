@@ -3588,7 +3588,7 @@ const LevelUp = ({
 
       {/* --- REVIEWS --- */}
       {activeTab === "Reviews" && (
-        <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr" : "1fr 340px", gap: 28, alignItems: "flex-start" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: C.sub, letterSpacing: 1 }}>REVIEWS</div>
@@ -3703,30 +3703,6 @@ const LevelUp = ({
                 );
               })}
             </div>
-          </div>
-
-          {/* Quick Feedback Card */}
-          <Card style={{ position: "sticky", top: 20 }}>
-            <SectionTitle>Quick Feedback</SectionTitle>
-            <p style={{ fontSize: 12, color: C.sub, marginBottom: 16 }}>Lightweight recognition for everyday wins.</p>
-            
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
-              {quickFeedback.map(f => (
-                <div key={f.id} style={{ padding: 12, borderRadius: 12, background: C.bg, border: `1px solid ${C.bdr}` }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                      <Av ini={f.fromIni} sz={18} />
-                      <span style={{ fontSize: 11, fontWeight: 700 }}>{f.from}</span>
-                    </div>
-                    <span style={{ fontSize: 10, color: C.sub }}>{f.time}</span>
-                  </div>
-                  <p style={{ margin: 0, fontSize: 12, color: C.txt }}>{f.msg}</p>
-                </div>
-              ))}
-            </div>
-
-            <Btn onClick={() => toast("Feedback form coming soon...")} style={{ width: "100%" }}>Give Feedback</Btn>
-          </Card>
         </div>
       )}
 
