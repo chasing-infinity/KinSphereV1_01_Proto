@@ -618,6 +618,7 @@ const ICONS = {
   "Vibe Check": <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M9 14h6"/></svg>,
   "Reports & Analytics": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
   "Level Up": <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
+  Resolve: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>,
 };
 
 const NAV = [
@@ -634,6 +635,7 @@ const NAV = [
   { key:"Vibe Check" },
   { key:"Level Up" },
   { key:"Reports & Analytics" },
+  { key:"Resolve" },
   { key:"Settings" },
 ];
 
@@ -3703,6 +3705,7 @@ const LevelUp = ({
                 );
               })}
             </div>
+          </div>
         </div>
       )}
 
@@ -4053,6 +4056,235 @@ const ProgressBar = ({ progress, height = 8, color = C.p }) => (
   </div>
 );
 
+const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBottom, narrow }) => {
+  const isSA = role === "Super Admin";
+  const [showModal, setShowModal] = useState(false);
+  const [newReq, setNewReq] = useState({ category: "Other", title: "", desc: "" });
+  const [activeReqId, setActiveReqId] = useState(null);
+  const [replyText, setReplyText] = useState("");
+  
+  const [filterCat, setFilterCat] = useState("All");
+  const [filterStatus, setFilterStatus] = useState("All");
+  
+  const cats = ["Payroll", "Leave", "IT / Devices", "Documents", "Other"];
+  const statuses = ["Open", "In Progress", "Resolved"];
+
+  const handleCreate = () => {
+    if (!newReq.title || !newReq.desc) return toast("Title and Description are required");
+    const r = {
+      id: Date.now(),
+      empId: me.id,
+      category: newReq.category,
+      title: newReq.title,
+      desc: newReq.desc,
+      status: "Open",
+      assignedTo: null,
+      timestamp: new Date().toLocaleString("en-IN", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit" }),
+      thread: []
+    };
+    setRequests(prev => [r, ...prev]);
+    setShowModal(false);
+    setNewReq({ category: "Other", title: "", desc: "" });
+    toast("Request submitted ✓");
+  };
+
+  const handleReply = () => {
+    if (!replyText.trim()) return;
+    setRequests(prev => prev.map(r => r.id === activeReqId ? {
+      ...r,
+      thread: [...r.thread, { sender: me.name, type: "msg", msg: replyText, time: "Just now" }]
+    } : r));
+    setReplyText("");
+  };
+
+  const updateStatus = (id, newStatus) => {
+    setRequests(prev => prev.map(r => r.id === id ? {
+      ...r, status: newStatus,
+      thread: [...r.thread, { sender: "System", type: "event", msg: `Status changed to ${newStatus} by ${me.name}`, time: "Just now" }]
+    } : r));
+    toast(`Status updated to ${newStatus} ✓`);
+  };
+
+  const assignReq = (id, assigneeId) => {
+    const assigneeName = assigneeId ? employees.find(e => e.id === Number(assigneeId))?.name : "Unassigned";
+    setRequests(prev => prev.map(r => r.id === id ? {
+      ...r, assignedTo: assigneeId ? Number(assigneeId) : null,
+      thread: [...r.thread, { sender: "System", type: "event", msg: `Assigned to ${assigneeName} by ${me.name}`, time: "Just now" }]
+    } : r));
+    toast(`Assigned to ${assigneeName} ✓`);
+  };
+
+  const visible = requests.filter(r => {
+    if (!isSA && r.empId !== me.id) return false;
+    if (filterCat !== "All" && r.category !== filterCat) return false;
+    if (filterStatus !== "All" && r.status !== filterStatus) return false;
+    return true;
+  });
+
+  const activeReq = requests.find(r => r.id === activeReqId);
+
+  return (
+    <div style={{ padding: `0 ${pad}px ${padBottom}px`, width: "100%", boxSizing: "border-box" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
+        <div>
+           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 8, padding: "4px 10px", borderRadius: 999, background: "rgba(var(--p-rgb),.1)", color: C.p, fontSize: 10, fontWeight: 700, letterSpacing: .5, textTransform: "uppercase" }}>
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg> Resolve Support
+           </div>
+           <h1 style={{ margin:0, fontSize:"clamp(24px, 3vw, 28px)", fontWeight:800, color:C.txt, letterSpacing:"-0.02em" }}>Resolve</h1>
+           <p style={{ margin:"6px 0 0", fontSize:13, color:C.sub }}>Track and resolve requests across the team</p>
+        </div>
+        <Btn onClick={() => setShowModal(true)}>+ New Request</Btn>
+      </div>
+
+      {isSA && (
+         <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+            <select value={filterCat} onChange={e => setFilterCat(e.target.value)} style={{ padding: "8px 12px", borderRadius: 8, border: `1px solid ${C.bdr}`, fontSize: 12 }}>
+               <option value="All">All Categories</option>
+               {cats.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ padding: "8px 12px", borderRadius: 8, border: `1px solid ${C.bdr}`, fontSize: 12 }}>
+               <option value="All">All Statuses</option>
+               {statuses.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+         </div>
+      )}
+
+      <div style={{ background: C.wht, borderRadius: 16, border: `1px solid ${C.bdr}`, overflow: "hidden" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+           <thead>
+             <tr style={{ background: C.surf, borderBottom: `1px solid ${C.bdr}`, fontSize: 10, fontWeight: 700, color: C.sub, textAlign: "left" }}>
+               <th style={{ padding: "14px 20px" }}>REQUEST</th>
+               <th style={{ padding: "14px 20px" }}>STATUS</th>
+               <th style={{ padding: "14px 20px" }}>REQUESTED BY</th>
+               <th style={{ padding: "14px 20px" }}>ASSIGNED TO</th>
+               <th style={{ padding: "14px 20px", textAlign:"right" }}>ACTION</th>
+             </tr>
+           </thead>
+           <tbody>
+             {visible.length === 0 ? (
+               <tr><td colSpan={5} style={{ textAlign: "center", padding: 40, color: C.sub, fontSize: 13 }}>No requests found.</td></tr>
+             ) : visible.map(r => {
+               const emp = employees.find(e => e.id === r.empId);
+               const assignee = r.assignedTo ? employees.find(e => e.id === r.assignedTo) : null;
+               return (
+                 <tr key={r.id} style={{ borderBottom: `1px solid ${C.surf}`, cursor: "pointer", transition: ".15s background" }} onClick={() => setActiveReqId(r.id)} onMouseEnter={e => e.currentTarget.style.background = C.bg} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                   <td style={{ padding: "14px 20px" }}>
+                     <div style={{ fontSize: 13, fontWeight: 700, color: C.txt }}>{r.title}</div>
+                     <div style={{ fontSize: 11, color: C.sub, marginTop: 4 }}>{r.category} • {r.timestamp}</div>
+                   </td>
+                   <td style={{ padding: "14px 20px" }}>
+                     <Badge s={r.status === "Open" ? "pending" : (r.status === "Resolved" ? "approved" : "pending")} />
+                   </td>
+                   <td style={{ padding: "14px 20px" }}>
+                     {emp ? <div style={{ display:"flex", alignItems:"center", gap:8 }}><Av ini={emp.ini} sz={24} /><span style={{ fontSize:12, fontWeight:600 }}>{emp.name}</span></div> : "—"}
+                   </td>
+                   <td style={{ padding: "14px 20px" }}>
+                     {assignee ? <div style={{ display:"flex", alignItems:"center", gap:8 }}><Av ini={assignee.ini} sz={24} /><span style={{ fontSize:12, fontWeight:600 }}>{assignee.name}</span></div> : <span style={{ fontSize:12, color:C.sub }}>Unassigned</span>}
+                   </td>
+                   <td style={{ padding: "14px 20px", textAlign:"right" }}>
+                     <Btn variant="ghost" style={{ padding: "6px 12px", fontSize: 11 }}>View</Btn>
+                   </td>
+                 </tr>
+               );
+             })}
+           </tbody>
+        </table>
+      </div>
+
+      {showModal && (
+        <Modal title="Submit a Request" onClose={() => setShowModal(false)} width={500}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <Inp label="Category" opts={cats} value={newReq.category} onChange={e => setNewReq({ ...newReq, category: e.target.value })} />
+            <Inp label="Title" placeholder="Brief issue explanation" value={newReq.title} onChange={e => setNewReq({ ...newReq, title: e.target.value })} />
+            <Inp label="Description" type="textarea" placeholder="Detail the issue..." value={newReq.desc} onChange={e => setNewReq({ ...newReq, desc: e.target.value })} />
+            
+            <div>
+              <label style={{ fontSize: 10, fontWeight: 700, color: C.sub }}>ATTACHMENTS (OPTIONAL)</label>
+              <div style={{ padding: 14, border: `1px dashed ${C.bdr}`, borderRadius: 10, background: C.bg, cursor: "pointer", textAlign: "center", fontSize: 12, marginTop: 6 }} onClick={() => toast("File browser mock opened")}>Click to select file</div>
+            </div>
+
+            <Btn onClick={handleCreate} style={{ padding: 12 }}>Submit Request</Btn>
+          </div>
+        </Modal>
+      )}
+
+      {activeReq && (
+        <Modal title="Request Details" onClose={() => setActiveReqId(null)} width={800} pad={0}>
+          <div style={{ display: "flex", height: "70vh", flexDirection: narrow ? "column" : "row" }}>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", borderRight: narrow ? "none" : `1px solid ${C.bdr}` }}>
+              <div style={{ padding: "20px 24px", borderBottom: `1px solid ${C.bdr}`, background: C.surf }}>
+                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                   <div>
+                     <h2 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 800 }}>{activeReq.title}</h2>
+                     <div style={{ fontSize: 11, color: C.sub, display: "flex", gap: 12 }}>
+                       <span>{activeReq.category}</span>
+                       <span>{activeReq.timestamp}</span>
+                     </div>
+                   </div>
+                   <Badge s={activeReq.status === "Open" ? "pending" : (activeReq.status === "Resolved" ? "approved" : "pending")} />
+                 </div>
+                 
+                 <div style={{ background: C.wht, padding: 16, borderRadius: 12, border: `1px solid ${C.bdr}`, fontSize: 13, lineHeight: 1.5 }}>
+                   <div style={{ fontSize: 10, fontWeight: 700, color: C.sub, marginBottom: 8, letterSpacing: 0.5 }}>ORIGINAL REQUEST</div>
+                   {activeReq.desc}
+                 </div>
+              </div>
+
+              <div style={{ flex: 1, padding: "20px 24px", overflowY: "auto", background: C.bg, display: "flex", flexDirection: "column", gap: 16 }}>
+                 {activeReq.thread.length === 0 ? (
+                   <div style={{ textAlign: "center", fontStyle: "italic", color: C.sub, fontSize: 12, margin: "auto 0" }}>No replies yet.</div>
+                 ) : activeReq.thread.map((t, idx) => {
+                   if (t.type === "event") {
+                     return <div key={idx} style={{ textAlign: "center", fontSize: 10, color: C.sub, fontWeight: 600 }}>— {t.msg} —</div>
+                   }
+                   const isMe = t.sender === me.name;
+                   return (
+                     <div key={idx} style={{ display: "flex", flexDirection: "column", alignItems: isMe ? "flex-end" : "flex-start" }}>
+                       <div style={{ fontSize: 10, color: C.sub, marginBottom: 4, fontWeight: 600 }}>{t.sender} • {t.time}</div>
+                       <div style={{ background: isMe ? C.p : C.wht, color: isMe ? "#fff" : C.txt, padding: "10px 14px", borderRadius: 14, border: isMe ? "none" : `1px solid ${C.bdr}`, fontSize: 13 }}>
+                         {t.msg}
+                       </div>
+                     </div>
+                   )
+                 })}
+              </div>
+
+              <div style={{ padding: 16, background: C.wht, borderTop: `1px solid ${C.bdr}`, display: "flex", gap: 12 }}>
+                 <input value={replyText} onChange={e => setReplyText(e.target.value)} placeholder="Type a reply..." style={{ flex: 1, padding: "10px 14px", borderRadius: 8, border: `1px solid ${C.bdr}`, fontSize: 13, outline: "none" }} onKeyDown={e => e.key === "Enter" && handleReply()} />
+                 <Btn variant="outline" onClick={() => toast("Upload mock")} style={{ padding: "0 14px" }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></Btn>
+                 <Btn onClick={handleReply} style={{ padding: "0 20px" }}>Send</Btn>
+              </div>
+            </div>
+
+            {isSA && (
+              <div style={{ width: narrow ? "100%" : 260, padding: 24, background: C.surf }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: C.sub, letterSpacing: 0.5, marginBottom: 16 }}>ADMIN ACTIONS</div>
+                
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: C.txt, display: "block", marginBottom: 8 }}>CHANGE STATUS</label>
+                  <select value={activeReq.status} onChange={e => updateStatus(activeReq.id, e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: `1px solid ${C.bdr}`, fontSize: 13, outline: "none" }}>
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: C.txt, display: "block", marginBottom: 8 }}>ASSIGN TO</label>
+                  <select value={activeReq.assignedTo || ""} onChange={e => assignReq(activeReq.id, e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: `1px solid ${C.bdr}`, fontSize: 13, outline: "none" }}>
+                    <option value="">Unassigned</option>
+                    {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
+
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [page,       setPage]     = useState("Dashboard");
@@ -4064,6 +4296,10 @@ export default function App() {
   const [saPayslips, setSaPayslips] = useState(DEMO_PAYSLIPS);
   const [leaves,     setLeaves]   = useState(INIT_LEAVES);
   const [holidays, setHolidays]   = useState(INIT_HOLIDAYS);
+  const [resolveRequests, setResolveRequests] = useState([
+    { id: 1, empId: 1, category: "IT / Devices", title: "New monitor request", desc: "My old monitor is flickering", status: "Open", assignedTo: null, timestamp: "Today, 10:00 AM", thread: [] },
+    { id: 2, empId: 2, category: "Payroll", title: "Missing tax document", desc: "I cannot find my Form 16", status: "In Progress", assignedTo: 1, timestamp: "Yesterday, 2:30 PM", thread: [{ sender: "System", type: "event", msg: "Assigned to Aditi" }] },
+  ]);
 
   const [leaveApply, setLeaveApply] = useState({
     forEmpId: ME_ID,
@@ -7773,6 +8009,15 @@ export default function App() {
             padBottom={padBottom}
             heroPadStd={heroPadStd}
             narrow={narrow}
+          />
+        )}
+
+        {/* ─ RESOLVE ─ */}
+        {page === "Resolve" && (
+          <Resolve 
+            requests={resolveRequests} setRequests={setResolveRequests}
+            employees={employees} role={role} me={me} toast={toast} 
+            pad={pad} padBottom={padBottom} narrow={narrow}
           />
         )}
 
