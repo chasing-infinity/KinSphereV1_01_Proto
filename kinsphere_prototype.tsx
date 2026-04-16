@@ -774,9 +774,10 @@ const Badge = ({ s }) => {
     pending:  { bg:"#fef3c7", c:"#7a5a00", lbl:"Pending"  },
     approved: { bg:C.surf, c:"#2d5a3a", lbl:"Approved" },
     rejected: { bg:"#e8e8e3", c:"#555550", lbl:"Rejected" },
+    not_started: { bg:"#f3f4f6", c:"#4b5563", lbl:"Not Started" },
   };
   const x = m[s]||m.pending;
-  return <span style={{ background:x.bg, color:x.c, padding:"3px 10px", borderRadius:12, fontSize:10, fontWeight:700, letterSpacing:.5 }}>{x.lbl.toUpperCase()}</span>;
+  return <span style={{ background:x.bg, color:x.c, padding:"3px 10px", borderRadius:12, fontSize:10, fontWeight:700, letterSpacing:.5, whiteSpace:"nowrap" }}>{x.lbl.toUpperCase()}</span>;
 };
 
 const Pill = ({ txt, bg, c }) => (
@@ -3549,7 +3550,7 @@ const LevelUp = ({
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: C.p, letterSpacing: 0.5 }}>{g.type.toUpperCase()}</div>
-                    <Badge s={g.status === "In Progress" ? "pending" : g.status === "Completed" ? "approved" : "rejected"} />
+                    <Badge s={g.status === "In Progress" ? "pending" : g.status === "Completed" ? "approved" : "not_started"} />
                   </div>
                   <h3 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: C.txt }}>{g.title}</h3>
                   <p style={{ margin: "0 0 16px", fontSize: 12, color: C.sub, lineHeight: 1.5, height:36, overflow:"hidden" }}>{g.desc}</p>
@@ -3670,7 +3671,7 @@ const LevelUp = ({
                               </div>
                               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                                 <div style={{ textAlign:"right" }}>
-                                  <Badge s={status === "Completed" ? "approved" : (status === "Not Started" ? "rejected" : "pending")} />
+                                  <Badge s={status === "Completed" ? "approved" : (status === "Not Started" ? "not_started" : "pending")} />
                                   {status === "Self Review Submitted" && amIReviewer && <div style={{ fontSize: 9, color: C.p, fontWeight: 800, marginTop: 4 }}>MANAGER REVIEW PENDING</div>}
                                 </div>
                                 <div style={{ display:"flex", gap:6 }}>
