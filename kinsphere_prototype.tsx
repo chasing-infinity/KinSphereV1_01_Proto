@@ -4107,7 +4107,7 @@ const ProgressBar = ({ progress, height = 8, color = C.p }) => (
   </div>
 );
 
-const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBottom, narrow }) => {
+const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBottom, narrow, heroPadStd }) => {
   const isSA = role === "Super Admin";
   const [showModal, setShowModal] = useState(false);
   const [newReq, setNewReq] = useState({ category: "Other", title: "", desc: "", tagged: [] });
@@ -8092,7 +8092,7 @@ export default function App() {
           <Resolve 
             requests={resolveRequests} setRequests={setResolveRequests}
             employees={employees} role={role} me={me} toast={toast} 
-            pad={pad} padBottom={padBottom} narrow={narrow}
+            pad={pad} padBottom={padBottom} narrow={narrow} heroPadStd={heroPadStd}
           />
         )}
 
