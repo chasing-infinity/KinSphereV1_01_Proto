@@ -3388,6 +3388,7 @@ const LevelUp = ({
     return Math.round((completedCount / markers.length) * 100);
   };
 
+  const handleAddGoal = () => {
     const selectedOwners = newGoal.ownerIds || [];
     const validOwners = newGoal.type === "Individual" 
       ? [Number(selectedOwners[0])].filter(n => !isNaN(n))
@@ -3453,6 +3454,31 @@ const LevelUp = ({
        return g;
      }));
      toast("New marker added ✓");
+  };
+
+  const handleCreateCycle = () => {
+    if (!newCycle.name || !newCycle.start || !newCycle.end) return toast("Please fill cycle name and dates.");
+    if (newCycle.assignments.length === 0) return toast("Please assign at least one employee.");
+
+    const cycleId = Date.now();
+    const c = { id: cycleId, name: newCycle.name, start: newCycle.start, end: newCycle.end, baseOnGoals: newCycle.baseOnGoals };
+    setReviewCycles(prev => [c, ...(prev || [])]);
+
+    const newRevs = newCycle.assignments.map((ass, i) => ({
+      id: cycleId + i + 1,
+      cycleId,
+      empId: ass.empId,
+      reviewerId: ass.reviewerId,
+      status: "Not Started",
+      managerRating: 0,
+      selfReview: { achievements: "", areasForImprovement: "",  goalsNextCycle: "" },
+      managerReview: { feedback: "", rating: 0 }
+    }));
+    
+    setReviews(prev => [...newRevs, ...(prev || [])]);
+    setShowCycleModal(false);
+    setNewCycle({ name: "", start: "", end: "", baseOnGoals: false, assignments: [] });
+    toast("Review cycle launched ✓");
   };
 
   const stats = {
