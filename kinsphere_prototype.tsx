@@ -4358,9 +4358,98 @@ const Resolve = ({ requests, setRequests, employees, role, me, toast, pad, padBo
   );
 };
 
+
+const getThemeCss = (themeName: string, isDark: boolean) => {
+  const isSpace = true; // Forcing space for now
+  return `
+    :root {
+      --p: #38bdf8;
+      --p2: #818cf8;
+      --bg: ${isSpace ? '#020617' : '#f8fafc'};
+      --sb: ${isSpace ? '#0b1120' : '#1e293b'};
+      --surf: ${isSpace ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.8)'};
+      --bdr: ${isSpace ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'};
+      --txt: ${isSpace ? '#f1f5f9' : '#1e293b'};
+      --sub: ${isSpace ? '#94a3b8' : '#64748b'};
+    }
+    
+    @keyframes orbit {
+      from { transform: rotate(0deg) translateX(var(--distance)) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(var(--distance)) rotate(-360deg); }
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); }
+      70% { box-shadow: 0 0 0 20px rgba(56, 189, 248, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .glass {
+      backdrop-filter: blur(20px);
+      background: var(--surf);
+      border: 1px solid var(--bdr);
+    }
+  `;
+};
+
+const Planet = ({ nav, index, total, onSelect, isActive, C, scale }) => {
+  const angle = (index / total) * 360;
+  const distance = scale === 'small' ? '140px' : '220px';
+  const size = scale === 'small' ? '40px' : '60px';
+  
+  return (
+    <div 
+      onClick={() => onSelect(nav.key)}
+      style={{
+        position: 'absolute',
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        zIndex: 10,
+        '--distance': distance,
+        animation: `orbit ${20 + index * 2}s linear infinite`,
+        boxShadow: isActive ? '0 0 20px var(--p)' : 'none',
+        border: `1px solid ${isActive ? 'var(--p)' : 'var(--bdr)'}`,
+        background: isActive ? 'var(--p)' : 'var(--surf)',
+        backdropFilter: 'blur(10px)',
+      } as any}
+    >
+      <div style={{ transform: 'scale(1.2)', color: isActive ? '#fff' : 'var(--p)' }}>
+        {ICONS[nav.key]}
+      </div>
+      <div style={{
+        position: 'absolute',
+        top: '110%',
+        whiteSpace: 'nowrap',
+        fontSize: '10px',
+        fontWeight: 700,
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
+        color: isActive ? 'var(--p)' : 'var(--sub)',
+        opacity: scale === 'small' ? 0 : 1,
+      }}>
+        {nav.key}
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [page,       setPage]     = useState("Dashboard");
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [page,       setPage]     = useState("");
   const [role,       setRole]     = useState("Super Admin");
   const isSA  = role === "Super Admin";
   const isAdmin = role === "Admin" || role === "Super Admin";
@@ -4923,505 +5012,113 @@ export default function App() {
   const myPendingTaggedApprovals = leaves.filter(l => canActOnTaggedLeave(l, me.name, employees));
   const allPendingLeaves = leaves.filter(l => l.status === "pending");
   const pendingApprovalsForDashboard = isSA ? allPendingLeaves : myPendingTaggedApprovals;
-  const [dummy, setDummy] = useState(null);
-  const dashDateLabel = new Date().toLocaleDateString("en-IN", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
-  const todayISO = new Date().toISOString().slice(0, 10);
-  const onLeaveTodayCount = leaves.filter(
-    l => l.status === "approved" && l.fromISO <= todayISO && l.toISO >= todayISO
-  ).length;
-  const navItems = navItemsForRole(isSA, isAdmin);
-  const myLeaves = leaves.filter(l => l.empId === ME_ID);
-  const saPayslipRows = saPayslips.filter(p =>
-    p.year === payYear && (payMonthFilter === null || p.month === payMonthFilter)
-  ).sort((a, b) => a.month - b.month || a.name.localeCompare(b.name));
-  const myPayslipRows = saPayslips.filter(p => p.empId === ME_ID && p.year === payYear && p.released)
-    .sort((a, b) => b.month - a.month);
-  const onEmpProfilePage = page === "Employees" || page === "My Profile";
-
+  
   useEffect(() => {
-    if (!isAdmin && page === "Employees") setPage("My Profile");
-    if (isAdmin && page === "My Profile") setPage("Employees");
-  }, [role, isAdmin, page]);
-
-  useEffect(() => {
-    setNavOpen(false);
-  }, [page]);
-
-  useEffect(()=>{ if(chatRef.current) chatRef.current.scrollTop=chatRef.current.scrollHeight; },[msgs]);
-
-  useEffect(() => {
-    if (!showLeave) return;
-    setLeaveApply({
-      forEmpId: ME_ID,
-      type: "Sick Leave",
-      from: "",
-      to: "",
-      approver: "",
-      reason: "",
-      halfDay: false,
-      halfDayPart: "First half",
-    });
-  }, [showLeave]);
-
-  const sendMsg = () => {
-    if(!input.trim()) return;
-    const q=input; setInput("");
-    setMsgs(p=>[...p,{from:"me",txt:q}]);
-    setTimeout(()=>setMsgs(p=>[...p,{from:"ai",txt:`I hear you. It sounds like "${q.slice(0,40)}${q.length>40?"...":""}" is weighing on you. Would you like to unpack that a bit more, or just sit with it for now?`}]),800);
-  };
-
-  const mobileHeaderTop = "calc(52px + env(safe-area-inset-top, 0px))";
-
-  if (!isLoggedIn) {
-    return <LoginScreen onLogin={(r) => { setRole(r); setIsLoggedIn(true); setPage("Dashboard"); }} logoUrl={companyLogoUrl} tagline={companyTagline} />;
-  }
+    setIsLoggedIn(true);
+    setPage("");
+  }, []);
 
   return (
     <div style={{
-      display:"flex",
-      flexDirection: narrow ? "column" : "row",
-      height:"100vh",
-      maxHeight:"100dvh",
-      background:C.bg,
-      fontFamily:"'Inter',system-ui,sans-serif",
-      overflow:"hidden",
-      fontSize:13,
-      color:C.txt,
-      position:"relative",
+      width: '100vw',
+      height: '100vh',
+      background: 'radial-gradient(circle at center, #0B1120 0%, #020617 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      color: '#fff',
+      position: 'relative',
+      fontFamily: "'Inter', sans-serif",
     }}>
-      {/* ─ STEP 3: E-SIGNATURE OVERLAY ─ */}
-      {signId && (() => {
-        const docToSign = papers.find(p => p.id === signId);
-        if (!docToSign) return null;
-        return (
-          <div style={{ position:"fixed", inset:0, zIndex:2000, background:"#f9fafb", display:"flex", flexDirection:"column", animation:"fadeIn 0.2s" }}>
-            <style>{`@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }`}</style>
-            <div style={{ padding:"16px 24px", background:"#fff", borderBottom:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between", alignItems:"center", boxShadow:"0 1px 3px rgba(0,0,0,.05)" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ width:32, height:32, borderRadius:8, background:C.p, display:"flex", alignItems:"center", justifyContent:"center", color:"#2a3326", fontWeight:800 }}>KS</div>
-                <div>
-                  <div style={{ fontSize:14, fontWeight:700, color:C.txt }}>Sign Document</div>
-                  <div style={{ fontSize:11, color:C.sub }}>{docToSign.name} • KinSphere Document Center</div>
-                </div>
-              </div>
-              <button onClick={() => { setSignId(null); setSigValue(""); }} style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:8, padding:"6px 14px", fontSize:11, fontWeight:600, cursor:"pointer" }}>✕ Cancel</button>
-            </div>
-            
-            <div style={{ flex:1, overflowY:"auto", padding: narrow ? "20px 14px" : "40px", display:"flex", justifyContent:"center", background:C.bg }}>
-              <div style={{ background:"#fff", width:"100%", maxWidth:800, padding: narrow ? "40px 24px" : "80px 60px", boxShadow:"0 4px 30px rgba(0,0,0,.06)", borderRadius:4, border:`1px solid ${C.bdr}`, position:"relative", height:"fit-content" }}>
-                <div style={{ position:"absolute", top:20, right:30, fontSize:10, fontWeight:700, color:C.bdr, letterSpacing:1 }}>OFFICIAL COPY</div>
-                
-                <h2 style={{ fontFamily:"Georgia,serif", fontSize:24, textAlign:"center", marginBottom:40 }}>{docToSign.name}</h2>
-                <pre style={{ whiteSpace:"pre-wrap", fontFamily:"Georgia, serif", fontSize:14, lineHeight:1.9, color:C.txt, margin:0 }}>{docToSign.filledBody}</pre>
-                
-                <div style={{ marginTop:80, paddingTop:40, borderTop:`2px solid ${C.bg}` }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:16 }}>
-                    <div>
-                      <div style={{ fontSize:10, fontWeight:700, color:C.p, letterSpacing:1.5, marginBottom:4 }}>SIGNATURE</div>
-                      <div style={{ fontSize:11, color:C.sub }}>Type or draw your official signature below</div>
-                    </div>
-                    <div style={{ display:"flex", gap:4, background:C.surf, padding:3, borderRadius:10 }}>
-                      <button onClick={()=>setSigType("type")} style={{ border:"none", borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:700, cursor:"pointer", background: sigType==="type"?"#fff":"transparent", color: sigType==="type"?C.p:C.sub }}>Type</button>
-                      <button onClick={()=>setSigType("draw")} style={{ border:"none", borderRadius:8, padding:"4px 10px", fontSize:10, fontWeight:700, cursor:"pointer", background: sigType==="draw"?"#fff":"transparent", color: sigType==="draw"?C.p:C.sub }}>Draw</button>
-                    </div>
-                  </div>
-                  
-                  <div style={{ background:C.bg, borderRadius:16, border:`2px dashed ${C.bdr}`, padding:30, textAlign:"center" }}>
-                    {sigType === "type" ? (
-                      <input 
-                        type="text"
-                        value={sigValue}
-                        onChange={e => setSigValue(e.target.value)}
-                        placeholder="Type Full Name..."
-                        style={{ width:"100%", background:"none", border:"none", borderBottom:`2px solid ${C.p}`, textAlign:"center", fontSize:32, color:C.txt, fontFamily:"'Georgia', serif", fontStyle:"italic", outline:"none", padding:10 }}
-                      />
-                    ) : (
-                      <div style={{ height:80, display:"flex", alignItems:"center", justifyContent:"center", color:C.bdr, fontSize:12, fontStyle:"italic" }}>
-                        [ Move mouse or use touch to draw signature ]
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div style={{ marginTop:40, textAlign:"center" }}>
-                    <Btn 
-                      disabled={sigType==="type" && !sigValue.trim()} 
-                      style={{ padding:"14px 40px", fontSize:14, boxShadow:"0 4px 14px rgba(0,0,0,.1)" }}
-                      onClick={() => {
-                        const date = new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" });
-                        setPapers(papers.map(p => p.id === signId ? { ...p, status:"signed", date } : p));
-                        setSignId(null);
-                        setSigValue("");
-                        toast("Document Signed & Completed! ✓");
-                      }}
-                    >
-                      Sign & Complete Document
-                    </Btn>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
-      {narrow && (
-        <header
-          style={{
-            flexShrink:0,
-            display:"flex",
-            alignItems:"center",
-            gap:12,
-            minHeight: mobileHeaderTop,
-            padding:"8px 14px",
-            paddingTop:"max(8px, env(safe-area-inset-top, 0px))",
-            background:C.dk,
-            borderBottom:`1px solid ${C.dk2}`,
-            zIndex:210,
-            boxSizing:"border-box",
-          }}
-        >
-          <button
-            type="button"
-            aria-label={navOpen ? "Close menu" : "Open menu"}
-            onClick={() => setNavOpen(o => !o)}
-            style={{
-              width:42,
-              height:38,
-              borderRadius:9,
-              border:`1px solid ${C.dk2}`,
-              background:"rgba(255,255,255,.08)",
-              color:C.dkAcc,
-              fontSize:18,
-              cursor:"pointer",
-              display:"flex",
-              alignItems:"center",
-              justifyContent:"center",
-              flexShrink:0,
-            }}
-          >
-            {navOpen ? "✕" : "☰"}
-          </button>
-          <div style={{ minWidth:0, flex:1 }}>
-            <div style={{ color:"#fff", fontWeight:700, fontSize:15, fontFamily:"Georgia,serif", lineHeight:1.2 }}>KinSphere</div>
-            <div style={{ color:C.dkAcc, fontSize:10, marginTop:2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{page}</div>
-          </div>
-        </header>
-      )}
-      {narrow && navOpen && (
-        <div
-          role="presentation"
-          aria-hidden
-          onClick={() => setNavOpen(false)}
-          style={{
-            position:"fixed",
-            top: mobileHeaderTop,
-            left:0,
-            right:0,
-            bottom:0,
-            background:"rgba(var(--shadow-rgb),.45)",
-            zIndex:199,
-          }}
-        />
-      )}
+      <style>{getThemeCss(theme, isDark)}</style>
 
-      {/* ── SIDEBAR ── */}
-      <aside style={{
-        width: narrow ? 268 : 214,
-        background:C.sb,
-        display:"flex",
-        flexDirection:"column",
-        flexShrink:0,
-        boxSizing:"border-box",
-        ...(narrow ? {
-          position:"fixed",
-          top: mobileHeaderTop,
-          left: 0,
-          bottom: 0,
-          zIndex: 200,
-          transform: navOpen ? "translateX(0)" : "translateX(-100%)",
-          transition: "transform 0.22s ease",
-          boxShadow: navOpen ? "6px 0 28px rgba(0,0,0,.22)" : "none",
-        } : {}),
-      }}>
-        {/* Brand */}
-        <div style={{ padding:"18px 16px 14px", borderBottom:`1px solid ${C.dk2}` }}>
-          <input
-            ref={logoInputRef}
-            type="file"
-            accept="image/*"
-            style={{ display:"none" }}
-            onChange={e => {
-              const f = e.target.files?.[0];
-              if (!f || !f.type.startsWith("image/")) return;
-              const r = new FileReader();
-              r.onload = () => setCompanyLogoUrl(String(r.result));
-              r.readAsDataURL(f);
-              e.target.value = "";
-            }}
-          />
-          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <div
-              style={{ position:"relative", width:36, height:36, borderRadius:8, overflow:"hidden", flexShrink:0, border:`1px solid ${C.dk2}` }}
-              onMouseEnter={()=>isSA && setBrandLogoHovered(true)}
-              onMouseLeave={()=>setBrandLogoHovered(false)}
-            >
-              {companyLogoUrl ? (
-                <img src={companyLogoUrl} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
-              ) : (
-                <div style={{ width:"100%", height:"100%", background:C.p, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, color:"#fff", fontSize:11 }}>KS</div>
-              )}
-              {isSA && (
-                <button
-                  type="button"
-                  title="Upload company logo"
-                  onClick={()=>logoInputRef.current?.click()}
-                  style={{
-                    position:"absolute", inset:0, border:"none", borderRadius:7, cursor:"pointer",
-                    background:"rgba(var(--shadow-rgb),.65)", display:"flex", alignItems:"center", justifyContent:"center", padding:0,
-                    opacity: brandLogoHovered ? 1 : 0, transition:"opacity .15s ease",
-                  }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="17 8 12 3 7 8" />
-                    <line x1="12" y1="3" x2="12" y2="15" />
-                  </svg>
-                </button>
-              )}
-            </div>
-            <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", justifyContent:"center", gap:3 }}>
-              <div style={{ color:"#fff", fontWeight:700, fontSize:14, fontFamily:"Georgia,serif", lineHeight:1.25, margin:0 }}>KinSphere</div>
-              <div style={{ display:"flex", alignItems:"center", gap:5, minHeight:14 }}>
-                <span style={{ color:C.dkAcc, fontSize:9, letterSpacing:.3, lineHeight:1.25 }}>{companyTagline}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Stars Background */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        {[...Array(100)].map((_, i) => (
+          <div key={i} style={{
+            position: 'absolute',
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: Math.random() * 2 + 'px',
+            height: Math.random() * 2 + 'px',
+            background: '#fff',
+            borderRadius: '50%',
+            opacity: Math.random() * 0.5,
+          }} />
+        ))}
+      </div>
 
-        {/* Nav */}
-        <nav style={{ flex:1, padding:"10px 8px", overflowY:"auto" }}>
-          {navItems.map(n => {
-            const on = page===n.key;
-            return (
-              <div key={n.key} onClick={()=>setPage(n.key)} style={{
-                display:"flex", alignItems:"center", gap:9, padding:"8px 11px",
-                borderRadius:8, marginBottom:2, cursor:"pointer", transition:"all .15s",
-                background: on ? C.p   : "transparent",
-                color:      on ? "#fff" : C.dkAcc,
-                fontWeight: on ? 600   : 400, fontSize:12,
-              }}
-                onMouseEnter={e=>{ if(!on) e.currentTarget.style.background="rgba(var(--p-rgb),.2)"; }}
-                onMouseLeave={e=>{ if(!on) e.currentTarget.style.background="transparent"; }}>
-                <span style={{ display:"flex", alignItems:"center", justifyContent:"center", width:18, height:18, flexShrink:0 }}>{ICONS[n.key]}</span>
-                {n.key}
-              </div>
-            );
-          })}
-        </nav>
-
-        {/* Bottom */}
-        <div style={{ borderTop:`1px solid ${C.dk2}`, padding:"12px 10px" }}>
-          <div style={{ marginBottom:10 }}>
-            <div style={{ color:C.dkAcc, fontSize:9, marginBottom:6, letterSpacing:.6 }}>SWITCH ROLE</div>
-            <div style={{ display:"flex", background:C.dk2, borderRadius:7, overflow:"hidden" }}>
-              {["Super Admin","Admin","Employee"].map(r=>(
-                <button key={r} onClick={()=>setRole(r)} title={r} style={{
-                  flex:1, padding:"5px 2px", border:"none", cursor:"pointer", transition:"all .15s",
-                  background: role===r ? C.p       : "transparent",
-                  color:      role===r ? "#fff"    : C.dkAcc,
-                  fontSize:8, fontWeight: role===r ? 700 : 400,
-                }}>{r==="Super Admin"?"SA":r==="Admin"?"AD":"EE"}</button>
-              ))}
-            </div>
-            <div style={{ color:C.p, fontSize:9, marginTop:4, textAlign:"center" }}>{role}</div>
-          </div>
-          <button
-            onClick={() => setIsDark(!isDark)}
-            style={{
-              width:"100%", textAlign:"left", background:"transparent", border:"none", cursor:"pointer",
-              padding:"10px 12px", color:C.dkAcc, fontSize:13, fontWeight:600, borderRadius:8,
-              display:"flex", alignItems:"center", gap:8, marginBottom:16, marginTop:8,
-              transition:"background .12s, color .12s",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background="rgba(255,255,255,.06)"; e.currentTarget.style.color="#fff"; }}
-            onMouseLeave={e => { e.currentTarget.style.background="transparent"; e.currentTarget.style.color=C.dkAcc; }}
-          >
-            <span style={{ fontSize:15 }}>{isDark ? "🔆" : "🌙"}</span>
-            {isDark ? "Light mode" : "Dark mode"}
-          </button>
-          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-            <Av ini={me.ini} sz={30} bg={me.avatarC} />
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ color:"#fff", fontSize:11, fontWeight:600, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{me.name}</div>
-              <div style={{ color:C.dkAcc, fontSize:9 }}>{role}</div>
-            </div>
-            <button
-              type="button"
-              onClick={() => { setIsLoggedIn(false); setRole("Employee"); setPage("Dashboard"); toast("Logged out ✓"); }}
-              title="Log out"
-              style={{
-                flexShrink:0,
-                padding:"6px 10px",
-                borderRadius:8,
-                border:`1px solid ${C.dk2}`,
-                background:"rgba(255,255,255,.06)",
-                color:C.dkAcc,
-                fontSize:10,
-                fontWeight:600,
-                cursor:"pointer",
-                letterSpacing:0.2,
-                transition:"background .12s, border-color .12s",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background="rgba(var(--p-rgb),.2)"; e.currentTarget.style.borderColor=C.p; }}
-              onMouseLeave={e => { e.currentTarget.style.background="rgba(255,255,255,.06)"; e.currentTarget.style.borderColor=C.dk2; }}
-            >
-              Log out
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* ── MAIN ── */}
-      <main style={{
-        flex:1,
-        minWidth:0,
-        minHeight:0,
-        overflowY:"auto",
-        overflowX:"hidden",
-        background:C.bg,
-        position:"relative",
-        WebkitOverflowScrolling:"touch",
-        paddingBottom: narrow ? "env(safe-area-inset-bottom, 0px)" : undefined,
-      }}>
-
-        {showToast && (
+      {/* Navigation Layer */}
+      {page === "" && (
+        <div style={{ 
+          position: 'relative', 
+          width: '600px', 
+          height: '600px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center' 
+        }}>
           <div style={{
-            position:"fixed",
-            top: narrow ? 12 : 20,
-            left: narrow ? 12 : "auto",
-            right: 12,
-            maxWidth: narrow ? "calc(100vw - 24px)" : 420,
-            background:C.dk,
-            color:"#fff",
-            padding:"10px 16px",
-            borderRadius:10,
-            zIndex:300,
-            fontSize:12,
-            fontWeight:600,
-            boxSizing:"border-box",
-            wordBreak:"break-word",
-          }}>{showToast}</div>
-        )}
+            width: '120px',
+            height: '120px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle at 30% 30%, #38bdf8 0%, #1e3a8a 100%)',
+            boxShadow: '0 0 60px rgba(56, 189, 248, 0.4)',
+            zIndex: 20,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            animation: 'pulse 3s infinite ease-in-out',
+          }}>
+            <div style={{ color: '#fff', fontWeight: 900, fontSize: '24px' }}>KS</div>
+          </div>
 
-        {/* ── NOTIFICATION BELL ── */}
-        {(() => {
-          if (page !== "Dashboard") return null;
-          const visibleNotifs = notifications.filter(n =>
-            isAdmin ? true
-            : n.forAll
-            || n.forEmpIds.includes(ME_ID)
-          );
-          const unread = visibleNotifs.filter(n => !n.read).length;
-          return (
-            <>
-              <button
-                id="notif-bell-btn"
-                onClick={() => setShowNotifPanel(v => !v)}
-                style={{
-                  position:"fixed",
-                  top: narrow ? "calc(52px + env(safe-area-inset-top,0px) + 10px)" : 18,
-                  right: narrow ? 14 : 18,
-                  zIndex: 250,
-                  width: 40, height: 40,
-                  borderRadius: 12,
-                  border: `1px solid ${C.bdr}`,
-                  background: showNotifPanel ? C.p : C.wht,
-                  color: showNotifPanel ? "#fff" : C.txt,
-                  cursor: "pointer",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: "0 2px 12px rgba(var(--shadow-rgb),.1)",
-                  transition: "background .15s, color .15s, box-shadow .15s",
-                  flexShrink: 0,
-                }}
-                title="Notifications"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
-                {unread > 0 && (
-                  <span style={{
-                    position:"absolute", top:-4, right:-4,
-                    minWidth:17, height:17, borderRadius:999,
-                    background:"#dc2626", color:"#fff",
-                    fontSize:9, fontWeight:800, letterSpacing:.2,
-                    display:"flex", alignItems:"center", justifyContent:"center",
-                    padding:"0 4px", border:"2px solid #fff",
-                    lineHeight:1,
-                  }}>{unread > 9 ? "9+" : unread}</span>
-                )}
-              </button>
+          {navItems.map((n, i) => (
+            <Planet 
+              key={n.key} 
+              nav={n} 
+              index={i} 
+              total={navItems.length} 
+              onSelect={(k) => setPage(k)} 
+              isActive={false}
+              C={C}
+              scale="large"
+            />
+          ))}
+        </div>
+      )}
 
-              {showNotifPanel && (
-                <>
-                  <div
-                    style={{ position:"fixed", inset:0, zIndex:248 }}
-                    onClick={() => setShowNotifPanel(false)}
-                  />
-                  <div
-                    style={{
-                      position:"fixed",
-                      top: narrow ? "calc(52px + env(safe-area-inset-top,0px) + 56px)" : 66,
-                      right: narrow ? 10 : 18,
-                      zIndex: 249,
-                      width: Math.min(360, (typeof window !== "undefined" ? window.innerWidth : 400) - 20),
-                      maxHeight: "calc(100vh - 120px)",
-                      background: C.wht,
-                      borderRadius: 16,
-                      border: `1px solid ${C.bdr}`,
-                      boxShadow: "0 16px 48px rgba(var(--shadow-rgb),.18)",
-                      display: "flex", flexDirection: "column",
-                      overflow: "hidden",
-                      animation: "fadeIn .15s ease",
-                    }}
-                  >
-                    {/* Panel header */}
-                    <div style={{ padding:"14px 16px 10px", borderBottom:`1px solid ${C.bdr}`, display:"flex", justifyContent:"space-between", alignItems:"center", flexShrink:0 }}>
-                      <div>
-                        <div style={{ fontWeight:700, fontSize:14, color:C.txt }}>Notifications</div>
-                        <div style={{ fontSize:10, color:C.sub, marginTop:2 }}>{unread} unread · {visibleNotifs.length} total</div>
-                      </div>
-                      {unread > 0 && (
-                        <button
-                          onClick={() => setNotifications(prev => prev.map(n => ({ ...n, read: true })))}
-                          style={{ background:"none", border:"none", fontSize:11, fontWeight:600, color:C.p, cursor:"pointer", padding:"4px 8px", borderRadius:6 }}
-                        >Mark all read</button>
-                      )}
-                    </div>
+      {/* Module Content */}
+      {page !== "" && (
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 50 }}>
+          {/* Mini Sidebar */}
+          <div className="glass" style={{ width: '70px', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px 0', gap: '15px' }}>
+            <div onClick={() => setPage("")} style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--p)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+              <div style={{ color: '#fff', fontWeight: 900, fontSize: '14px' }}>K</div>
+            </div>
+            {navItems.map(n => (
+              <div key={n.key} onClick={() => setPage(n.key)} style={{ width: '36px', height: '36px', borderRadius: '10px', background: page === n.key ? 'var(--p)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: page === n.key ? '#fff' : 'rgba(255,255,255,0.4)', fontSize: '18px' }}>
+                {ICONS[n.key]}
+              </div>
+            ))}
+          </div>
+          
+          <div style={{ flex: 1, padding: '24px', overflowY: 'auto', background: 'rgba(2, 6, 23, 0.4)' }}>
+              {page === "Dashboard" && <Dashboard {...{ me, employees, todayISO, onLeaveTodayCount, leaves, holidays, saPayslips, MONTHS_SHORT, payYear, toast, navigate: setPage, role }} />}
+              {page === "Employees" && <Employees {...{ employees, role, me, toast, employeesData: EMP_DATA, pad, padBottom, narrow, heroPadStd, setEmployees, setProfilePick, setShowImportCsv, setShowEmp, empListTab, setEmpListTab, empSearch, setEmpSearch, filteredEmps }} />}
+              {page === "Presence" && <Presence {...{ role, me, toast, pad, padBottom, narrow, heroPadStd, employees, attendanceData, setAttendanceData, isClockedIn, setIsClockedIn, presenceEmpId, setPresenceEmpId, presenceMonth, setPresenceMonth, selectedADate, setSelectedADate, attendanceMode, setAttendanceMode, slackTeamsPlatform, setSlackTeamsPlatform }} />}
+              {page === "Settings" && <Settings {...{ role, me, toast, pad, padBottom, narrow, heroPadStd, isSA, theme, setTheme, isDark, setIsDark, companyLogoUrl, setCompanyLogoUrl, companyTagline, setCompanyTagline, showTaglineEdit, setShowTaglineEdit, taglineDraft, setTaglineDraft, departments, setDepartments, newDeptInput, setNewDeptInput, require2FAForAll, setRequire2FAForAll, sessionTimeoutValue, setSessionTimeoutValue, sessionTimeoutUnit, setSessionTimeoutUnit, accessSelectedEmpId, setAccessSelectedEmpId, accessPermissions, setAccessPermissions, settingNotifs, setSettingNotifs, employees }} />}
+          </div>
+        </div>
+      )}
 
-                    {/* Notification list */}
-                    <div style={{ overflowY:"auto", flex:1 }}>
-                      {visibleNotifs.length === 0 ? (
-                        <div style={{ padding:"40px 20px", textAlign:"center", color:C.sub, fontSize:12 }}>No notifications yet.</div>
-                      ) : visibleNotifs.map(n => (
-                        <div
-                          key={n.id}
-                          onClick={() => setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, read: true } : x))}
-                          style={{
-                            display:"flex", gap:12, padding:"12px 16px",
-                            borderBottom:`1px solid ${C.surf}`,
-                            background: n.read ? "transparent" : `rgba(var(--p-rgb),.06)`,
-                            cursor:"pointer", transition:"background .12s",
-                            position:"relative",
-                          }}
-                          onMouseEnter={ev => { ev.currentTarget.style.background = C.surf; }}
-                          onMouseLeave={ev => { ev.currentTarget.style.background = n.read ? "transparent" : `rgba(var(--p-rgb),.06)`; }}
-                        >
-                          {!n.read && (
-                            <span style={{ position:"absolute", left:6, top:"50%", transform:"translateY(-50%)", width:5, height:5, borderRadius:"50%", background:C.p }} />
-                          )}
-                          <div style={{ width:34, height:34, borderRadius:10, background:C.surf, border:`1px solid ${C.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>
-                            {n.icon}
-                          </div>
+      {showToast && (
+        <div style={{ position: "fixed", bottom: 40, left: "50%", transform: "translateX(-50%)", background: "var(--p)", color:"#fff", padding:"10px 20px", borderRadius:12, zIndex:1000 }}>{showToast}</div>
+      )}
+    </div>
+  );
+}
                           <div style={{ flex:1, minWidth:0 }}>
                             <div style={{ fontWeight: n.read ? 500 : 700, fontSize:12, color:C.txt, lineHeight:1.3 }}>{n.title}</div>
                             <div style={{ fontSize:11, color:C.sub, marginTop:3, lineHeight:1.4, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{n.body}</div>
